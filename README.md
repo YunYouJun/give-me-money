@@ -10,4 +10,4 @@
 
 就试着边学习，边用网页实现了下试试。
 
-DEMO: <http://github.yunyoujun.cn/give-me-money/#/>
+DEMO: <http://github.yunyoujun.cn/give-me-money/>
