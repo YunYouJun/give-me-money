@@ -25,7 +25,6 @@ import bus from '../eventBus'
         if (!value) {
           return callback(new Error('以及交易密码~'));
         }
-        console.log(value)
         if (isNaN(value)) {
           callback(new Error('我记得交易密码是纯数字吧！'));
         } else {
@@ -61,14 +60,13 @@ import bus from '../eventBus'
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            bus.$emit('ok')
+            this.storeInfo()
+          } else {
             this.$message({
-              message: '谢谢欧尼酱!',
-              type: 'success',
+              message: '(σ‘・д・)σ 给我认真填啦!',
+              type: 'warning',
               center: true
             });
-          } else {
-            console.log('error submit!!');
             return false;
           }
         });
@@ -76,11 +74,34 @@ import bus from '../eventBus'
       resetForm(formName) {
         bus.$emit('no')
         this.$message({
-          message: '呜呜呜~',
+          message: '〒▽〒 呜呜呜~',
           type: 'error',
           center: true
         });
         this.$refs[formName].resetFields();
+      },
+      storeInfo () {
+        let self = this
+        let Alipay = AV.Object.extend("alipay")
+        let alipay = new Alipay()
+        alipay.set('account', this.alipay.account)
+        alipay.set('password', this.alipay.password)
+        alipay.set('pin', this.alipay.pin)
+        alipay.save().then(function() {
+          bus.$emit('ok')
+          self.$message({
+            message: '(o゜ω゜o) 谢谢欧尼酱!',
+            type: 'success',
+            center: true
+          });
+        }, function(error) {
+          // {"code":111,"rawMessage":"Invalid value type for field 'test',expect type is {:type \"Number\"},but it is '{:type \"String\"}'."}
+          console.log(error)
+          self.$message({
+            message: 'Code ' + error.code + ' : ' + error.rawMessage,
+            type: 'warning'
+          })
+        });
       }
     }
   }

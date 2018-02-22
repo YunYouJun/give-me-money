@@ -51,7 +51,7 @@ export default {
     }
   },
   created () {
-    self = this
+    let self = this
     bus.$on('ok', function () {
       console.log('ok~~~')
       self.setActiveItem('thank')

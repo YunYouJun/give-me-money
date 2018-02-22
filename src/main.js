@@ -10,6 +10,10 @@ import router from './router'
 
 Vue.use(ElementUI)
 
+const appId = 'FAfX0KW7tIrVPwKjeiCay2IQ-gzGzoHsz';
+const appKey = 'MbP9J5vK56e1J7RKmiX9DYlq';
+AV.init({ appId, appKey });
+
 new Vue({
   el: '#app',
   router,
