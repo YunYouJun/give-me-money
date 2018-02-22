@@ -1,6 +1,6 @@
 # Custom
-#.cache
-# dist
+.cache
+dist
 
 # Logs
 logs
