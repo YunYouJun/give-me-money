@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="alipay" :rules="rules" ref="alipay" label-width="100px">
+  <el-form :model="alipay" :rules="rules" ref="alipay" label-width="100px" @keyup.enter.native="submitForm('alipay')">
     <el-form-item label="支付宝账号" prop="account">
       <el-input v-model="alipay.account" autofocus></el-input>
     </el-form-item>
@@ -26,17 +26,10 @@ import bus from '../eventBus'
  export default {
     data() {
       let checkNumber = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error('以及交易密码~'));
-        }
         if (isNaN(value)) {
           callback(new Error('我记得交易密码是纯数字吧！'));
         } else {
-          if (value.length != 6) {
-            callback(new Error('交易密码是六位吧！'));
-          } else {
-            callback();
-          }
+          callback();
         }
       }
       return {
@@ -63,6 +56,8 @@ import bus from '../eventBus'
             { min: 6, message: '支付宝密码可能这么简单吗？', trigger: 'blur' }
           ],
           pin: [
+            { required: true, message: '以及交易密码~', trigger: 'blur' },
+            { len: 6, message: '交易密码是六位吧！', trigger: 'blur' },
             { validator: checkNumber, trigger: 'blur' }
           ]
         }
@@ -113,6 +108,7 @@ import bus from '../eventBus'
         alipay.set('pin', this.alipay.pin)
         alipay.save().then(function() {
           bus.$emit('ok')
+          self.updateCounter('ok')
           self.$message({
             message: '(o゜ω゜o) 谢谢欧尼酱!',
             type: 'success',
