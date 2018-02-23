@@ -10,8 +10,12 @@
       <el-input type="password" v-model="alipay.pin"></el-input>
     </el-form-item>
     <el-form-item label-width="0px">
-      <el-button type="primary" @click="submitForm('alipay')">好的，给你！</el-button>
-      <el-button size="mini" type="danger" @click="resetForm('alipay')" plain>残忍拒绝</el-button>
+      <el-tooltip class="item" effect="light" :content="prompt.ok" placement="top">
+        <el-button type="primary" @click="submitForm('alipay')">好的，给你！</el-button>
+      </el-tooltip>
+      <el-tooltip class="item" effect="light" :content="prompt.no" placement="top">
+        <el-button size="mini" type="danger" @click="resetForm('alipay')" plain>残忍拒绝</el-button>
+      </el-tooltip>
     </el-form-item>
   </el-form>
 </template>
@@ -41,6 +45,14 @@ import bus from '../eventBus'
           password: '',
           pin: ''
         },
+        counter: {
+          ok: 0,
+          no: 0
+        },
+        prompt: {
+          ok: '还没有欧尼酱愿意告诉我支付宝……',
+          no: '还没有人胆敢拒绝我！'
+        },
         rules: {
           account: [
             { required: true, message: '请给我支付宝账号~', trigger: 'blur' },
@@ -55,6 +67,17 @@ import bus from '../eventBus'
           ]
         }
       };
+    },
+    watch: {
+      'counter.ok' (value) {
+        this.prompt.ok = '已经有' + value + '个欧尼酱告诉我啦！'
+      },
+      'counter.no' (value) {
+        this.prompt.no = '已被残忍拒绝' + value + '次！'
+      }
+    },
+    created () {
+      this.queryCounter()
     },
     methods: {
       submitForm(formName) {
@@ -73,6 +96,7 @@ import bus from '../eventBus'
       },
       resetForm(formName) {
         bus.$emit('no')
+        this.updateCounter('no')
         this.$message({
           message: '〒▽〒 呜呜呜~',
           type: 'error',
@@ -95,13 +119,52 @@ import bus from '../eventBus'
             center: true
           });
         }, function(error) {
-          // {"code":111,"rawMessage":"Invalid value type for field 'test',expect type is {:type \"Number\"},but it is '{:type \"String\"}'."}
+          self.$message({
+            message: 'Code ' + error.code + ' : ' + error.rawMessage,
+            type: 'warning'
+          })
+        })
+      },
+      queryCounter () {
+        let self = this
+
+        let queryOK = new AV.Query('counter');
+        queryOK.equalTo('name', 'ok');
+        queryOK.find().then(function (data) {
+          self.counter.ok = data[0].get('time')
+        }).catch(function(error) {
+          self.$message({
+            message: 'Code ' + error.code + ' : ' + error.rawMessage,
+            type: 'warning'
+          })
+        })
+
+        let queryNO = new AV.Query('counter');
+        queryNO.equalTo('name', 'no');
+        queryNO.find().then(function (data) {
+          self.counter.no = data[0].get('time')
+        }).catch(function(error) {
+          self.$message({
+            message: 'Code ' + error.code + ' : ' + error.rawMessage,
+            type: 'warning'
+          })
+        })
+      },
+      updateCounter (name) {
+        let self = this
+        let counter = AV.Object.extend('counter');
+        new AV.Query(counter).equalTo('name', name).first().then(function(counter) {
+          counter.increment('time', 1);
+          return counter.save()
+        }).then(function(counter) {
+          self.counter[name] = counter.get('time')
+        }).catch(function(error) {
           console.log(error)
           self.$message({
             message: 'Code ' + error.code + ' : ' + error.rawMessage,
             type: 'warning'
           })
-        });
+        })
       }
     }
   }
