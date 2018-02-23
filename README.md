@@ -14,5 +14,5 @@ DEMO: <http://github.yunyoujun.cn/give-me-money/>
 
 ## Intend
 
-- [] i18b
+- [] i18n
 - [] wechat
