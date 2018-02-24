@@ -1,18 +1,19 @@
 <template>
   <el-container>
-    <el-header height="30px">
-      <h3>{{ header }}</h3>
+    <el-header>
+      <navbar></navbar>
     </el-header>
     
     <el-main>
+      <h3>{{ this.$t('message.header') }}</h3>
       <el-row>
         <el-col :xs="{span: 24, offset: 0}" :sm="{span: 16, offset: 4}" :md="{span: 16, offset: 4}" :lg="{span: 12, offset: 6}" :xl="{span: 8, offset: 8}">
           <display-image></display-image>
         </el-col>
       </el-row>
-      <h2>{{ msg }}</h2>
+      <h2>{{ this.$t('message.give-me-alipay') }}</h2>
       <el-row>
-        <el-col :xs="{span: 22, offset: 1}" :sm="{span: 20, offset: 2}" :md="{span: 16, offset: 4}" :lg="{span: 12, offset: 6}" :xl="{span: 8, offset: 8}">
+        <el-col :xs="{span: 24, offset: 0}" :sm="{span: 20, offset: 2}" :md="{span: 16, offset: 4}" :lg="{span: 12, offset: 6}" :xl="{span: 8, offset: 8}">
           <info-input></info-input>
         </el-col>
       </el-row>
@@ -29,16 +30,19 @@
 </template>
 
 <script>
+import Navbar from '../components/common/Navbar'
+import Copyright from '../components/common/Copyright'
+
 import DisplayImage from '../components/DisplayImage'
 import InfoInput from '../components/InfoInput'
-import Copyright from '../components/common/Copyright'
    
 export default {
   name: 'can-you-give-me-money',
   components: {
+    Navbar,
+    Copyright,
     DisplayImage,
-    InfoInput,
-    Copyright
+    InfoInput
   },
   data () {
     return {

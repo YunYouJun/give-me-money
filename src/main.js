@@ -4,6 +4,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 import App from './App'
 import router from './router'
+import i18n from './i18n'
 
 // 生产模式 提示
 // Vue.config.productionTip = false
@@ -17,5 +18,6 @@ AV.init({ appId, appKey });
 new Vue({
   el: '#app',
   router,
-  render: h => h(App)
+  render: h => h(App),
+  i18n
 })

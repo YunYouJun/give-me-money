@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import i18n from '../i18n'
 
 import Index from '../components/Index.vue'
 
@@ -10,13 +11,24 @@ const router = new VueRouter({
     {
       path: '/',
       name: 'Index',
-      component: Index
+      component: Index,
+      meta: {
+        title: i18n.t('message.title')
+      }
     },
     {
       path: '*',
       redirect: '/'
     }
   ] 
+})
+
+router.beforeEach((to, from, next) => {
+  /* 路由发生变化修改页面title */
+  if (to.meta.title) {
+    document.title = to.meta.title;
+  }
+  next();
 })
 
 export default router

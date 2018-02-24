@@ -1,20 +1,20 @@
 <template>
-  <el-form :model="alipay" :rules="rules" ref="alipay" label-width="100px" @keyup.enter.native="submitForm('alipay')">
-    <el-form-item label="支付宝账号" prop="account">
+  <el-form :model="alipay" :rules="rules" ref="alipay" label-width="120px" @keyup.enter.native="submitForm('alipay')">
+    <el-form-item :label="this.$t('message.alipay.account')" prop="account">
       <el-input v-model="alipay.account" autofocus></el-input>
     </el-form-item>
-    <el-form-item label="支付宝密码" prop="password">
+    <el-form-item :label="this.$t('message.alipay.password')" prop="password">
       <el-input type="password" v-model="alipay.password"></el-input>
     </el-form-item>
-    <el-form-item label="交易密码" prop="pin">
+    <el-form-item :label="this.$t('message.alipay.pin')" prop="pin">
       <el-input type="password" v-model="alipay.pin"></el-input>
     </el-form-item>
     <el-form-item label-width="0px">
       <el-tooltip class="item" effect="light" :content="prompt.ok" placement="top">
-        <el-button type="primary" @click="submitForm('alipay')">好的，给你！</el-button>
+        <el-button type="primary" @click="submitForm('alipay')">{{ this.$t('message.ok') }}</el-button>
       </el-tooltip>
       <el-tooltip class="item" effect="light" :content="prompt.no" placement="top">
-        <el-button size="mini" type="danger" @click="resetForm('alipay')" plain>残忍拒绝</el-button>
+        <el-button size="mini" type="danger" @click="resetForm('alipay')" plain>{{ this.$t('message.no') }}</el-button>
       </el-tooltip>
     </el-form-item>
   </el-form>
@@ -48,15 +48,15 @@ import bus from '../eventBus'
         },
         rules: {
           account: [
-            { required: true, message: '请给我支付宝账号~', trigger: 'blur' },
+            { required: true, message: this.$t('prompt.alipay.account'), trigger: 'blur' },
             { min: 6, message: '支付宝账号有这么简单吗？', trigger: 'blur' }
           ],
           password: [
-            { required: true, message: '还有支付宝密码~', trigger: 'blur' },
+            { required: true, message: this.$t('prompt.alipay.password'), trigger: 'blur' },
             { min: 6, message: '支付宝密码可能这么简单吗？', trigger: 'blur' }
           ],
           pin: [
-            { required: true, message: '以及交易密码~', trigger: 'blur' },
+            { required: true, message: this.$t('prompt.alipay.pin'), trigger: 'blur' },
             { len: 6, message: '交易密码是六位吧！', trigger: 'blur' },
             { validator: checkNumber, trigger: 'blur' }
           ]
@@ -65,10 +65,10 @@ import bus from '../eventBus'
     },
     watch: {
       'counter.ok' (value) {
-        this.prompt.ok = '已经有' + value + '个欧尼酱告诉我啦！'
+        this.prompt.ok = this.$t('prompt.ok', {value})
       },
       'counter.no' (value) {
-        this.prompt.no = '已被残忍拒绝' + value + '次！'
+        this.prompt.no = this.$t('prompt.no', {value})
       }
     },
     created () {
@@ -81,7 +81,7 @@ import bus from '../eventBus'
             this.storeInfo()
           } else {
             this.$message({
-              message: '(σ‘・д・)σ 给我认真填啦!',
+              message: this.$t('message.be-serious'),
               type: 'warning',
               center: true
             });
@@ -93,7 +93,7 @@ import bus from '../eventBus'
         bus.$emit('no')
         this.updateCounter('no')
         this.$message({
-          message: '〒▽〒 呜呜呜~',
+          message: this.$t('message.cry'),
           type: 'error',
           center: true
         });
@@ -110,7 +110,7 @@ import bus from '../eventBus'
           bus.$emit('ok')
           self.updateCounter('ok')
           self.$message({
-            message: '(o゜ω゜o) 谢谢欧尼酱!',
+            message: this.$t('message.thank'),
             type: 'success',
             center: true
           });
