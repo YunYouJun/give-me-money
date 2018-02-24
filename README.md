@@ -16,3 +16,4 @@ DEMO: <http://github.yunyoujun.cn/give-me-money/>
 
 - [] i18n
 - [] wechat
+- [] audio

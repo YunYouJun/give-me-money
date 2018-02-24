@@ -16,6 +16,10 @@
           <info-input></info-input>
         </el-col>
       </el-row>
+      
+      <audio autoplay="autoplay">
+        <source src="../assets/audio/love.mp3" type="audio/mpeg">
+      </audio>
     </el-main>
 
     <el-footer>
