@@ -14,6 +14,7 @@ DEMO: <http://github.yunyoujun.cn/give-me-money/>
 
 ## Intend
 
-- [] i18n (part)
-- [] wechat
 - [x] audio
+- [x] i18n (part)
+- [] i18n all
+- [] wechatpay
