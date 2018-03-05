@@ -1,5 +1,5 @@
 <template>
-  <el-carousel ref="beg" :autoplay="false" indicator-position="none" arrow="never" set>
+  <el-carousel ref="beg" :autoplay="false" indicator-position="none" arrow="never">
     <el-carousel-item v-for="(item, name) in album" :key="name" :name="name" :label="item.label">
       <!-- <h3>{{ item }}</h3> -->
       <img width="100%" :src="item.path" :alt="item.label"/>
@@ -52,6 +52,11 @@ export default {
   },
   created () {
     let self = this
+    bus.$on('wow', function () {
+      console.log('wow')
+      self.setActiveItem('wow')
+    })
+
     bus.$on('ok', function () {
       console.log('ok~~~')
       self.setActiveItem('thank')

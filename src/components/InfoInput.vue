@@ -11,10 +11,14 @@
     </el-form-item>
     <el-form-item label-width="0px">
       <el-tooltip class="item" effect="light" :content="prompt.ok" placement="top">
-        <el-button type="primary" @click="submitForm('alipay')">{{ this.$t('message.ok') }}</el-button>
+        <span>
+          <el-button plain type="primary" @click="submitForm('alipay')" :disabled="disabled.ok">{{ this.$t('message.ok') }}</el-button>
+        </span>
       </el-tooltip>
       <el-tooltip class="item" effect="light" :content="prompt.no" placement="top">
-        <el-button size="mini" type="danger" @click="resetForm('alipay')" plain>{{ this.$t('message.no') }}</el-button>
+        <span style="margin-left: 20px;">
+          <el-button plain size="mini" type="danger" @click="resetForm('alipay')" :disabled="disabled.no">{{ this.$t('message.no') }}</el-button>
+        </span>
       </el-tooltip>
     </el-form-item>
   </el-form>
@@ -45,6 +49,10 @@ import bus from '../eventBus'
         prompt: {
           ok: '还没有欧尼酱愿意告诉我支付宝……',
           no: '还没有人胆敢拒绝我！'
+        },
+        disabled: {
+          ok: false,
+          no: false
         },
         rules: {
           account: [
@@ -80,6 +88,7 @@ import bus from '../eventBus'
           if (valid) {
             this.storeInfo()
           } else {
+            bus.$emit('wow')
             this.$message({
               message: this.$t('message.be-serious'),
               type: 'warning',
@@ -91,6 +100,7 @@ import bus from '../eventBus'
       },
       resetForm(formName) {
         bus.$emit('no')
+        this.disabled.no = true // 禁用 no 按钮
         this.updateCounter('no')
         this.$message({
           message: this.$t('message.cry'),
@@ -108,6 +118,7 @@ import bus from '../eventBus'
         alipay.set('pin', this.alipay.pin)
         alipay.save().then(function() {
           bus.$emit('ok')
+          self.disabled.ok = true // 禁用 ok 按钮
           self.updateCounter('ok')
           self.$message({
             message: this.$t('message.thank'),
@@ -151,7 +162,7 @@ import bus from '../eventBus'
         let counter = AV.Object.extend('counter');
         new AV.Query(counter).equalTo('name', name).first().then(function(counter) {
           counter.increment('time', 1);
-          return counter.save()
+          return counter.save(null, {fetchWhenSave: true})
         }).then(function(counter) {
           self.counter[name] = counter.get('time')
         }).catch(function(error) {

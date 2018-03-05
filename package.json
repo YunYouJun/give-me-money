@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Please give me money.",
   "scripts": {
+    "start": "npm run dev",
     "dev": "parcel index.html",
     "build": "parcel build index.html --public-url ./",
     "test": "echo \"Error: no test specified\" && exit 1",

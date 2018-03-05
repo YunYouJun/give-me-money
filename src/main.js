@@ -6,8 +6,7 @@ import App from './App'
 import router from './router'
 import i18n from './i18n'
 
-// 生产模式 提示
-// Vue.config.productionTip = false
+Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 
