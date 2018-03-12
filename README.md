@@ -8,7 +8,7 @@
 
 此前看到的一个图，觉得很有趣。
 
-就试着边学习，边用网页实现了下试试。
+就试着用网页实现了下。
 
 DEMO: <http://github.yunyoujun.cn/give-me-money/>
 
