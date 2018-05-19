@@ -19,7 +19,7 @@
       </el-row>
       
       <audio autoplay="autoplay">
-        <source src="../assets/audio/love.mp3" type="audio/mpeg">
+        <!-- <source src="../../static/audio/love.mp3" type="audio/mpeg"> -->
       </audio>
     </el-main>
 
