@@ -8,11 +8,10 @@
 
 此前看到的一个图，觉得很有趣，就试着用网页实现了下。
 
-DEMO: <http://github.yunyoujun.cn/give-me-money/>
+- GitHub: <https://github.com/YunYouJun/give-me-money>
+- DEMO: <http://github.yunyoujun.cn/give-me-money/>
 
-采用 LeanCloud 存储 （大家留给我的支付宝帐号，大概是能看到的~）
-
-（虽然至今都没有一个真的啊！摔！）
+<!-- more -->
 
 ## Base
 
@@ -22,15 +21,28 @@ DEMO: <http://github.yunyoujun.cn/give-me-money/>
 - [Element](https://github.com/ElemeFE/element)
 - [element-theme-ink](https://github.com/YunYouJun/element-theme-ink)
 
+## Storage
+
+采用 [LeanCloud](https://leancloud.cn/) 存储 （大家留给我的支付宝帐号，大概是能看到的~）
+
+> 虽然至今都没有一个真的啊！摔！
+
+## Audio
+
+话说这个音频，有识之士（~~绅士~~）应该都有所耳闻。(~~笑~~)
+
+我不是，我没有。
+
 ## Use
 
 ```sh
 git clone https://github.com/YunYouJun/give-me-money.git
 npm install
+npm run dev
 # http://localhost:2333
 ```
 
-端口号是 `2333` 啦~
+端口号当然是 `2333` 啦~
 
 ## Intend
 
