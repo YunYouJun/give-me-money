@@ -4429,6 +4429,10 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
+vue-about-me@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.npmjs.org/vue-about-me/-/vue-about-me-0.0.3.tgz#ad9359ba0c8fabc752b611fbf52dfaf812099404"
+
 vue-hot-reload-api@^2.3.0:
   version "2.3.0"
   resolved "http://registry.npm.taobao.org/vue-hot-reload-api/download/vue-hot-reload-api-2.3.0.tgz#97976142405d13d8efae154749e88c4e358cf926"

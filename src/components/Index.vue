@@ -24,14 +24,14 @@
     </el-main>
 
     <el-footer>
-      <copyright></copyright>
+      <vue-about-me :copyright="copyright"></vue-about-me>
     </el-footer>
   </el-container>
 </template>
 
 <script>
 import Navbar from '../components/common/Navbar'
-import Copyright from '../components/common/Copyright'
+import VueAboutMe from 'vue-about-me'
 
 import DisplayImage from '../components/DisplayImage'
 import InfoInput from '../components/InfoInput'
@@ -40,14 +40,20 @@ export default {
   name: 'can-you-give-me-money',
   components: {
     Navbar,
-    Copyright,
     DisplayImage,
-    InfoInput
+    InfoInput,
+    VueAboutMe
   },
   data () {
     return {
       header: '可爱的萝莉妹妹们',
-      msg: '欧尼酱，可以……告诉我……你的……支付宝吗？'
+      msg: '欧尼酱，可以……告诉我……你的……支付宝吗？',
+      copyright: {
+        name: 'Give Me Money!',
+        repoName: 'give-me-money',
+        author: 'YunYouJun',
+        logo: 'far fa-credit-card'
+      }
     }
   }
 }
