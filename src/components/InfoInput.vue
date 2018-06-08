@@ -80,7 +80,8 @@ import bus from '../eventBus'
       }
     },
     created () {
-      this.queryCounter()
+      this.queryOkCounter()
+      this.queryNoCounter()
     },
     methods: {
       submitForm(formName) {
@@ -90,19 +91,21 @@ import bus from '../eventBus'
           } else {
             bus.$emit('wow')
             this.$message({
+              showClose: true,
               message: this.$t('message.be-serious'),
               type: 'warning',
               center: true
             });
             return false;
           }
-        });
+        })
       },
       resetForm(formName) {
         bus.$emit('no')
         this.disabled.no = true // 禁用 no 按钮
         this.updateCounter('no')
         this.$message({
+          showClose: true,
           message: this.$t('message.cry'),
           type: 'error',
           center: true
@@ -119,12 +122,13 @@ import bus from '../eventBus'
         alipay.save().then(function() {
           bus.$emit('ok')
           self.disabled.ok = true // 禁用 ok 按钮
-          self.updateCounter('ok')
+          self.queryOkCounter()
           self.$message({
-            message: this.$t('message.thank'),
+            showClose: true,
+            message: self.$t('message.thank'),
             type: 'success',
             center: true
-          });
+          })
         }, function(error) {
           self.$message({
             message: 'Code ' + error.code + ' : ' + error.rawMessage,
@@ -132,26 +136,28 @@ import bus from '../eventBus'
           })
         })
       },
-      queryCounter () {
+      queryOkCounter () {
         let self = this
-
-        let queryOK = new AV.Query('counter');
-        queryOK.equalTo('name', 'ok');
-        queryOK.find().then(function (data) {
-          self.counter.ok = data[0].get('time')
-        }).catch(function(error) {
+        let queryAlipay = new AV.Query('alipay')
+        queryAlipay.count().then(function (count) {
+          self.counter.ok = count
+        }, function (error) {
           self.$message({
+            showClose: true,
             message: 'Code ' + error.code + ' : ' + error.rawMessage,
             type: 'warning'
           })
         })
-
-        let queryNO = new AV.Query('counter');
-        queryNO.equalTo('name', 'no');
-        queryNO.find().then(function (data) {
+      },
+      queryNoCounter () {
+        let self = this
+        let queryNo = new AV.Query('counter');
+        queryNo.equalTo('name', 'no');
+        queryNo.find().then(function (data) {
           self.counter.no = data[0].get('time')
         }).catch(function(error) {
           self.$message({
+            showClose: true,
             message: 'Code ' + error.code + ' : ' + error.rawMessage,
             type: 'warning'
           })
@@ -160,14 +166,15 @@ import bus from '../eventBus'
       updateCounter (name) {
         let self = this
         let counter = AV.Object.extend('counter');
-        new AV.Query(counter).equalTo('name', name).first().then(function(counter) {
+        new AV.Query(counter).equalTo('name', name).first()
+        .then(function(counter) {
           counter.increment('time', 1);
           return counter.save(null, {fetchWhenSave: true})
         }).then(function(counter) {
           self.counter[name] = counter.get('time')
         }).catch(function(error) {
-          console.log(error)
           self.$message({
+            showClose: true,
             message: 'Code ' + error.code + ' : ' + error.rawMessage,
             type: 'warning'
           })

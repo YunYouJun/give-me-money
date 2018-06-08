@@ -46,7 +46,7 @@ npm run dev
 
 ## Intend
 
-- [x] audio
-- [x] i18n (part)
-- [] i18n all
-- [] wechatpay
+- [ ] i18n all  [json 分离]
+- [ ] wechatpay
+- [ ] qrcode
+- [ ] show all account info (vue router)

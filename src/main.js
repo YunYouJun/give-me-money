@@ -9,7 +9,9 @@ import i18n from './i18n'
 
 Vue.config.productionTip = false
 
-Vue.use(ElementUI)
+Vue.use(ElementUI, {
+  i18n: (key, value) => i18n.t(key, value)
+})
 
 const appId = 'FAfX0KW7tIrVPwKjeiCay2IQ-gzGzoHsz'
 const appKey = 'MbP9J5vK56e1J7RKmiX9DYlq'

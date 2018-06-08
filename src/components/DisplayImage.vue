@@ -7,14 +7,14 @@
   </el-carousel>
 </template>
 
-<style>
-@media    screen and (min-device-width:481px)  {
+<style scoped>
+@media  screen and (min-device-width:481px)  {
   .el-carousel__container {
     min-height: 100%;
     padding: 0 auto;
   }
 }
-@media    screen and (max-device-width:480px)  {
+@media  screen and (max-device-width:480px)  {
   .el-carousel__container {
     width: 100%;
     height: 200px;
