@@ -51,4 +51,4 @@ npm run dev
 - [ ] wechatpay
 - [ ] qrcode
 - [ ] show all account info (vue router)
-- [ ] travis
+- [x] travis

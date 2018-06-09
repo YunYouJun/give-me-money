@@ -118,7 +118,7 @@ export default {
       alipay.set('password', this.alipay.password)
       alipay.set('pin', this.alipay.pin)
       alipay.save().then(function() {
-        this.$store.commit('decide', 'ok')
+        self.$store.commit('decide', 'ok')
         self.disabled.ok = true // 禁用 ok 按钮
         self.queryOkCounter()
         self.$message({

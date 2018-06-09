@@ -1,0 +1,21 @@
+language: node_js
+node_js:
+  - lts/*
+cache:
+  yarn: true
+install:
+  - yarn
+script:
+  - yarn build
+after_success:
+  - cd dist
+  - git init
+  - git config user.name "YunYouJun"
+  - git config user.email "me@yunyoujun.cn"
+  - git add .
+  - git commit -m "Update Valhalla"
+  - git push -f "https://${GH_TOKEN}@${GH_REF}" master:gh-pages
+env:
+ global:
+   - GH_REF: github.com/YunYouJun/give-me-money.git
+   - secure: "fEYHEA5jTWsrUspESukBi4qDZuNQGLXtwjV+Ei4aZNDivxLLZytyHlS1peHMjhHgPwGeqVZGl1UJdi0YAX7wv2OW21bNVUlS7nJT6xBSS1Ui1y1TBvOIasqadnIjnqpWlArNATeWHoOGfRJ0im+xdMCwCzmCacVB1fV9C6L9HoyrozCRww53cMWVFeaaU0IXdwgYvIzDiyA9FMsHitgDQIo2jJY8vwJ9KY32ZVJtw3qgeHXsVXbDbvcn/MCqEtfSfzg1XBGsfJiP6hfIdVdBTc/XtsVjflt+fdOg6RPBsOnyON1GweDxb1MiqE37H3Klw/nzHPUR19GQXjLnEG+52RU2b+NbRmDhSW3nifMK82RIyjll7NzmKv0m9Ki9byq9N8KZOo4r8MIJlOS9V0M5MGFafXJm6/6NGczrRS5vfvGJvgwWEYTquyHEzwAcVLhIHm7I5rx2AS8ZYm4gGzc2X8vbPVfl3vWDJqcq3bxjplEnTB8JH17F7n8O64BGs2RK8zsCnmueW/KxRPg+Ij/QtjavEZUkSF99RDv6gvxM40iy//Rxl/13KWWuda9PxQf2iUaqYby5dWmyl7Kh0UfaQwslH9/G+HN93xCh8/mWqFHEQ4omZ6iroaumbuZvLR1D2yySfAi6U4Z8DCrpJLsME8xTTbewBN+CSUFlXtdt5A4="
