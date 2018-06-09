@@ -2,6 +2,8 @@
 
 > I'm so cute. Please give me money.
 
+[![Build Status](https://travis-ci.org/YunYouJun/give-me-money.svg?branch=master)](https://travis-ci.org/YunYouJun/give-me-money)
+
 我很可爱，请给我钱。
 
 ![give-me-money](https://github.com/YunYouJun/give-me-money/blob/master/src/assets/example.jpg?raw=true)
