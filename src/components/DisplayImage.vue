@@ -1,30 +1,13 @@
 <template>
   <el-carousel ref="beg" :autoplay="false" indicator-position="none" arrow="never">
     <el-carousel-item v-for="(item, name) in album" :key="name" :name="name" :label="item.label">
-      <!-- <h3>{{ item }}</h3> -->
+      <!-- <h3>{{ $store.state.decision }}</h3> -->
       <img width="100%" :src="item.path" :alt="item.label"/>
     </el-carousel-item>
   </el-carousel>
 </template>
 
-<style scoped>
-@media  screen and (min-device-width:481px)  {
-  .el-carousel__container {
-    min-height: 100%;
-    padding: 0 auto;
-  }
-}
-@media  screen and (max-device-width:480px)  {
-  .el-carousel__container {
-    width: 100%;
-    height: 200px;
-  }
-}
-</style>
-
 <script>
-import bus from '../eventBus'
-
 export default {
   name: 'DisplayImage',
   data () {
@@ -50,22 +33,37 @@ export default {
       this.$refs['beg'].setActiveItem(index)
     }
   },
-  created () {
-    let self = this
-    bus.$on('wow', function () {
-      console.log('wow')
-      self.setActiveItem('wow')
-    })
-
-    bus.$on('ok', function () {
-      console.log('ok~~~')
-      self.setActiveItem('thank')
-    })
-
-    bus.$on('no', function () {
-      console.log('no!!!')
-      self.setActiveItem('hum')
-    })
+  watch: {
+    '$store.state.decision' () {
+      switch (this.$store.state.decision) {
+        case 'wow':
+          this.setActiveItem('wow')
+          break
+        case 'ok':
+          this.setActiveItem('thank')
+          break
+        case 'no':
+          this.setActiveItem('hum')
+          break
+        default:
+          break
+      }
+    }
   }
 }
 </script>
+
+<style scoped>
+@media  screen and (min-device-width:481px)  {
+  .el-carousel__container {
+    min-height: 100%;
+    padding: 0 auto;
+  }
+}
+@media  screen and (max-device-width:480px)  {
+  .el-carousel__container {
+    width: 100%;
+    height: 200px;
+  }
+}
+</style>

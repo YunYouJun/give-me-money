@@ -1,42 +1,27 @@
 <template>
-  <el-menu :default-active="activeMenuIndex" class="give-me-menu" mode="horizontal" >
-    <el-menu-item index="/">
-      <img width="20px" src="../../assets/money.png">
-    </el-menu-item>
-    <el-menu-item index="lang" class="lang">
-      <el-select v-model="currentLang" placeholder="语言">
-        <el-option
-          v-for="item in lang"
-          :key="item.code"
-          :label="item.label"
-          :value="item.code">
-        </el-option>
-      </el-select>
-    </el-menu-item>
-
-  </el-menu>
+  <div>
+    <el-menu :default-active="activeMenuIndex" class="gmm-menu" mode="horizontal">
+      <el-menu-item index="/">
+        <img width="20px" src="../../assets/money.png">
+      </el-menu-item>
+      <div class="right-menu">
+        <lang-select class="right-menu-item"></lang-select>
+      </div>
+    </el-menu>
+  </div>
 </template>
 
 <script>
+import LangSelect from './LangSelect'
+
 export default {
   name: 'Navbar',
+  components: {
+    LangSelect
+  },
   data () {
     return {
-      lang: [{
-        code: 'zh-CN',
-        label: '简体中文'
-      },{
-        code: 'en',
-        label: 'English'
-      }],
-      currentLang: localStorage.getItem('lang')?localStorage.getItem('lang'):'zh-CN'
-    }
-  },
-  watch: {
-    currentLang (lang) {
-      localStorage.setItem('lang', lang)
-      location.reload();
-      // this.$i18n.locale = lang
+      
     }
   },
   computed: {
@@ -47,15 +32,18 @@ export default {
 }
 </script>
 
-<style>
-.el-menu--horizontal>.lang{
+<style lang="scss" scoped>
+.right-menu {
   float: right;
-  border: 0px;
-}
-
-.el-select>.el-input>.el-input__inner{
-  width: 120px;
-  border: 0px;
+  height: 100%;
+  line-height: 60px;
+  &:focus{
+    outline: none;
+  }
+  .right-menu-item {
+    display: inline-block;
+    margin: 0 8px;
+  }
 }
 </style>
 

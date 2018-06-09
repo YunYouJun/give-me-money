@@ -16,10 +16,11 @@
 ## Base
 
 - [Vue](https://vuejs.org)
-- [Parcel](https://parceljs.org/)
+- [Parcel](https://parceljs.org)
+- [Vuex](https://vuex.vuejs.org)
 - [iconfont](http://iconfont.cn)
-- [Element](https://github.com/ElemeFE/element)
-- [element-theme-ink](https://github.com/YunYouJun/element-theme-ink)
+- [Element](https://github.com/ElemeFE/element/)
+- [element-theme-ink](https://github.com/YunYouJun/element-theme-ink/)
 
 ## Storage
 

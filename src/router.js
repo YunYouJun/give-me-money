@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import i18n from '../i18n'
+import i18n from './i18n'
 
-import Index from '../pages/index.vue'
+import Index from './views/index.vue'
 
 Vue.use(VueRouter)
 

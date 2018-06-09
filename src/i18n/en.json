@@ -1,0 +1,26 @@
+{
+  "message": {
+    "title": "Give Me Money!",
+    "give-me-alipay": "Dear brother, can you give me your alipay?",
+    "header": "Lovely Loli",
+    "ok": "OK ! Give you !",
+    "no": "Nooooo!",
+    "alipay": {
+      "account": "Alipay Account",
+      "password": "Alipy Password",
+      "pin": "Alipay Pin"
+    },
+    "be-serious": "(σ‘・д・)σ Please be serious!",
+    "cry": "〒▽〒 WuWuWu……",
+    "thank": "(o゜ω゜o) Thank you, darling!"
+  },
+  "prompt": {
+    "alipay": {
+      "account": "Please givr me your alipay account ~",
+      "password": "And alipay password ~",
+      "pin": "And alipay pin ~"
+    },
+    "ok": "{value} brothers have told us !",
+    "no": "We have been rejected {value} times !"
+  }
+}

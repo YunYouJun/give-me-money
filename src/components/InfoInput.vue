@@ -25,161 +25,159 @@
 </template>
 
 <script>
-import bus from '../eventBus'
-
- export default {
-    data() {
-      let checkNumber = (rule, value, callback) => {
-        if (isNaN(value)) {
-          callback(new Error('我记得交易密码是纯数字吧！'));
-        } else {
-          callback();
-        }
-      }
-      return {
-        alipay: {
-          account: '',
-          password: '',
-          pin: ''
-        },
-        counter: {
-          ok: 0,
-          no: 0
-        },
-        prompt: {
-          ok: '还没有欧尼酱愿意告诉我支付宝……',
-          no: '还没有人胆敢拒绝我！'
-        },
-        disabled: {
-          ok: false,
-          no: false
-        },
-        rules: {
-          account: [
-            { required: true, message: this.$t('prompt.alipay.account'), trigger: 'blur' },
-            { min: 6, message: '支付宝账号有这么简单吗？', trigger: 'blur' }
-          ],
-          password: [
-            { required: true, message: this.$t('prompt.alipay.password'), trigger: 'blur' },
-            { min: 6, message: '支付宝密码可能这么简单吗？', trigger: 'blur' }
-          ],
-          pin: [
-            { required: true, message: this.$t('prompt.alipay.pin'), trigger: 'blur' },
-            { len: 6, message: '交易密码是六位吧！', trigger: 'blur' },
-            { validator: checkNumber, trigger: 'blur' }
-          ]
-        }
-      };
-    },
-    watch: {
-      'counter.ok' (value) {
-        this.prompt.ok = this.$t('prompt.ok', {value})
-      },
-      'counter.no' (value) {
-        this.prompt.no = this.$t('prompt.no', {value})
-      }
-    },
-    created () {
-      this.queryOkCounter()
-      this.queryNoCounter()
-    },
-    methods: {
-      submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.storeInfo()
-          } else {
-            bus.$emit('wow')
-            this.$message({
-              showClose: true,
-              message: this.$t('message.be-serious'),
-              type: 'warning',
-              center: true
-            });
-            return false;
-          }
-        })
-      },
-      resetForm(formName) {
-        bus.$emit('no')
-        this.disabled.no = true // 禁用 no 按钮
-        this.updateCounter('no')
-        this.$message({
-          showClose: true,
-          message: this.$t('message.cry'),
-          type: 'error',
-          center: true
-        });
-        this.$refs[formName].resetFields();
-      },
-      storeInfo () {
-        let self = this
-        let Alipay = AV.Object.extend("alipay")
-        let alipay = new Alipay()
-        alipay.set('account', this.alipay.account)
-        alipay.set('password', this.alipay.password)
-        alipay.set('pin', this.alipay.pin)
-        alipay.save().then(function() {
-          bus.$emit('ok')
-          self.disabled.ok = true // 禁用 ok 按钮
-          self.queryOkCounter()
-          self.$message({
-            showClose: true,
-            message: self.$t('message.thank'),
-            type: 'success',
-            center: true
-          })
-        }, function(error) {
-          self.$message({
-            message: 'Code ' + error.code + ' : ' + error.rawMessage,
-            type: 'warning'
-          })
-        })
-      },
-      queryOkCounter () {
-        let self = this
-        let queryAlipay = new AV.Query('alipay')
-        queryAlipay.count().then(function (count) {
-          self.counter.ok = count
-        }, function (error) {
-          self.$message({
-            showClose: true,
-            message: 'Code ' + error.code + ' : ' + error.rawMessage,
-            type: 'warning'
-          })
-        })
-      },
-      queryNoCounter () {
-        let self = this
-        let queryNo = new AV.Query('counter');
-        queryNo.equalTo('name', 'no');
-        queryNo.find().then(function (data) {
-          self.counter.no = data[0].get('time')
-        }).catch(function(error) {
-          self.$message({
-            showClose: true,
-            message: 'Code ' + error.code + ' : ' + error.rawMessage,
-            type: 'warning'
-          })
-        })
-      },
-      updateCounter (name) {
-        let self = this
-        let counter = AV.Object.extend('counter');
-        new AV.Query(counter).equalTo('name', name).first()
-        .then(function(counter) {
-          counter.increment('time', 1);
-          return counter.save(null, {fetchWhenSave: true})
-        }).then(function(counter) {
-          self.counter[name] = counter.get('time')
-        }).catch(function(error) {
-          self.$message({
-            showClose: true,
-            message: 'Code ' + error.code + ' : ' + error.rawMessage,
-            type: 'warning'
-          })
-        })
+export default {
+  data() {
+    let checkNumber = (rule, value, callback) => {
+      if (isNaN(value)) {
+        callback(new Error('我记得交易密码是纯数字吧！'))
+      } else {
+        callback()
       }
     }
+    return {
+      alipay: {
+        account: '',
+        password: '',
+        pin: ''
+      },
+      counter: {
+        ok: 0,
+        no: 0
+      },
+      prompt: {
+        ok: '还没有欧尼酱愿意告诉我支付宝……',
+        no: '还没有人胆敢拒绝我！'
+      },
+      disabled: {
+        ok: false,
+        no: false
+      },
+      rules: {
+        account: [
+          { required: true, message: this.$t('prompt.alipay.account'), trigger: 'blur' },
+          { min: 6, message: '支付宝账号有这么简单吗？', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: this.$t('prompt.alipay.password'), trigger: 'blur' },
+          { min: 6, message: '支付宝密码可能这么简单吗？', trigger: 'blur' }
+        ],
+        pin: [
+          { required: true, message: this.$t('prompt.alipay.pin'), trigger: 'blur' },
+          { len: 6, message: '交易密码是六位吧！', trigger: 'blur' },
+          { validator: checkNumber, trigger: 'blur' }
+        ]
+      }
+    }
+  },
+  watch: {
+    'counter.ok' (value) {
+      this.prompt.ok = this.$t('prompt.ok', {value})
+    },
+    'counter.no' (value) {
+      this.prompt.no = this.$t('prompt.no', {value})
+    }
+  },
+  created () {
+    this.queryOkCounter()
+    this.queryNoCounter()
+  },
+  methods: {
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.storeInfo()
+        } else {
+          this.$store.commit('decide', 'wow')
+          this.$message({
+            showClose: true,
+            message: this.$t('message.be-serious'),
+            type: 'warning',
+            center: true
+          })
+          return false
+        }
+      })
+    },
+    resetForm(formName) {
+      this.$store.commit('decide', 'no')
+      this.disabled.no = true // 禁用 no 按钮
+      this.updateCounter('no')
+      this.$message({
+        showClose: true,
+        message: this.$t('message.cry'),
+        type: 'error',
+        center: true
+      })
+      this.$refs[formName].resetFields()
+    },
+    storeInfo () {
+      let self = this
+      let Alipay = AV.Object.extend("alipay")
+      let alipay = new Alipay()
+      alipay.set('account', this.alipay.account)
+      alipay.set('password', this.alipay.password)
+      alipay.set('pin', this.alipay.pin)
+      alipay.save().then(function() {
+        this.$store.commit('decide', 'ok')
+        self.disabled.ok = true // 禁用 ok 按钮
+        self.queryOkCounter()
+        self.$message({
+          showClose: true,
+          message: self.$t('message.thank'),
+          type: 'success',
+          center: true
+        })
+      }, function(error) {
+        self.$message({
+          message: 'Code ' + error.code + ' : ' + error.rawMessage,
+          type: 'warning'
+        })
+      })
+    },
+    queryOkCounter () {
+      let self = this
+      let queryAlipay = new AV.Query('alipay')
+      queryAlipay.count().then(function (count) {
+        self.counter.ok = count
+      }, function (error) {
+        self.$message({
+          showClose: true,
+          message: 'Code ' + error.code + ' : ' + error.rawMessage,
+          type: 'warning'
+        })
+      })
+    },
+    queryNoCounter () {
+      let self = this
+      let queryNo = new AV.Query('counter')
+      queryNo.equalTo('name', 'no')
+      queryNo.find().then(function (data) {
+        self.counter.no = data[0].get('time')
+      }).catch(function(error) {
+        self.$message({
+          showClose: true,
+          message: 'Code ' + error.code + ' : ' + error.rawMessage,
+          type: 'warning'
+        })
+      })
+    },
+    updateCounter (name) {
+      let self = this
+      let counter = AV.Object.extend('counter')
+      new AV.Query(counter).equalTo('name', name).first()
+      .then(function(counter) {
+        counter.increment('time', 1)
+        return counter.save(null, {fetchWhenSave: true})
+      }).then(function(counter) {
+        self.counter[name] = counter.get('time')
+      }).catch(function(error) {
+        self.$message({
+          showClose: true,
+          message: 'Code ' + error.code + ' : ' + error.rawMessage,
+          type: 'warning'
+        })
+      })
+    }
   }
+}
 </script>
