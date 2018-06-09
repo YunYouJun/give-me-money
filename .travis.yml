@@ -13,7 +13,7 @@ after_success:
   - git config user.name "YunYouJun"
   - git config user.email "me@yunyoujun.cn"
   - git add .
-  - git commit -m "Update Valhalla"
+  - git commit -m "Update gh-pages"
   - git push -f "https://${GH_TOKEN}@${GH_REF}" master:gh-pages
 env:
  global:
