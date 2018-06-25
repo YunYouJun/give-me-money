@@ -33,7 +33,7 @@
   "dependencies": {
     "element-theme-ink": "^0.1.5",
     "element-ui": "^2.4.1",
-    "vue-about-me": "^0.0.5",
+    "vue-about-me": "^0.1.0",
     "vue-i18n": "^7.8.0",
     "vuex": "^3.0.1"
   }

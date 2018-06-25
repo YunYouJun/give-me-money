@@ -2460,6 +2460,10 @@ lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.npmjs.org/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
 
+lodash.merge@^4.6.0:
+  version "4.6.1"
+  resolved "https://registry.npmjs.org/lodash.merge/-/lodash.merge-4.6.1.tgz#adc25d9cb99b9391c59624f379fbba60d7111d54"
+
 lodash.mergewith@^4.6.0:
   version "4.6.1"
   resolved "https://registry.npmjs.org/lodash.mergewith/-/lodash.mergewith-4.6.1.tgz#639057e726c3afbdb3e7d42741caa8d6e4335927"
@@ -3109,6 +3113,10 @@ pinkie-promise@^2.0.0:
 pinkie@^2.0.0:
   version "2.0.4"
   resolved "https://registry.npmjs.org/pinkie/-/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
+
+popper.js@^1.12.9:
+  version "1.14.3"
+  resolved "https://registry.npmjs.org/popper.js/-/popper.js-1.14.3.tgz#1438f98d046acf7b4d78cd502bf418ac64d4f095"
 
 posix-character-classes@^0.1.0:
   version "0.1.1"
@@ -4342,6 +4350,14 @@ uuid@^3.0.0:
   version "3.2.1"
   resolved "https://registry.npmjs.org/uuid/-/uuid-3.2.1.tgz#12c528bb9d58d0b9265d9a2f6f0fe8be17ff1f14"
 
+v-tooltip@^2.0.0-rc.33:
+  version "2.0.0-rc.33"
+  resolved "https://registry.npmjs.org/v-tooltip/-/v-tooltip-2.0.0-rc.33.tgz#78f7d8e9c34265622be65ba9dc78c67f1dc02b73"
+  dependencies:
+    lodash.merge "^4.6.0"
+    popper.js "^1.12.9"
+    vue-resize "^0.4.3"
+
 v8-compile-cache@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/v8-compile-cache/-/v8-compile-cache-2.0.0.tgz#526492e35fc616864284700b7043e01baee09f0a"
@@ -4375,9 +4391,11 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-vue-about-me@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.npmjs.org/vue-about-me/-/vue-about-me-0.0.5.tgz#2b4ee65d46942282c6ea4c70449f4809e3babfd8"
+vue-about-me@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.npmjs.org/vue-about-me/-/vue-about-me-0.1.0.tgz#ef35e1bbd4de160c22fccf0c5654f08ea6345ba1"
+  dependencies:
+    v-tooltip "^2.0.0-rc.33"
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.0"
@@ -4386,6 +4404,10 @@ vue-hot-reload-api@^2.3.0:
 vue-i18n@^7.8.0:
   version "7.8.0"
   resolved "https://registry.npmjs.org/vue-i18n/-/vue-i18n-7.8.0.tgz#fa49c3f90d20edab2048e9ef825774d39f1906d9"
+
+vue-resize@^0.4.3:
+  version "0.4.4"
+  resolved "https://registry.npmjs.org/vue-resize/-/vue-resize-0.4.4.tgz#dee9b8dd1b189e7e3f6ec47f86c60694a241bb17"
 
 vue-router@^3.0.1:
   version "3.0.1"
