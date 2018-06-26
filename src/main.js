@@ -14,6 +14,11 @@ Vue.use(ElementUI, {
   i18n: (key, value) => i18n.t(key, value)
 })
 
+import VTooltip from 'v-tooltip'
+Vue.use(VTooltip)
+import VueAboutMe from 'vue-about-me'
+Vue.use(VueAboutMe)
+
 // leancloud
 const appId = 'FAfX0KW7tIrVPwKjeiCay2IQ-gzGzoHsz'
 const appKey = 'MbP9J5vK56e1J7RKmiX9DYlq'

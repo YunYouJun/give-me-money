@@ -1,8 +1,11 @@
 <template>
   <div>
-    <el-menu :default-active="activeMenuIndex" class="gmm-menu" mode="horizontal">
+    <el-menu :default-active="activeMenuIndex" class="gmm-menu" mode="horizontal" router>
       <el-menu-item index="/">
         <img width="20px" src="../../assets/money.png">
+      </el-menu-item>
+      <el-menu-item index="/brothers">
+        {{ $t('link.brothers') }}
       </el-menu-item>
       <div class="right-menu">
         <lang-select class="right-menu-item"></lang-select>

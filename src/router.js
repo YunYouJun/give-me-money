@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import i18n from './i18n'
 
 import Index from './views/index.vue'
+import Brothers from './views/brothers.vue'
 
 Vue.use(VueRouter)
 
@@ -14,6 +15,14 @@ const router = new VueRouter({
       component: Index,
       meta: {
         title: i18n.t('message.title')
+      }
+    },
+    {
+      path: '/brothers',
+      name: 'Brothers',
+      component: Brothers,
+      meta: {
+        title: i18n.t('link.brothers')
       }
     },
     {

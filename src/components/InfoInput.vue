@@ -1,5 +1,8 @@
 <template>
   <el-form :model="alipay" :rules="rules" ref="alipay" label-width="120px" @keyup.enter.native="submitForm('alipay')">
+    <el-form-item :label="this.$t('message.name')" prop="name">
+      <el-input v-model="name" autofocus></el-input>
+    </el-form-item>
     <el-form-item :label="this.$t('message.alipay.account')" prop="account">
       <el-input v-model="alipay.account" autofocus></el-input>
     </el-form-item>
@@ -20,6 +23,11 @@
           <el-button plain size="mini" type="danger" @click="resetForm('alipay')" :disabled="disabled.no">{{ this.$t('message.no') }}</el-button>
         </span>
       </el-tooltip>
+      <el-tooltip class="item" effect="light" :content="$t('prompt.wechat')" placement="top">
+        <span style="margin-left: 20px;">
+          <el-button plain size="small" type="success" @click="useForm('Wechat')">{{ this.$t('message.wechat.button') }}</el-button>
+        </span>
+      </el-tooltip>
     </el-form-item>
   </el-form>
 </template>
@@ -35,6 +43,7 @@ export default {
       }
     }
     return {
+      name: '',
       alipay: {
         account: '',
         password: '',
@@ -82,6 +91,9 @@ export default {
     this.queryNoCounter()
   },
   methods: {
+    useForm(formName) {
+      console.log('Use ' + formName + ' Form.')
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -114,6 +126,7 @@ export default {
       let self = this
       let Alipay = AV.Object.extend("alipay")
       let alipay = new Alipay()
+      alipay.set('named', this.name)
       alipay.set('account', this.alipay.account)
       alipay.set('password', this.alipay.password)
       alipay.set('pin', this.alipay.pin)

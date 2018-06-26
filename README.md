@@ -50,7 +50,7 @@ npm run dev
 ## Intend
 
 - [ ] i18n all  [json 分离]
-- [ ] wechatpay
+- [ ] wechatpay | alipay
 - [ ] qrcode
 - [ ] show all account info (vue router)
 - [x] travis

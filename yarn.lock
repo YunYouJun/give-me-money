@@ -1302,6 +1302,10 @@ date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.npmjs.org/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
 
+dayjs@^1.6.10:
+  version "1.6.10"
+  resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.6.10.tgz#8725191b9a7a5f8c2bf42d0cb6e8df1a041d3274"
+
 de-indent@^1.0.2:
   version "1.0.2"
   resolved "https://registry.npmjs.org/de-indent/-/de-indent-1.0.2.tgz#b2038e846dc33baa5796128d0804b455b8c1e21d"

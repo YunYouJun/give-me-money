@@ -1,14 +1,26 @@
 {
+  "link": {
+    "brothers": "Brothers"
+  },
+  "title": {
+    "good-brothers": "Good brothers ~"
+  },
   "message": {
     "title": "Give Me Money!",
     "give-me-alipay": "Dear brother, can you give me your alipay?",
     "header": "Lovely Loli",
     "ok": "OK ! Give you !",
     "no": "Nooooo!",
+    "name": "Your Name",
     "alipay": {
+      "name": "Alipay",
       "account": "Alipay Account",
       "password": "Alipy Password",
       "pin": "Alipay Pin"
+    },
+    "wechat": {
+      "name": "WeChat",
+      "button": "But I use Wechat."
     },
     "be-serious": "(σ‘・д・)σ Please be serious!",
     "cry": "〒▽〒 WuWuWu……",
@@ -20,6 +32,7 @@
       "password": "And alipay password ~",
       "pin": "And alipay pin ~"
     },
+    "wechat": "Wechat is fine, too.",
     "ok": "{value} brothers have told us !",
     "no": "We have been rejected {value} times !"
   }

@@ -1,14 +1,26 @@
 {
+  "link": {
+    "brothers": "哥哥们~"
+  },
+  "title": {
+    "good-brothers": "好心的哥哥们~"
+  },
   "message": {
     "title": "我很可爱，请给我钱！",
     "give-me-alipay": "欧尼酱，可以……告诉我……你的……支付宝吗？",
     "header": "可爱的萝莉妹妹们",
     "ok": "好的，给你!",
     "no": "残忍拒绝",
+    "name": "你的名字",
     "alipay": {
+      "name": "支付宝",
       "account": "支付宝账号",
       "password": "支付宝密码",
       "pin": "交易密码"
+    },
+    "wechat": {
+      "name": "微信",
+      "button": "其实我用微信啦~"
     },
     "be-serious": "(σ‘・д・)σ 给我认真填啦!",
     "cry": "〒▽〒 呜呜呜~",
@@ -20,6 +32,7 @@
       "password": "还有支付宝密码~",
       "pin": "以及交易密码~"
     },
+    "wechat": "那填微信也行哦~",
     "ok": "已经有 {value} 个欧尼酱告诉我啦！",
     "no": "已被残忍拒绝 {value} 次！"
   }

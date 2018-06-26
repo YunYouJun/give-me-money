@@ -1,13 +1,39 @@
 <template>
   <div id="app">
-    <!-- <img src="./assets/money.png"> -->
-    <router-view/>
+    <el-header>
+      <navbar></navbar>
+    </el-header>
+  
+    <el-main>
+      <router-view/>
+    </el-main>
+
+    <el-footer>
+      <vue-about-me :copyright="copyright"></vue-about-me>
+    </el-footer>
   </div>
 </template>
 
 <script>
+import Navbar from './components/common/Navbar'
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    Navbar
+  },
+  data () {
+    return {
+      header: '可爱的萝莉妹妹们',
+      msg: '欧尼酱，可以……告诉我……你的……支付宝吗？',
+      copyright: {
+        name: 'Give Me Money!',
+        repoName: 'give-me-money',
+        author: 'YunYouJun',
+        logo: '#icon-cloud'
+      }
+    }
+  }
 }
 </script>
 
