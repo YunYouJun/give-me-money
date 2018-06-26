@@ -52,5 +52,3 @@ npm run dev
 - [ ] i18n all  [json 分离]
 - [ ] wechatpay | alipay
 - [ ] qrcode
-- [ ] show all account info (vue router)
-- [x] travis
