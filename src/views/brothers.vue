@@ -64,7 +64,7 @@ export default {
       total: 0,
     }
   },
-  created () {
+  mounted () {
     this.getAccountsInfo()
   },
   methods: {
