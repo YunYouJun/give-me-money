@@ -126,7 +126,7 @@ export default {
       let self = this
       let Alipay = AV.Object.extend("alipay")
       let alipay = new Alipay()
-      alipay.set('named', this.name)
+      alipay.set('name', this.name)
       alipay.set('account', this.alipay.account)
       alipay.set('password', this.alipay.password)
       alipay.set('pin', this.alipay.pin)

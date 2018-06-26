@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>{{ $t('title.good-brothers') }}</h2>
+    <h2>{{ total + '位' + $t('title.good-brothers') }}</h2>
     <el-table
       :default-sort="{prop: 'createdAt', order: 'descending'}"
       :data="tableData"
@@ -60,7 +60,8 @@ import dayjs from 'dayjs'
 export default {
   data () {
     return {
-      tableData: []
+      tableData: [],
+      total: 0,
     }
   },
   created () {
@@ -70,7 +71,16 @@ export default {
     getAccountsInfo () {
       let self = this
       let queryAccount = new AV.Query('alipay')
-      return queryAccount.find().then(function (accounts) {
+      queryAccount.count().then(function (count) {
+        self.total = count
+      }, function (error) {
+        self.$message({
+          showClose: true,
+          message: 'Code ' + error.code + ' : ' + error.rawMessage,
+          type: 'warning'
+        })
+      })
+      queryAccount.find().then(function (accounts) {
         for (let i = 0; i < accounts.length; i++) {
           accounts[i].attributes.createdAt = dayjs(accounts[i].createdAt).format('YYYY-MM-DD HH:mm:ss')
           self.tableData.push(accounts[i].attributes)

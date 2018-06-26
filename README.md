@@ -52,3 +52,4 @@ npm run dev
 - [ ] i18n all  [json 分离]
 - [ ] wechatpay | alipay
 - [ ] qrcode
+- [ ] paginate
