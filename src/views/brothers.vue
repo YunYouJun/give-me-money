@@ -48,7 +48,8 @@
         >
         <template slot-scope="scope">
           <i class="el-icon-time"></i>
-          <span style="margin-left: 10px">{{ scope.row.createdAt }}</span>
+          &nbsp;
+          <span>{{ scope.row.createdAt }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -56,7 +57,7 @@
 </template>
 
 <script>
-import dayjs from 'dayjs'
+// import dayjs from 'dayjs'
 export default {
   data () {
     return {
@@ -65,6 +66,21 @@ export default {
     }
   },
   mounted () {
+    Date.prototype.Format = function (fmt) { //author: meizz 
+    let o = {
+          "M+": this.getMonth() + 1, //月份 
+          "d+": this.getDate(), //日 
+          "H+": this.getHours(), //小时 
+          "m+": this.getMinutes(), //分 
+          "s+": this.getSeconds(), //秒 
+          "q+": Math.floor((this.getMonth() + 3) / 3), //季度 
+          "S": this.getMilliseconds() //毫秒 
+      }
+      if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length))
+      for (var k in o)
+      if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)))
+      return fmt
+    }
     this.getAccountsInfo()
   },
   methods: {
@@ -82,7 +98,8 @@ export default {
       })
       queryAccount.find().then(function (accounts) {
         for (let i = 0; i < accounts.length; i++) {
-          accounts[i].attributes.createdAt = dayjs(accounts[i].createdAt).format('YYYY-MM-DD HH:mm:ss')
+          // accounts[i].attributes.createdAt = dayjs(accounts[i].createdAt).format('YYYY-MM-DD HH:mm:ss')
+          accounts[i].attributes.createdAt = new Date(accounts[i].createdAt).Format("yyyy-MM-dd HH:mm:ss")
           self.tableData.push(accounts[i].attributes)
         }
       }, function (error) {
