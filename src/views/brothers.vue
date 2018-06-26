@@ -56,6 +56,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 export default {
   data () {
     return {
@@ -81,7 +82,7 @@ export default {
       })
       queryAccount.find().then(function (accounts) {
         for (let i = 0; i < accounts.length; i++) {
-          accounts[i].attributes.createdAt = dayjs(accounts[i].createdAt)
+          accounts[i].attributes.createdAt = dayjs(accounts[i].createdAt).format('YYYY-MM-DD HH:mm:ss')
           self.tableData.push(accounts[i].attributes)
         }
       }, function (error) {

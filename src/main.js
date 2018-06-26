@@ -8,12 +8,6 @@ import ElementUI from 'element-ui'
 import 'element-theme-ink'
 // import 'element-ui/lib/theme-chalk/index.css'
 
-// dayjs filter
-import dayjs from 'dayjs'
-Vue.filter('dayjs', function (value, formatString='YYYY-MM-DD HH:mm:ss') {
-  return dayjs(value).format(formatString) // 这是时间戳转时间
-})
-
 Vue.config.productionTip = false
 
 Vue.use(ElementUI, {
