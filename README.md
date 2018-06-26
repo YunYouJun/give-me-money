@@ -50,6 +50,6 @@ npm run dev
 ## Intend
 
 - [ ] i18n all  [json 分离]
-- [ ] wechatpay | alipay
+- [ ] many pay type (like wechat | alipay | py)
 - [ ] qrcode
 - [ ] paginate
