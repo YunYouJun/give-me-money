@@ -26,8 +26,7 @@ export default {
   watch: {
     currentLang (lang) {
       localStorage.setItem('lang', lang)
-      location.reload();
-      // this.$i18n.locale = lang
+      this.$i18n.locale = lang
     }
   },
 }

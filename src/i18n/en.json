@@ -3,9 +3,13 @@
     "brothers": "Brothers"
   },
   "title": {
-    "good-brothers": "Good brothers ~"
+    "good-brothers": " Good brothers ~"
   },
   "message": {
+    "brother": {
+      "name": "Name",
+      "anonymous": "Anonymous"
+    },
     "title": "Give Me Money!",
     "give-me-alipay": "Dear brother, can you give me your alipay?",
     "header": "Lovely Loli",
@@ -13,16 +17,18 @@
     "no": "Nooooo!",
     "name": "Your Name",
     "pay": {
+      "type": "Type",
       "account": "Account",
       "password": "Password",
-      "pin": "Pin"
+      "pin": "Pin",
+      "time": "Time"
     },
     "alipay": {
-      "name": "Alipay",
+      "name": "Alipay ",
       "button": "But I use Alipay."
     },
     "wechat": {
-      "name": "WeChat",
+      "name": "WeChat ",
       "button": "But I use Wechat."
     },
     "be-serious": "(σ‘・д・)σ Please be serious!",

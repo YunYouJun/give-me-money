@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="pay" :rules="rules" ref="pay" label-width="120px" @keyup.enter.native="submitForm('pay')">
+  <el-form :model="pay" :rules="rules" ref="pay" label-width="140px" @keyup.enter.native="submitForm('pay')">
     <el-form-item :label="$t('message.name')" prop="name">
       <el-input v-model="name" autofocus></el-input>
     </el-form-item>

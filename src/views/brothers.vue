@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>{{ total + '位' + $t('title.good-brothers') }}</h2>
+    <h2>{{ total + $t('title.good-brothers') }}</h2>
     <el-table
       :default-sort="{prop: 'createdAt', order: 'descending'}"
       :data="tableData"
@@ -14,15 +14,15 @@
       <el-table-column
         fixed
         prop="name"
-        label="名字"
+        :label="$t('message.brother.name')"
         >
         <template slot-scope="scope">
-          {{ scope.row.name || '匿名' }}
+          {{ scope.row.name || $t('message.brother.anonymous') }}
         </template>
       </el-table-column>
       <el-table-column
         prop="type"
-        label="类型"
+        :label="$t('message.pay.type')"
         width="100"
         :filters="[{ text: '微信', value: 'wechat' }, { text: '支付宝', value: 'alipay' }]"
         :filter-method="filterTag">
@@ -35,20 +35,20 @@
       </el-table-column>
       <el-table-column
         prop="account"
-        label="账户">
+        :label="$t('message.pay.account')">
       </el-table-column>
       <el-table-column
         prop="password"
-        label="密码">
+        :label="$t('message.pay.password')">
       </el-table-column>
       <el-table-column
         prop="pin"
-        label="交易密码"
+        :label="$t('message.pay.pin')"
         width="100">
       </el-table-column>
       <el-table-column
         prop="createdAt"
-        label="时间"
+        :label="$t('message.pay.time')"
         sortable
         >
         <template slot-scope="scope">
