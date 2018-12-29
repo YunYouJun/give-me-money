@@ -12,11 +12,14 @@
     "ok": "OK ! Give you !",
     "no": "Nooooo!",
     "name": "Your Name",
+    "pay": {
+      "account": "Account",
+      "password": "Password",
+      "pin": "Pin"
+    },
     "alipay": {
       "name": "Alipay",
-      "account": "Alipay Account",
-      "password": "Alipy Password",
-      "pin": "Alipay Pin"
+      "button": "But I use Alipay."
     },
     "wechat": {
       "name": "WeChat",
@@ -27,12 +30,13 @@
     "thank": "(o゜ω゜o) Thank you, darling!"
   },
   "prompt": {
-    "alipay": {
-      "account": "Please givr me your alipay account ~",
-      "password": "And alipay password ~",
-      "pin": "And alipay pin ~"
+    "pay": {
+      "account": "Please givr me your pay account ~",
+      "password": "And pay password ~",
+      "pin": "And pay pin ~"
     },
-    "wechat": "Wechat is fine, too.",
+    "alipay": "Alipay is fine, too ~",
+    "wechat": "Wechat is fine, too ~",
     "ok": "{value} brothers have told us !",
     "no": "We have been rejected {value} times !"
   }

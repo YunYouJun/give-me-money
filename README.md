@@ -13,8 +13,6 @@
 - GitHub: <https://github.com/YunYouJun/give-me-money>
 - DEMO: <http://github.yunyoujun.cn/give-me-money/>
 
-<!-- more -->
-
 ## Base
 
 - [Vue](https://vuejs.org)

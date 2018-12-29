@@ -23,9 +23,14 @@
       <el-table-column
         prop="type"
         label="类型"
-        width="100">
+        width="100"
+        :filters="[{ text: '微信', value: 'wechat' }, { text: '支付宝', value: 'alipay' }]"
+        :filter-method="filterTag">
         <template slot-scope="scope">
-          {{ $t('message.'+scope.row.type+'.name') }}
+          <el-tag
+          :type="scope.row.type === 'alipay' ? 'primary' : 'success'">
+            {{ $t('message.'+scope.row.type+'.name') }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -78,12 +83,15 @@ export default {
       }
       if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length))
       for (var k in o)
-      if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)))
+      if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)))
       return fmt
     }
     this.getAccountsInfo()
   },
   methods: {
+    filterTag(value, row) {
+      return row.type === value;
+    },
     getAccountsInfo () {
       let self = this
       let queryAccount = new AV.Query('alipay')

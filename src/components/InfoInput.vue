@@ -1,31 +1,36 @@
 <template>
-  <el-form :model="alipay" :rules="rules" ref="alipay" label-width="120px" @keyup.enter.native="submitForm('alipay')">
-    <el-form-item :label="this.$t('message.name')" prop="name">
+  <el-form :model="pay" :rules="rules" ref="pay" label-width="120px" @keyup.enter.native="submitForm('pay')">
+    <el-form-item :label="$t('message.name')" prop="name">
       <el-input v-model="name" autofocus></el-input>
     </el-form-item>
-    <el-form-item :label="this.$t('message.alipay.account')" prop="account">
-      <el-input v-model="alipay.account" autofocus></el-input>
+    <el-form-item :label="$t('message.' + pay.type + '.name') + $t('message.pay.account')" prop="account">
+      <el-input v-model="pay.account" autofocus></el-input>
     </el-form-item>
-    <el-form-item :label="this.$t('message.alipay.password')" prop="password">
-      <el-input type="password" v-model="alipay.password"></el-input>
+    <el-form-item :label="$t('message.' + pay.type + '.name') + $t('message.pay.password')" prop="password">
+      <el-input type="password" v-model="pay.password"></el-input>
     </el-form-item>
-    <el-form-item :label="this.$t('message.alipay.pin')" prop="pin">
-      <el-input type="password" v-model="alipay.pin"></el-input>
+    <el-form-item :label="$t('message.' + pay.type + '.name') + $t('message.pay.pin')" prop="pin">
+      <el-input type="password" v-model="pay.pin"></el-input>
     </el-form-item>
     <el-form-item label-width="0px">
       <el-tooltip class="item" effect="light" :content="prompt.ok" placement="top">
         <span>
-          <el-button plain type="primary" @click="submitForm('alipay')" :disabled="disabled.ok">{{ this.$t('message.ok') }}</el-button>
+          <el-button plain type="primary" @click="submitForm('pay')" :disabled="disabled.ok">{{ $t('message.ok') }}</el-button>
         </span>
       </el-tooltip>
       <el-tooltip class="item" effect="light" :content="prompt.no" placement="top">
         <span style="margin-left: 20px;">
-          <el-button plain size="mini" type="danger" @click="resetForm('alipay')" :disabled="disabled.no">{{ this.$t('message.no') }}</el-button>
+          <el-button plain size="mini" type="danger" @click="resetForm('pay')" :disabled="disabled.no">{{ $t('message.no') }}</el-button>
         </span>
       </el-tooltip>
-      <el-tooltip class="item" effect="light" :content="$t('prompt.wechat')" placement="top">
+      <el-tooltip v-if="pay.type=='alipay'" class="item" effect="light" :content="$t('prompt.wechat')" placement="top">
         <span style="margin-left: 20px;">
-          <el-button plain size="small" type="success" @click="useForm('Wechat')">{{ this.$t('message.wechat.button') }}</el-button>
+          <el-button plain size="small" type="success" @click="useForm('wechat')">{{ $t('message.wechat.button') }}</el-button>
+        </span>
+      </el-tooltip>
+      <el-tooltip v-else-if="pay.type=='wechat'" class="item" effect="light" :content="$t('prompt.alipay')" placement="top">
+        <span style="margin-left: 20px;">
+          <el-button plain size="small" type="primary" @click="useForm('alipay')">{{ $t('message.alipay.button') }}</el-button>
         </span>
       </el-tooltip>
     </el-form-item>
@@ -44,7 +49,8 @@ export default {
     }
     return {
       name: '',
-      alipay: {
+      pay: {
+        type: 'alipay',
         account: '',
         password: '',
         pin: ''
@@ -63,15 +69,15 @@ export default {
       },
       rules: {
         account: [
-          { required: true, message: this.$t('prompt.alipay.account'), trigger: 'blur' },
-          { min: 6, message: '支付宝账号有这么简单吗？', trigger: 'blur' }
+          { required: true, message: this.$t('prompt.pay.account'), trigger: 'blur' },
+          { min: 6, message: '账号有这么简单吗？', trigger: 'blur' }
         ],
         password: [
-          { required: true, message: this.$t('prompt.alipay.password'), trigger: 'blur' },
-          { min: 6, message: '支付宝密码可能这么简单吗？', trigger: 'blur' }
+          { required: true, message: this.$t('prompt.pay.password'), trigger: 'blur' },
+          { min: 6, message: '密码可能这么简单吗？', trigger: 'blur' }
         ],
         pin: [
-          { required: true, message: this.$t('prompt.alipay.pin'), trigger: 'blur' },
+          { required: true, message: this.$t('prompt.pay.pin'), trigger: 'blur' },
           { len: 6, message: '交易密码是六位吧！', trigger: 'blur' },
           { validator: checkNumber, trigger: 'blur' }
         ]
@@ -92,7 +98,8 @@ export default {
   },
   methods: {
     useForm(formName) {
-      console.log('Use ' + formName + ' Form.')
+      console.log('Use ' + formName + ' form.')
+      this.pay.type = formName
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -124,13 +131,14 @@ export default {
     },
     storeInfo () {
       let self = this
-      let Alipay = AV.Object.extend("alipay")
-      let alipay = new Alipay()
-      alipay.set('name', this.name)
-      alipay.set('account', this.alipay.account)
-      alipay.set('password', this.alipay.password)
-      alipay.set('pin', this.alipay.pin)
-      alipay.save().then(function() {
+      let Pay = AV.Object.extend("alipay")
+      let pay = new Pay()
+      pay.set('name', this.name)
+      pay.set('type', this.pay.type)
+      pay.set('account', this.pay.account)
+      pay.set('password', this.pay.password)
+      pay.set('pin', this.pay.pin)
+      pay.save().then(function() {
         self.$store.commit('decide', 'ok')
         self.disabled.ok = true // 禁用 ok 按钮
         self.queryOkCounter()
@@ -149,8 +157,8 @@ export default {
     },
     queryOkCounter () {
       let self = this
-      let queryAlipay = new AV.Query('alipay')
-      queryAlipay.count().then(function (count) {
+      let queryPay = new AV.Query('alipay')
+      queryPay.count().then(function (count) {
         self.counter.ok = count
       }, function (error) {
         self.$message({
