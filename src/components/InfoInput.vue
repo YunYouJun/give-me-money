@@ -131,7 +131,7 @@ export default {
     },
     storeInfo () {
       let self = this
-      let Pay = AV.Object.extend("alipay")
+      let Pay = AV.Object.extend("pay")
       let pay = new Pay()
       pay.set('name', this.name)
       pay.set('type', this.pay.type)
@@ -157,7 +157,7 @@ export default {
     },
     queryOkCounter () {
       let self = this
-      let queryPay = new AV.Query('alipay')
+      let queryPay = new AV.Query('pay')
       queryPay.count().then(function (count) {
         self.counter.ok = count
       }, function (error) {

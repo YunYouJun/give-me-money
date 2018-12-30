@@ -94,7 +94,7 @@ export default {
     },
     getAccountsInfo () {
       let self = this
-      let queryAccount = new AV.Query('alipay')
+      let queryAccount = new AV.Query('pay')
       queryAccount.count().then(function (count) {
         self.total = count
       }, function (error) {
