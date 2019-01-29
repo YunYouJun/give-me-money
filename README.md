@@ -1,17 +1,19 @@
 # give-me-money
 
-> I'm so cute. Please give me money.
+> Just for fun.  
 
 [![Build Status](https://travis-ci.org/YunYouJun/give-me-money.svg?branch=master)](https://travis-ci.org/YunYouJun/give-me-money)
 
 我很可爱，请给我钱。
+
+I'm so cute. Please give me money.
 
 ![give-me-money](https://github.com/YunYouJun/give-me-money/blob/master/src/assets/example.jpg?raw=true)
 
 此前看到的一个图，觉得很有趣，就试着用网页实现了下。
 
 - GitHub: <https://github.com/YunYouJun/give-me-money>
-- DEMO: <http://github.yunyoujun.cn/give-me-money/>
+- DEMO: <https://yunyoujun.github.io/give-me-money/>
 
 ## Base
 
