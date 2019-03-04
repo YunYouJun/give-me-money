@@ -13,7 +13,7 @@ I'm so cute. Please give me money.
 此前看到的一个图，觉得很有趣，就试着用网页实现了下。
 
 - GitHub: <https://github.com/YunYouJun/give-me-money>
-- DEMO: <https://yunyoujun.github.io/give-me-money/>
+- 预览地址: <https://yunyoujun.github.io/give-me-money/>
 
 ## Base
 
