@@ -1,23 +1,20 @@
 language: node_js
 node_js:
   - lts/*
-# cache:
-#   yarn: true
-#   directories:
-#     - node_modules
+cache:
+  yarn: true
+  directories:
+    - node_modules
 install:
   - yarn
 script:
   - yarn build
-after_success:
-  - cd dist
-  - git init
-  - git config user.name "YunYouJun"
-  - git config user.email "me@yunyoujun.cn"
-  - git add .
-  - git commit -m "Update gh-pages"
-  - git push -f "https://${GH_TOKEN}@${GH_REF}" master:gh-pages
-env:
- global:
-  - GH_REF: github.com/YunYouJun/give-me-money.git
-  - secure: "BFyGz9WRm3QEN/Gh4WZZmK0bZ6qxY7kOHlF9q/BWP0OK71dsX85S7V1SEdjv07rZ5I1n5gO3uJ6ZgpMdiH2iSazOrZ2HqiQOl1ERVyp7jzaCiZO9Yk/GMshDQaf0DsziH2JZT9BLefw0unxmoYySBeS7ypG84mtn1WHrEym71zUwGUtRuV35VN8gksD0zc1nZUOudMQSpxCVzWvEgqlTFxnY1sS2FlIsZbER9IwJGjBg+bJO6p0AxuWfRIuMsMx5IHvYuNdDGJ8mv98j60rvKpIkR5SqYCqSgOE3btTGuLtYK6AVC5l1JUWPIbVrNSdrGIa8945G9kiFmqKn6K++l9xKfQtrvqYPY8OEF1LK9x0V/KFKG6xQ4SNjP5F6Czllce6RvqVMIT5X6un8I5rhIKop7sTL+0EUjPBdEaXxOMlmw2MWYH2nIs14XizCEpGKYmtFfkewRIv6X39XRfgTTHsFqAS2eZ2yhEzc9YLCXGTDuWUji2AMbQt5vYA9LU30G0gSAnCQ0CTomns4Jeplv7ygQRKbyZ5klzlhsOGeVFmu0PRBAZUw9CG3qcHzezEjj1R8tLg1/1tWBnJGIJdYTLVp99vBR/FZzmIAzh3rwdFj0PtDByIDoLFFDVBFjTTtj7j28z7FajcxJiZUgYtP5If1j4siIffP8AYJMYk9fwE="
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GH_TOKEN
+  target-branch: gh-pages
+  local-dir: dist
+  on:
+    branch: master
