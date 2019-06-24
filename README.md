@@ -2,7 +2,7 @@
 
 > Just for fun.  
 
-[![Build Status](https://travis-ci.org/YunYouJun/give-me-money.svg?branch=master)](https://travis-ci.org/YunYouJun/give-me-money)
+[![Build Status](https://travis-ci.com/YunYouJun/give-me-money.svg?branch=master)](https://travis-ci.com/YunYouJun/give-me-money)
 
 我很可爱，请给我钱。
 

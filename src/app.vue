@@ -16,11 +16,12 @@
 
 <script>
 import Navbar from './components/common/Navbar'
-
+import VueAboutMe from 'vue-about-me'
 export default {
   name: 'App',
   components: {
-    Navbar
+    Navbar,
+    VueAboutMe
   },
   data () {
     return {
