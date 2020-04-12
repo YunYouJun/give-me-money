@@ -21,9 +21,11 @@
   },
   "homepage": "https://github.com/YunYouJun/give-me-money#readme",
   "devDependencies": {
-    "@babel/core": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
     "@vue/component-compiler-utils": "^3.1.1",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-vue": "^6.2.2",
     "parcel-bundler": "^1.12.4",
     "sass": "^1.25.0",
     "vue-template-compiler": "^2.6.11"
@@ -32,6 +34,7 @@
     "dayjs": "^1.8.14",
     "element-theme-ink": "^1.0.1",
     "element-ui": "^2.9.2",
+    "leancloud-storage": "^4.5.3",
     "vue": "^2.6.11",
     "vue-about-me": "^0.2.4",
     "vue-hot-reload-api": "^2.3.4",

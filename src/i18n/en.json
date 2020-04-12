@@ -11,11 +11,12 @@
       "anonymous": "Anonymous"
     },
     "title": "Give Me Money!",
-    "give-me-alipay": "Dear brother, can you give me your alipay?",
+    "give-me-pay": "Dear brother, can you give me your {name}?",
     "header": "Lovely Loli",
     "ok": "OK ! Give you !",
     "no": "Nooooo!",
     "name": "Your Name",
+    "name-placeholder": "In fact, I don’t have to know your name.",
     "pay": {
       "type": "Type",
       "account": "Account",
