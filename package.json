@@ -33,7 +33,7 @@
   "dependencies": {
     "dayjs": "^1.8.14",
     "element-theme-ink": "^1.0.1",
-    "element-ui": "^2.9.2",
+    "element-ui": "^2.13.0",
     "leancloud-storage": "^4.5.3",
     "vue": "^2.6.11",
     "vue-about-me": "^0.2.4",

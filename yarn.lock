@@ -2333,7 +2333,7 @@ element-theme-ink@^1.0.1:
   resolved "https://registry.npm.taobao.org/element-theme-ink/download/element-theme-ink-1.0.1.tgz#d44441d59523245d76b7a0d94d26092b72a98807"
   integrity sha1-1ERB1ZUjJF12t6DZTSYJK3KpiAc=
 
-element-ui@^2.9.2:
+element-ui@^2.13.0:
   version "2.13.0"
   resolved "https://registry.npm.taobao.org/element-ui/download/element-ui-2.13.0.tgz#f6bb04e5b0a76ea5f62466044b774407ba4ebd2d"
   integrity sha1-9rsE5bCnbqX2JGYES3dEB7pOvS0=

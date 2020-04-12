@@ -24,15 +24,15 @@ export default {
     return {
       album: {
         wow: {
-          path: require("../assets/img/0.png"),
+          path: require("../assets/img/0.jpg"),
           label: "好吗？"
         },
         thank: {
-          path: require("../assets/img/1.png"),
+          path: require("../assets/img/1.jpg"),
           label: "那个……谢谢啦……"
         },
         hum: {
-          path: require("../assets/img/2.png"),
+          path: require("../assets/img/2.jpg"),
           label: "哼！"
         }
       }
