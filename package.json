@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "export NODE_ENV=dev && parcel index.html -p 2333",
-    "build": "parcel --version && parcel build index.html --public-url ./ --no-cache",
+    "build": "parcel --version && parcel build index.html --public-url ./ --no-cache --no-source-maps",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
