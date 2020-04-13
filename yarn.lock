@@ -6416,11 +6416,6 @@ vue-about-me@^0.2.4:
     v-tooltip "^2.0.0-rc.33"
     vue "^2.5.22"
 
-vue-analytics@^5.22.1:
-  version "5.22.1"
-  resolved "https://registry.npm.taobao.org/vue-analytics/download/vue-analytics-5.22.1.tgz#9d6b32da56daee1b9dfb23a267b50349a03f710f"
-  integrity sha1-nWsy2lba7hud+yOiZ7UDSaA/cQ8=
-
 vue-eslint-parser@^7.0.0:
   version "7.0.0"
   resolved "https://registry.npm.taobao.org/vue-eslint-parser/download/vue-eslint-parser-7.0.0.tgz#a4ed2669f87179dedd06afdd8736acbb3a3864d6"

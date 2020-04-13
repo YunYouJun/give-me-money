@@ -40,7 +40,7 @@
           <el-input
             v-model="pay.account"
             autofocus
-            placeholder="填邮箱验证哦～"
+            placeholder="需要验证邮箱才行哦～"
           >
             <el-button
               slot="append"

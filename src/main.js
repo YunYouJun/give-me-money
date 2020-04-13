@@ -19,13 +19,6 @@ import VTooltip from "v-tooltip";
 Vue.use(VTooltip);
 Vue.use(leancloud);
 
-// analytics
-import VueAnalytics from "vue-analytics";
-
-Vue.use(VueAnalytics, {
-  id: "UA-121354150-14"
-});
-
 new Vue({
   router,
   store,
