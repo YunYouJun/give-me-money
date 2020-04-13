@@ -6,10 +6,7 @@
       <img class="avatar" src="../assets/img/mea.jpg" />
       <br />
       实在想打钱，不如捐给
-      <a href="https://www.unicef.cn/" target="_blank">联合国儿童基金会</a>
-      或者给咱来点
-      <a href="https://github.com/YunYouJun/give-me-money" target="_blank">
-        Star </a
+      <a href="https://www.unicef.cn/" target="_blank">联合国儿童基金会</a
       >，谢谢！
     </p>
     <div id="vcomments"></div>

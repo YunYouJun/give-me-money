@@ -14,7 +14,7 @@ I'm so cute. Please give me money.
 
 大家乐呵乐呵完事了，我本身也是白嫖的 LeanCloud 的开发版，刷数据最多也就到 LeanCloud 的每日上限。
 
-大家要真想打钱，也不用给我打，有现成的 [联合国儿童基金会](https://www.unicef.cn/)，或者给咱来点 Star 满足虚荣心就行。
+大家要真想打钱，也不用给我打，有现成的 [联合国儿童基金会](https://www.unicef.cn/)。
 
 最后，欧尼酱，da i su ki。 （网页声音预警，看到有欧尼酱说不小心社会性死亡了。）
 
