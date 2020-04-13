@@ -48,11 +48,17 @@
         </template>
       </el-table-column>
     </el-table>
+    <hr />
+    <el-pagination
+      @current-change="handleCurrentChange"
+      layout="prev, pager, next"
+      :total="total"
+    >
+    </el-pagination>
   </div>
 </template>
 
 <script>
-// import dayjs from 'dayjs'
 export default {
   data() {
     return {
@@ -90,18 +96,38 @@ export default {
     this.getAccountsInfo();
   },
   methods: {
+    handleCurrentChange(val) {
+      let queryAccount = new this.$AV.Query("Pay");
+      queryAccount.skip(val * 100).then(
+        accounts => {
+          this.tableData = [];
+          for (let i = 0; i < accounts.length; i++) {
+            accounts[i].attributes.createdAt = new Date(
+              accounts[i].createdAt
+            ).Format("yyyy-MM-dd HH:mm:ss");
+            this.tableData.push(accounts[i].attributes);
+          }
+        },
+        error => {
+          this.$message({
+            showClose: true,
+            message: "Code " + error.code + " : " + error.rawMessage,
+            type: "warning"
+          });
+        }
+      );
+    },
     filterTag(value, row) {
       return row.type === value;
     },
     getAccountsInfo() {
-      let self = this;
-      let queryAccount = new this.$AV.Query("pay");
+      let queryAccount = new this.$AV.Query("Pay");
       queryAccount.count().then(
-        function(count) {
-          self.total = count;
+        count => {
+          this.total = count;
         },
-        function(error) {
-          self.$message({
+        error => {
+          this.$message({
             showClose: true,
             message: "Code " + error.code + " : " + error.rawMessage,
             type: "warning"
@@ -109,17 +135,16 @@ export default {
         }
       );
       queryAccount.find().then(
-        function(accounts) {
+        accounts => {
           for (let i = 0; i < accounts.length; i++) {
-            // accounts[i].attributes.createdAt = dayjs(accounts[i].createdAt).format('YYYY-MM-DD HH:mm:ss')
             accounts[i].attributes.createdAt = new Date(
               accounts[i].createdAt
             ).Format("yyyy-MM-dd HH:mm:ss");
-            self.tableData.push(accounts[i].attributes);
+            this.tableData.push(accounts[i].attributes);
           }
         },
-        function(error) {
-          self.$message({
+        error => {
+          this.$message({
             showClose: true,
             message: "Code " + error.code + " : " + error.rawMessage,
             type: "warning"

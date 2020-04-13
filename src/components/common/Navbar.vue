@@ -1,11 +1,19 @@
 <template>
   <div>
-    <el-menu :default-active="activeMenuIndex" class="gmm-menu" mode="horizontal" router>
+    <el-menu
+      :default-active="activeMenuIndex"
+      class="gmm-menu"
+      mode="horizontal"
+      router
+    >
       <el-menu-item index="/">
-        <img width="20px" src="../../assets/money.png">
+        <img width="20px" src="../../assets/money.png" />
       </el-menu-item>
       <el-menu-item index="/brothers">
-        {{ $t('link.brothers') }}
+        {{ $t("link.brothers") }}
+      </el-menu-item>
+      <el-menu-item index="/about">
+        {{ $t("link.about") }}
       </el-menu-item>
       <div class="right-menu">
         <lang-select class="right-menu-item"></lang-select>
@@ -15,24 +23,22 @@
 </template>
 
 <script>
-import LangSelect from './LangSelect'
+import LangSelect from "./LangSelect";
 
 export default {
-  name: 'Navbar',
+  name: "Navbar",
   components: {
     LangSelect
   },
-  data () {
-    return {
-      
-    }
+  data() {
+    return {};
   },
   computed: {
-    activeMenuIndex () {
-      return this.$route.path
+    activeMenuIndex() {
+      return this.$route.path;
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -40,7 +46,7 @@ export default {
   float: right;
   height: 100%;
   line-height: 60px;
-  &:focus{
+  &:focus {
     outline: none;
   }
   .right-menu-item {
@@ -49,4 +55,3 @@ export default {
   }
 }
 </style>
-

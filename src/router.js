@@ -1,36 +1,45 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import i18n from './i18n'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import i18n from "./i18n";
 
-import Index from './views/index.vue'
-import Brothers from './views/brothers.vue'
+import Index from "./views/index.vue";
+import Brothers from "./views/brothers.vue";
+import About from "./views/about.vue";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
-const router = new VueRouter({ 
+const router = new VueRouter({
   routes: [
     {
-      path: '/',
-      name: 'Index',
+      path: "/",
+      name: "Index",
       component: Index,
       meta: {
-        title: i18n.t('message.title')
+        title: i18n.t("message.title")
       }
     },
     {
-      path: '/brothers',
-      name: 'Brothers',
+      path: "/brothers",
+      name: "Brothers",
       component: Brothers,
       meta: {
-        title: i18n.t('link.brothers')
+        title: i18n.t("link.brothers")
       }
     },
     {
-      path: '*',
-      redirect: '/'
+      path: "/about",
+      name: "About",
+      component: About,
+      meta: {
+        title: i18n.t("link.about")
+      }
+    },
+    {
+      path: "*",
+      redirect: "/"
     }
-  ] 
-})
+  ]
+});
 
 router.beforeEach((to, from, next) => {
   /* 路由发生变化修改页面title */
@@ -38,6 +47,6 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title;
   }
   next();
-})
+});
 
-export default router
+export default router;

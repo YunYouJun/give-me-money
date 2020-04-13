@@ -5,7 +5,7 @@
   "description": "Please give me money.",
   "scripts": {
     "start": "npm run dev",
-    "dev": "parcel index.html -p 2333",
+    "dev": "export NODE_ENV=dev && parcel index.html -p 2333",
     "build": "parcel --version && parcel build index.html --public-url ./ --no-cache",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
@@ -31,12 +31,13 @@
     "vue-template-compiler": "^2.6.11"
   },
   "dependencies": {
-    "dayjs": "^1.8.14",
     "element-theme-ink": "^1.0.1",
     "element-ui": "^2.13.0",
     "leancloud-storage": "^4.5.3",
-    "vue": "^2.6.11",
+    "valine": "^1.4.4",
+    "vue": "^2.0.0",
     "vue-about-me": "^0.2.4",
+    "vue-analytics": "^5.22.1",
     "vue-hot-reload-api": "^2.3.4",
     "vue-i18n": "^8.11.2",
     "vue-router": "^3.1.5",

@@ -15,7 +15,7 @@
 
     <info-input></info-input>
 
-    <audio autoplay="autoplay">
+    <audio id="love-you" autoplay="autoplay">
       <source src="../../static/audio/love.mp3" type="audio/mpeg" />
     </audio>
   </div>
@@ -33,9 +33,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.el-main {
-  padding: 0rem 1rem !important;
-}
-</style>

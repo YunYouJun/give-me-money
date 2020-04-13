@@ -10,6 +10,10 @@
       </el-main>
 
       <el-footer>
+        <hr />
+        <div>
+          <a href="https://www.unicef.cn/" target="_blank">联合国儿童基金会</a>
+        </div>
         <vue-about-me :copyright="copyright"></vue-about-me>
       </el-footer>
     </el-container>
@@ -54,5 +58,11 @@ body {
 }
 hr {
   opacity: 0.2;
+}
+.el-header {
+  padding: 0 !important;
+}
+.el-main {
+  padding: 0 0.5rem !important;
 }
 </style>

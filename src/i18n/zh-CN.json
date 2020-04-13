@@ -1,9 +1,10 @@
 {
   "link": {
+    "about": "关于",
     "brothers": "哥哥们~"
   },
   "title": {
-    "good-brothers": "位好心的哥哥们~"
+    "good-brothers": " 位好心的哥哥们~"
   },
   "message": {
     "brother": {
@@ -16,7 +17,7 @@
     "ok": "好的，给你!",
     "no": "残忍拒绝",
     "name": "你的名字",
-    "name-placeholder": "其实人家也不是一定要知道你的名字",
+    "name-placeholder": "人家也不是一定要知道你的名字啦～",
     "pay": {
       "type": "类型",
       "account": "账号",

@@ -20,7 +20,7 @@
         :model="pay"
         :rules="rules"
         ref="pay"
-        label-width="140px"
+        label-width="135px"
         @keyup.enter.native="submitForm('pay')"
       >
         <el-form-item :label="$t('message.name')" prop="name">
@@ -28,7 +28,8 @@
             v-model="name"
             autofocus
             :placeholder="$t('message.name-placeholder')"
-          ></el-input>
+          >
+          </el-input>
         </el-form-item>
         <el-form-item
           :label="
@@ -36,7 +37,17 @@
           "
           prop="account"
         >
-          <el-input v-model="pay.account" autofocus></el-input>
+          <el-input
+            v-model="pay.account"
+            autofocus
+            placeholder="填邮箱验证哦～"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-message"
+              @click="submitForm('pay')"
+            ></el-button>
+          </el-input>
         </el-form-item>
         <el-form-item
           :label="
@@ -63,7 +74,7 @@
               <el-button
                 plain
                 type="primary"
-                @click="submitForm('pay')"
+                @click="giveYou"
                 :disabled="disabled.ok"
                 >{{ $t("message.ok") }}</el-button
               >
@@ -75,7 +86,7 @@
             :content="prompt.no"
             placement="top"
           >
-            <span style="margin-left: 20px;">
+            <span style="margin-left: 10px;">
               <el-button
                 plain
                 size="mini"
@@ -93,7 +104,7 @@
             :content="$t('prompt.wechat')"
             placement="top"
           >
-            <span style="margin-left: 20px;">
+            <span style="margin-left: 10px;">
               <el-button
                 plain
                 size="small"
@@ -110,7 +121,7 @@
             :content="$t('prompt.alipay')"
             placement="top"
           >
-            <span style="margin-left: 20px;">
+            <span style="margin-left: 10px;">
               <el-button
                 plain
                 size="small"
@@ -127,6 +138,7 @@
 </template>
 
 <script>
+import { playLoveAudio, queryOkCounter } from "../utils";
 export default {
   data() {
     let checkNumber = (rule, value, callback) => {
@@ -163,7 +175,11 @@ export default {
             message: this.$t("prompt.pay.account"),
             trigger: "blur"
           },
-          { min: 6, message: "账号有这么简单吗？", trigger: "blur" }
+          {
+            type: "email",
+            message: "邮箱账号真的长这样吗？",
+            trigger: "blur"
+          }
         ],
         password: [
           {
@@ -198,6 +214,78 @@ export default {
     this.queryNoCounter();
   },
   methods: {
+    queryOkCounter,
+    giveYou() {
+      this.$refs["pay"].validate(valid => {
+        if (valid) {
+          this.$AV.User.loginWithEmail(
+            this.pay.account,
+            this.pay.password
+          ).then(
+            user => {
+              this.storeInfo();
+            },
+            error => {
+              this.$message({
+                showClose: true,
+                message: "欧尼酱，先验证一下邮箱哦～",
+                type: "error",
+                center: true
+              });
+            }
+          );
+        } else {
+          this.$message({
+            showClose: true,
+            message: "~~(>_<)~~欧尼酱完全没有认真填！",
+            type: "error",
+            center: true
+          });
+        }
+      });
+    },
+    signUp(email, password) {
+      let user = new this.$AV.User();
+      user.setUsername(email);
+      user.setPassword(password);
+      user.setEmail(email);
+
+      user.signUp().then(
+        user => {
+          this.$AV.User.requestEmailVerify(email);
+          this.$message({
+            showClose: true,
+            message: "欧尼酱，我给你发邮件啦！",
+            type: "success",
+            center: true
+          });
+        },
+        error => {
+          if (error.code === 203) {
+            this.$message({
+              showClose: true,
+              message: "欧尼酱的这个邮箱已经提交过了哦～",
+              type: "error",
+              center: true
+            });
+          } else {
+            this.$message({
+              showClose: true,
+              message: error,
+              type: "error",
+              center: true
+            });
+            this.$message({
+              showClose: true,
+              message: "(╯°Д°）╯︵ /(.□ . \) 欧尼酱是大骗子！",
+              type: "error",
+              center: true,
+              offset: 80
+            });
+          }
+        }
+      );
+    },
     useForm(formName) {
       console.log("Use " + formName + " form.");
       this.pay.type = formName;
@@ -205,7 +293,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.storeInfo();
+          this.signUp(this.pay.account, this.pay.password);
         } else {
           this.$store.commit("decide", "wow");
           this.$message({
@@ -231,7 +319,7 @@ export default {
       this.$refs[formName].resetFields();
     },
     storeInfo() {
-      let Pay = this.$AV.Object.extend("pay");
+      let Pay = this.$AV.Object.extend("Pay");
       let pay = new Pay();
       pay.set("name", this.name);
       pay.set("type", this.pay.type);
@@ -249,32 +337,26 @@ export default {
             type: "success",
             center: true
           });
+          playLoveAudio();
         },
         error => {
-          this.$message({
-            message: "Code " + error.code + " : " + error.rawMessage,
-            type: "warning"
-          });
+          if (error.code === 137) {
+            this.$message({
+              message: "欧尼酱的账号我已经收到了哦～",
+              type: "warning"
+            });
+          } else {
+            this.$message({
+              message: "Code " + error.code + " : " + error.rawMessage,
+              type: "warning"
+            });
+          }
         }
       );
     },
-    queryOkCounter() {
-      let queryPay = new this.$AV.Query("pay");
-      queryPay.count().then(
-        count => {
-          this.counter.ok = count;
-        },
-        error => {
-          this.$message({
-            showClose: true,
-            message: "Code " + error.code + " : " + error.rawMessage,
-            type: "warning"
-          });
-        }
-      );
-    },
+
     queryNoCounter() {
-      let queryNo = new this.$AV.Query("counter");
+      let queryNo = new this.$AV.Query("Counter");
       queryNo.equalTo("name", "no");
       queryNo
         .find()
@@ -290,18 +372,18 @@ export default {
         });
     },
     updateCounter(name) {
-      let counter = this.$AV.Object.extend("counter");
+      let counter = this.$AV.Object.extend("Counter");
       new this.$AV.Query(counter)
         .equalTo("name", name)
         .first()
-        .then(function(counter) {
+        .then(counter => {
           counter.increment("time", 1);
           return counter.save(null, { fetchWhenSave: true });
         })
-        .then(function(counter) {
+        .then(counter => {
           this.counter[name] = counter.get("time");
         })
-        .catch(function(error) {
+        .catch(error => {
           this.$message({
             showClose: true,
             message: "Code " + error.code + " : " + error.rawMessage,
