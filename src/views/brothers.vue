@@ -53,6 +53,7 @@
       @current-change="handleCurrentChange"
       layout="prev, pager, next"
       :total="total"
+      :page-size="pageSize"
     >
     </el-pagination>
   </div>
@@ -63,7 +64,8 @@ export default {
   data() {
     return {
       tableData: [],
-      total: 0
+      total: 0,
+      pageSize: 20
     };
   },
   mounted() {
@@ -98,7 +100,10 @@ export default {
   methods: {
     handleCurrentChange(val) {
       let queryAccount = new this.$AV.Query("Pay");
-      queryAccount.skip(val * 100).then(
+      queryAccount.descending("createdAt");
+      queryAccount.limit(this.pageSize);
+      queryAccount.skip(this.pageSize * (val - 1));
+      queryAccount.find().then(
         accounts => {
           this.tableData = [];
           for (let i = 0; i < accounts.length; i++) {
@@ -122,6 +127,7 @@ export default {
     },
     getAccountsInfo() {
       let queryAccount = new this.$AV.Query("Pay");
+      queryAccount.descending("createdAt");
       queryAccount.count().then(
         count => {
           this.total = count;
@@ -134,6 +140,7 @@ export default {
           });
         }
       );
+      queryAccount.limit(this.pageSize);
       queryAccount.find().then(
         accounts => {
           for (let i = 0; i < accounts.length; i++) {
