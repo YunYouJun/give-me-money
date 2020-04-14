@@ -63,6 +63,11 @@
         >
           <el-input type="password" v-model="pay.pin"></el-input>
         </el-form-item>
+        <el-form-item style="text-align:center" label-width="0px"
+          ><el-checkbox v-model="checked">{{
+            $t("message.check")
+          }}</el-checkbox></el-form-item
+        >
         <el-form-item label-width="0px">
           <el-tooltip
             class="item"
@@ -150,6 +155,7 @@ export default {
     };
     return {
       name: "",
+      checked: false,
       pay: {
         type: "alipay",
         account: "",
@@ -216,33 +222,42 @@ export default {
   methods: {
     queryOkCounter,
     giveYou() {
-      this.$refs["pay"].validate(valid => {
-        if (valid) {
-          this.$AV.User.loginWithEmail(
-            this.pay.account,
-            this.pay.password
-          ).then(
-            user => {
-              this.storeInfo();
-            },
-            error => {
-              this.$message({
-                showClose: true,
-                message: "欧尼酱，先验证一下邮箱哦～",
-                type: "error",
-                center: true
-              });
-            }
-          );
-        } else {
-          this.$message({
-            showClose: true,
-            message: "~~(>_<)~~欧尼酱完全没有认真填！",
-            type: "error",
-            center: true
-          });
-        }
-      });
+      if (this.checked) {
+        this.$refs["pay"].validate(valid => {
+          if (valid) {
+            this.$AV.User.loginWithEmail(
+              this.pay.account,
+              this.pay.password
+            ).then(
+              user => {
+                this.storeInfo();
+              },
+              error => {
+                this.$message({
+                  showClose: true,
+                  message: "欧尼酱，先验证一下邮箱哦～",
+                  type: "error",
+                  center: true
+                });
+              }
+            );
+          } else {
+            this.$message({
+              showClose: true,
+              message: "~~(>_<)~~欧尼酱完全没有认真填！",
+              type: "error",
+              center: true
+            });
+          }
+        });
+      } else {
+        this.$message({
+          showClose: true,
+          message: "请确保您已知晓这是一个恶作剧网站。",
+          type: "error",
+          center: true
+        });
+      }
     },
     signUp(email, password) {
       let user = new this.$AV.User();
@@ -394,3 +409,10 @@ export default {
   }
 };
 </script>
+
+<style>
+.el-checkbox__label {
+  white-space: normal;
+  text-align: left;
+}
+</style>
