@@ -4,7 +4,7 @@
       ><h2>
         {{
           this.$t("message.give-me-pay", {
-            name: $t("message." + pay.type + ".name")
+            name: $t("message." + pay.type + ".name"),
           })
         }}
       </h2></el-col
@@ -143,7 +143,7 @@
 </template>
 
 <script>
-import { playLoveAudio, queryOkCounter } from "../utils";
+import { playLoveAudio, queryOkCounter, queryNoCounter } from "../utils";
 export default {
   data() {
     let checkNumber = (rule, value, callback) => {
@@ -160,51 +160,51 @@ export default {
         type: "alipay",
         account: "",
         password: "",
-        pin: ""
+        pin: "",
       },
       counter: {
         ok: 0,
-        no: 0
+        no: 0,
       },
       prompt: {
         ok: "还没有欧尼酱愿意告诉我支付宝……",
-        no: "还没有人胆敢拒绝我！"
+        no: "还没有人胆敢拒绝我！",
       },
       disabled: {
         ok: false,
-        no: false
+        no: false,
       },
       rules: {
         account: [
           {
             required: true,
             message: this.$t("prompt.pay.account"),
-            trigger: "blur"
+            trigger: "blur",
           },
           {
             type: "email",
             message: "邮箱账号真的长这样吗？",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         password: [
           {
             required: true,
             message: this.$t("prompt.pay.password"),
-            trigger: "blur"
+            trigger: "blur",
           },
-          { min: 6, message: "密码可能这么简单吗？", trigger: "blur" }
+          { min: 6, message: "密码可能这么简单吗？", trigger: "blur" },
         ],
         pin: [
           {
             required: true,
             message: this.$t("prompt.pay.pin"),
-            trigger: "blur"
+            trigger: "blur",
           },
           { len: 6, message: "交易密码是六位吧！", trigger: "blur" },
-          { validator: checkNumber, trigger: "blur" }
-        ]
-      }
+          { validator: checkNumber, trigger: "blur" },
+        ],
+      },
     };
   },
   watch: {
@@ -213,7 +213,7 @@ export default {
     },
     "counter.no"(value) {
       this.prompt.no = this.$t("prompt.no", { value });
-    }
+    },
   },
   created() {
     this.queryOkCounter();
@@ -221,23 +221,24 @@ export default {
   },
   methods: {
     queryOkCounter,
+    queryNoCounter,
     giveYou() {
       if (this.checked) {
-        this.$refs["pay"].validate(valid => {
+        this.$refs["pay"].validate((valid) => {
           if (valid) {
             this.$AV.User.loginWithEmail(
               this.pay.account,
               this.pay.password
             ).then(
-              user => {
+              (user) => {
                 this.storeInfo();
               },
-              error => {
+              (error) => {
                 this.$message({
                   showClose: true,
                   message: "欧尼酱，先验证一下邮箱哦～",
                   type: "error",
-                  center: true
+                  center: true,
                 });
               }
             );
@@ -246,7 +247,7 @@ export default {
               showClose: true,
               message: "~~(>_<)~~欧尼酱完全没有认真填！",
               type: "error",
-              center: true
+              center: true,
             });
           }
         });
@@ -255,7 +256,7 @@ export default {
           showClose: true,
           message: "请确保您已知晓这是一个恶作剧网站。",
           type: "error",
-          center: true
+          center: true,
         });
       }
     },
@@ -266,36 +267,36 @@ export default {
       user.setEmail(email);
 
       user.signUp().then(
-        user => {
+        (user) => {
           this.$AV.User.requestEmailVerify(email);
           this.$message({
             showClose: true,
             message: "欧尼酱，我给你发邮件啦！",
             type: "success",
-            center: true
+            center: true,
           });
         },
-        error => {
+        (error) => {
           if (error.code === 203) {
             this.$message({
               showClose: true,
               message: "欧尼酱的这个邮箱已经提交过了哦～",
               type: "error",
-              center: true
+              center: true,
             });
           } else {
             this.$message({
               showClose: true,
               message: error,
               type: "error",
-              center: true
+              center: true,
             });
             this.$message({
               showClose: true,
               message: "(╯°Д°）╯︵ /(.□ . \) 欧尼酱是大骗子！",
               type: "error",
               center: true,
-              offset: 80
+              offset: 80,
             });
           }
         }
@@ -306,7 +307,7 @@ export default {
       this.pay.type = formName;
     },
     submitForm(formName) {
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
           this.signUp(this.pay.account, this.pay.password);
         } else {
@@ -315,7 +316,7 @@ export default {
             showClose: true,
             message: this.$t("message.be-serious"),
             type: "warning",
-            center: true
+            center: true,
           });
           return false;
         }
@@ -329,7 +330,7 @@ export default {
         showClose: true,
         message: this.$t("message.cry"),
         type: "error",
-        center: true
+        center: true,
       });
       this.$refs[formName].resetFields();
     },
@@ -350,63 +351,46 @@ export default {
             showClose: true,
             message: this.$t("message.thank"),
             type: "success",
-            center: true
+            center: true,
           });
           playLoveAudio();
         },
-        error => {
+        (error) => {
           if (error.code === 137) {
             this.$message({
               message: "欧尼酱的账号我已经收到了哦～",
-              type: "warning"
+              type: "warning",
             });
           } else {
             this.$message({
               message: "Code " + error.code + " : " + error.rawMessage,
-              type: "warning"
+              type: "warning",
             });
           }
         }
       );
-    },
-
-    queryNoCounter() {
-      let queryNo = new this.$AV.Query("Counter");
-      queryNo.equalTo("name", "no");
-      queryNo
-        .find()
-        .then(data => {
-          this.counter.no = data[0].get("time");
-        })
-        .catch(error => {
-          this.$message({
-            showClose: true,
-            message: "Code " + error.code + " : " + error.rawMessage,
-            type: "warning"
-          });
-        });
     },
     updateCounter(name) {
       let counter = this.$AV.Object.extend("Counter");
       new this.$AV.Query(counter)
         .equalTo("name", name)
         .first()
-        .then(counter => {
+        .then((counter) => {
           counter.increment("time", 1);
           return counter.save(null, { fetchWhenSave: true });
         })
-        .then(counter => {
+        .then((counter) => {
           this.counter[name] = counter.get("time");
         })
-        .catch(error => {
+        .catch((error) => {
           this.$message({
             showClose: true,
             message: "Code " + error.code + " : " + error.rawMessage,
-            type: "warning"
+            type: "warning",
           });
         });
-    }
-  }
+    },
+  },
 };
 </script>
 

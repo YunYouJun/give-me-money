@@ -2,6 +2,7 @@
   <div>
     <h2>{{ total + $t("title.good-brothers") }}</h2>
     <el-table
+      v-loading="loading"
       :default-sort="{ prop: 'createdAt', order: 'descending' }"
       :data="tableData"
       stripe
@@ -20,7 +21,7 @@
         width="100"
         :filters="[
           { text: '微信', value: 'wechat' },
-          { text: '支付宝', value: 'alipay' }
+          { text: '支付宝', value: 'alipay' },
         ]"
         :filter-method="filterTag"
       >
@@ -65,7 +66,8 @@ export default {
     return {
       tableData: [],
       total: 0,
-      pageSize: 20
+      pageSize: 20,
+      loading: true,
     };
   },
   mounted() {
@@ -78,7 +80,7 @@ export default {
         "m+": this.getMinutes(), //分
         "s+": this.getSeconds(), //秒
         "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        S: this.getMilliseconds() //毫秒
+        S: this.getMilliseconds(), //毫秒
       };
       if (/(y+)/.test(fmt))
         fmt = fmt.replace(
@@ -99,12 +101,13 @@ export default {
   },
   methods: {
     handleCurrentChange(val) {
+      this.loading = true;
       let queryAccount = new this.$AV.Query("Pay");
       queryAccount.descending("createdAt");
       queryAccount.limit(this.pageSize);
       queryAccount.skip(this.pageSize * (val - 1));
       queryAccount.find().then(
-        accounts => {
+        (accounts) => {
           this.tableData = [];
           for (let i = 0; i < accounts.length; i++) {
             accounts[i].attributes.createdAt = new Date(
@@ -112,12 +115,13 @@ export default {
             ).Format("yyyy-MM-dd HH:mm:ss");
             this.tableData.push(accounts[i].attributes);
           }
+          this.loading = false;
         },
-        error => {
+        (error) => {
           this.$message({
             showClose: true,
             message: "Code " + error.code + " : " + error.rawMessage,
-            type: "warning"
+            type: "warning",
           });
         }
       );
@@ -129,37 +133,38 @@ export default {
       let queryAccount = new this.$AV.Query("Pay");
       queryAccount.descending("createdAt");
       queryAccount.count().then(
-        count => {
+        (count) => {
           this.total = count;
         },
-        error => {
+        (error) => {
           this.$message({
             showClose: true,
             message: "Code " + error.code + " : " + error.rawMessage,
-            type: "warning"
+            type: "warning",
           });
         }
       );
       queryAccount.limit(this.pageSize);
       queryAccount.find().then(
-        accounts => {
+        (accounts) => {
           for (let i = 0; i < accounts.length; i++) {
             accounts[i].attributes.createdAt = new Date(
               accounts[i].createdAt
             ).Format("yyyy-MM-dd HH:mm:ss");
             this.tableData.push(accounts[i].attributes);
           }
+          this.loading = false;
         },
-        error => {
+        (error) => {
           this.$message({
             showClose: true,
             message: "Code " + error.code + " : " + error.rawMessage,
-            type: "warning"
+            type: "warning",
           });
         }
       );
-    }
-  }
+    },
+  },
 };
 </script>
 

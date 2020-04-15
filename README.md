@@ -2,7 +2,7 @@
 
 > Just for fun.
 
-[![Build Status](https://travis-ci.com/YunYouJun/give-me-money.svg?branch=master)](https://travis-ci.com/YunYouJun/give-me-money)
+[![GitHub Actions](https://github.com/YunYouJun/give-me-money/workflows/GitHub%20Pages/badge.svg)](https://github.com/YunYouJun/give-me-money/actions)
 
 我很可爱，请给我钱。
 
@@ -60,6 +60,20 @@ I'm so cute. Please give me money.
 ```sh
 git clone https://github.com/YunYouJun/give-me-money.git
 npm install
+```
+
+复制 `.env.example`，并重命名为 `.env`。
+
+在 `.env` 中填入你在 [LeanCloud](https://leancloud.app) 创建的应用的 `appID` 与 `appKey`。
+
+```sh
+appId=bczeIAqfaN4JjOPLRVQwrRzq-MdYXbMMI
+appKey=zTwLboYflVo11MkvAbMiVaL8
+```
+
+### 运行
+
+```sh
 npm run dev
 # http://localhost:2333
 ```
