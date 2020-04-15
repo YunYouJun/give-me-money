@@ -59,6 +59,7 @@ I'm so cute. Please give me money.
 
 ```sh
 git clone https://github.com/YunYouJun/give-me-money.git
+cd give-me-money
 npm install
 ```
 
@@ -67,8 +68,8 @@ npm install
 在 `.env` 中填入你在 [LeanCloud](https://leancloud.app) 创建的应用的 `appID` 与 `appKey`。
 
 ```sh
-appId=bczeIAqfaN4JjOPLRVQwrRzq-MdYXbMMI
-appKey=zTwLboYflVo11MkvAbMiVaL8
+appId=xxxxxxx
+appKey=xxxxxxx
 ```
 
 ### 运行
