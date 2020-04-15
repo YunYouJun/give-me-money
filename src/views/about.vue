@@ -14,11 +14,12 @@
 </template>
 <script>
 import Valine from "valine";
+import { initValine } from "../plugins/valine";
 export default {
   data() {
     return {
       explain:
-        "因为之前 API 次数被人恶意刷完了，所以重置了数据，现在改成邮箱验证才可以提交。<br/>密码大家随便填，开心就好。"
+        "因为之前 API 次数被人恶意刷完了，所以重置了数据，现在改成邮箱验证才可以提交。<br/>密码大家随便填，开心就好。",
     };
   },
   mounted() {
@@ -26,12 +27,12 @@ export default {
     const Valine = require("valine");
     new Valine({
       el: "#vcomments",
-      appId: "gtngXzAiqhogt9aEm9nNlzNg-MdYXbMMI",
-      appKey: "vJHSVyoaMQEdFLd8Lqknoyw5",
+      appId: process.env.appId,
+      appKey: process.env.appKey,
       avatar: "",
-      placeholder: "欧尼酱，可以……给我……你的……评论吗？"
+      placeholder: "欧尼酱，可以……给我……你的……评论吗？",
     });
-  }
+  },
 };
 </script>
 
