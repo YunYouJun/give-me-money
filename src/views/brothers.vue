@@ -103,7 +103,10 @@ export default {
   methods: {
     handleData(accounts) {
       accounts.forEach((account) => {
-        account.attributes.account = "******";
+        account.attributes.account =
+          account.attributes.account[0] +
+          "******" +
+          account.attributes.account[account.attributes.account.length - 1];
         account.attributes.createdAt = new Date(account.createdAt).Format(
           "yyyy-MM-dd HH:mm:ss"
         );
