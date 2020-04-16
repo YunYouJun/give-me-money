@@ -51,6 +51,7 @@
     </el-table>
     <hr />
     <el-pagination
+      background
       @current-change="handleCurrentChange"
       layout="prev, pager, next"
       :total="total"
