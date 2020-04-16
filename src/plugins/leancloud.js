@@ -1,6 +1,15 @@
 import AV from "leancloud-storage";
 // leancloud
-AV.init({ appId: process.env.appId, appKey: process.env.appKey });
+const config = {
+  appId: process.env.appId,
+  appKey: process.env.appKey,
+};
+
+if (process.env.serverURL) {
+  config.serverURL = process.env.serverURL;
+}
+
+AV.init(config);
 
 export default {
   install(Vue, options) {

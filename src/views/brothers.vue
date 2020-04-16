@@ -100,6 +100,15 @@ export default {
     this.getAccountsInfo();
   },
   methods: {
+    handleData(accounts) {
+      accounts.forEach((account) => {
+        account.attributes.account = "******";
+        account.attributes.createdAt = new Date(account.createdAt).Format(
+          "yyyy-MM-dd HH:mm:ss"
+        );
+        this.tableData.push(account.attributes);
+      });
+    },
     handleCurrentChange(val) {
       this.loading = true;
       let queryAccount = new this.$AV.Query("Pay");
@@ -109,12 +118,7 @@ export default {
       queryAccount.find().then(
         (accounts) => {
           this.tableData = [];
-          for (let i = 0; i < accounts.length; i++) {
-            accounts[i].attributes.createdAt = new Date(
-              accounts[i].createdAt
-            ).Format("yyyy-MM-dd HH:mm:ss");
-            this.tableData.push(accounts[i].attributes);
-          }
+          this.handleData(accounts);
           this.loading = false;
         },
         (error) => {
@@ -147,12 +151,7 @@ export default {
       queryAccount.limit(this.pageSize);
       queryAccount.find().then(
         (accounts) => {
-          for (let i = 0; i < accounts.length; i++) {
-            accounts[i].attributes.createdAt = new Date(
-              accounts[i].createdAt
-            ).Format("yyyy-MM-dd HH:mm:ss");
-            this.tableData.push(accounts[i].attributes);
-          }
+          this.handleData(accounts);
           this.loading = false;
         },
         (error) => {

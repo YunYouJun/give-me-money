@@ -70,6 +70,8 @@ npm install
 ```sh
 appId=xxxxxxx
 appKey=xxxxxxx
+# 只有国内版 LeanCloud 需要填写，所以更推荐直接使用国际版
+# serverURL=https://xxx.example.com
 ```
 
 ### 运行
