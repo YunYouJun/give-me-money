@@ -12,16 +12,14 @@ import leancloud from "./plugins/leancloud";
 Vue.config.productionTip = false;
 
 Vue.use(ElementUI, {
-  i18n: (key, value) => i18n.t(key, value)
+  i18n: (key, value) => i18n.t(key, value),
 });
 
-import VTooltip from "v-tooltip";
-Vue.use(VTooltip);
 Vue.use(leancloud);
 
 new Vue({
   router,
   store,
   i18n,
-  render: h => h(App)
+  render: (h) => h(App),
 }).$mount("#app");

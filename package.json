@@ -21,25 +21,25 @@
   },
   "homepage": "https://github.com/YunYouJun/give-me-money#readme",
   "devDependencies": {
-    "@vue/component-compiler-utils": "^3.1.1",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.1.0",
-    "eslint-plugin-import": "^2.20.2",
+    "@vue/component-compiler-utils": "^3.2.0",
+    "eslint": "^7.6.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-vue": "^6.2.2",
     "parcel-bundler": "^1.12.4",
-    "sass": "^1.25.0",
+    "sass": "^1.26.10",
     "vue-template-compiler": "^2.6.11"
   },
   "dependencies": {
     "element-theme-ink": "^1.0.1",
-    "element-ui": "^2.13.0",
-    "leancloud-storage": "^4.5.3",
-    "valine": "^1.4.4",
+    "element-ui": "^2.13.2",
+    "leancloud-storage": "^4.6.1",
+    "valine": "^1.4.14",
     "vue": "^2.0.0",
-    "vue-about-me": "^0.2.4",
+    "vue-about-me": "^0.3.2",
     "vue-hot-reload-api": "^2.3.4",
-    "vue-i18n": "^8.11.2",
-    "vue-router": "^3.1.5",
-    "vuex": "^3.1.1"
+    "vue-i18n": "^8.20.0",
+    "vue-router": "^3.4.3",
+    "vuex": "^3.5.1"
   }
 }

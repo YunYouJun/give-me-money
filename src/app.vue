@@ -27,7 +27,7 @@ export default {
   name: "App",
   components: {
     Navbar,
-    VueAboutMe
+    VueAboutMe,
   },
   data() {
     return {
@@ -35,12 +35,12 @@ export default {
       msg: "欧尼酱，可以……告诉我……你的……支付宝吗？",
       copyright: {
         name: "Give Me Money!",
-        repoName: "give-me-money",
+        repo: "give-me-money",
         author: "YunYouJun",
-        logo: "#icon-cloud"
-      }
+        logo: "#icon-cloud-line",
+      },
     };
-  }
+  },
 };
 </script>
 
