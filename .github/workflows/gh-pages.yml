@@ -17,8 +17,8 @@ jobs:
       - run: yarn install
       - name: Build
         env:
-          appId: ${{ secrets.appId }}
-          appKey: ${{ secrets.appKey }}
+          VITE_APP_ID: ${{ secrets.appId }}
+          VITE_APP_KEY: ${{ secrets.appKey }}
         run: yarn build
 
       - name: Deploy

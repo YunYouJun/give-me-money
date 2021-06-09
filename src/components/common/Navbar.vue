@@ -1,57 +1,47 @@
 <template>
-  <div>
-    <el-menu
-      :default-active="activeMenuIndex"
-      class="gmm-menu"
-      mode="horizontal"
-      router
-    >
-      <el-menu-item index="/">
-        <img width="20px" src="../../assets/money.png" />
-      </el-menu-item>
-      <el-menu-item index="/brothers">
-        {{ $t("link.brothers") }}
-      </el-menu-item>
-      <el-menu-item index="/about">
-        {{ $t("link.about") }}
-      </el-menu-item>
-      <div class="right-menu">
-        <lang-select class="right-menu-item"></lang-select>
-      </div>
-    </el-menu>
-  </div>
+  <el-menu
+    :default-active="activeMenuIndex"
+    class="gmm-menu"
+    mode="horizontal"
+    router
+  >
+    <el-menu-item index="/">
+      <img width="20" src="/money.png" />
+    </el-menu-item>
+    <el-menu-item index="/brothers">
+      {{ t("link.brothers") }}
+    </el-menu-item>
+    <el-menu-item index="/about">
+      {{ t("link.about") }}
+    </el-menu-item>
+    <div class="right-menu">
+      <lang-select class="right-menu-item"></lang-select>
+    </div>
+  </el-menu>
 </template>
 
-<script>
-import LangSelect from "./LangSelect";
-
-export default {
-  name: "Navbar",
-  components: {
-    LangSelect
-  },
-  data() {
-    return {};
-  },
-  computed: {
-    activeMenuIndex() {
-      return this.$route.path;
-    }
-  }
-};
+<script setup lang="ts">
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
+const route = useRoute();
+const activeMenuIndex = computed(() => {
+  return route.path;
+});
 </script>
 
 <style lang="scss" scoped>
 .right-menu {
   float: right;
-  height: 100%;
+  height: 60px;
   line-height: 60px;
   &:focus {
     outline: none;
   }
   .right-menu-item {
-    display: inline-block;
-    margin: 0 8px;
+    display: inline-flex;
+    justify-content: center;
   }
 }
 </style>

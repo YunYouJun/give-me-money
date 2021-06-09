@@ -1,6 +1,6 @@
 <template>
   <el-carousel
-    ref="beg"
+    ref="carousel"
     :autoplay="false"
     indicator-position="none"
     arrow="never"
@@ -11,59 +11,72 @@
       :name="name"
       :label="item.label"
     >
-      <!-- <h3>{{ $store.state.decision }}</h3> -->
-      <img width="100%" :src="item.path" :alt="item.label" />
+      <img style="width:100%" :src="item.path" :alt="item.label" />
     </el-carousel-item>
   </el-carousel>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { ElCarousel } from "element-plus";
+import { defineComponent, watch, ref } from "vue";
+import { useStore } from "vuex";
+
+export default defineComponent({
   name: "DisplayImage",
-  data() {
-    return {
-      album: {
-        wow: {
-          path: require("../assets/img/0.jpg"),
-          label: "好吗？"
-        },
-        thank: {
-          path: require("../assets/img/1.jpg"),
-          label: "那个……谢谢啦……"
-        },
-        hum: {
-          path: require("../assets/img/2.jpg"),
-          label: "哼！"
+  setup() {
+    const carousel = ref<typeof ElCarousel | null>(null);
+    const album = {
+      wow: {
+        path: "/img/0.jpg",
+        label: "好吗？",
+      },
+      thank: {
+        path: "/img/1.jpg",
+        label: "那个……谢谢啦……",
+      },
+      hum: {
+        path: "/img/2.jpg",
+        label: "哼！",
+      },
+    };
+
+    const store = useStore();
+
+    /**
+     * 设置轮播索引
+     */
+    function setActiveItem(index: string) {
+      carousel.value?.setActiveItem(index);
+    }
+
+    watch(
+      () => store.state.decision,
+      (val: string) => {
+        switch (val) {
+          case "wow":
+            setActiveItem("wow");
+            break;
+          case "ok":
+            setActiveItem("thank");
+            break;
+          case "no":
+            setActiveItem("hum");
+            break;
+          default:
+            break;
         }
-      }
+      },
+    );
+
+    return {
+      album,
+      carousel,
     };
   },
-  methods: {
-    setActiveItem(index) {
-      this.$refs["beg"].setActiveItem(index);
-    }
-  },
-  watch: {
-    "$store.state.decision"() {
-      switch (this.$store.state.decision) {
-        case "wow":
-          this.setActiveItem("wow");
-          break;
-        case "ok":
-          this.setActiveItem("thank");
-          break;
-        case "no":
-          this.setActiveItem("hum");
-          break;
-        default:
-          break;
-      }
-    }
-  }
-};
+});
 </script>
 
-<style>
+<style lang="scss">
 .el-carousel__container {
   height: 400px !important;
 }

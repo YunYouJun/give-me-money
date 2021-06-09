@@ -4,6 +4,8 @@
 
 [![GitHub Actions](https://github.com/YunYouJun/give-me-money/workflows/GitHub%20Pages/badge.svg)](https://github.com/YunYouJun/give-me-money/actions)
 
+> Rewrite with Vite + Vue@3 + TypeScript.
+
 我很可爱，请给我钱。
 
 I'm so cute. Please give me money.
@@ -20,7 +22,7 @@ I'm so cute. Please give me money.
 
 ---
 
-![give-me-money](https://github.com/YunYouJun/give-me-money/blob/master/src/assets/example.jpg?raw=true)
+![give-me-money](https://github.com/YunYouJun/give-me-money/blob/master/public/example.jpg?raw=true)
 
 此前看到的一个图，出处不可考，觉得很有趣，就试着用网页实现了下。
 
@@ -68,10 +70,10 @@ npm install
 在 `.env` 中填入你在 [LeanCloud](https://leancloud.app) 创建的应用的 `appID` 与 `appKey`。
 
 ```sh
-appId=xxxxxxx
-appKey=xxxxxxx
+VITE_APP_ID=xxxxxxx
+VITE_APP_KEY=xxxxxxx
 # 只有国内版 LeanCloud 需要填写，所以更推荐直接使用国际版
-# serverURL=https://xxx.example.com
+# VITE_SERVER_URL=https://xxx.example.com
 ```
 
 ### 运行

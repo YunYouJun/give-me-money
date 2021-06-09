@@ -1,4 +1,4 @@
-function queryOkCounter() {
+export function queryOkCounter() {
   let queryPay = new this.$AV.Query("Pay");
   queryPay.count().then(
     (count) => {
@@ -26,7 +26,7 @@ function queryOkCounter() {
   );
 }
 
-function queryNoCounter() {
+export function queryNoCounter() {
   let queryNo = new this.$AV.Query("Counter");
   queryNo.equalTo("name", "no");
   queryNo
@@ -51,9 +51,10 @@ function queryNoCounter() {
     });
 }
 
-function playLoveAudio() {
-  const audio = document.getElementById("myAudio");
+/**
+ * 播放「大好き」音频
+ */
+export function playLoveAudio() {
+  const audio = document.getElementById("myAudio") as HTMLAudioElement;
   audio.play();
 }
-
-export { playLoveAudio, queryOkCounter, queryNoCounter };

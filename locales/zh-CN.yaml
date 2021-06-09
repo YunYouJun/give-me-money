@@ -1,0 +1,43 @@
+button:
+  toggle_langs: 切换语言
+link:
+  about: 关于
+  brothers: 哥哥们~
+title:
+  good-brothers: " 位好心的哥哥们~"
+message:
+  check: "我确认我知道这是一个恶作剧网站，我填写的信息将在 哥哥们 页面公开，并希望继续提交。"
+  brother:
+    name: 名字
+    anonymous: 匿名
+  title: 我很可爱，请给我钱！
+  give-me-pay: "欧尼酱，可以……告诉我……你的……{name}吗？"
+  header: 可爱的萝莉妹妹们
+  ok: 好的，给你!
+  no: 残忍拒绝
+  name: 你的名字
+  name-placeholder: 人家也不是一定要知道你的名字啦～
+  pay:
+    type: 类型
+    account: 账号
+    password: 密码
+    pin: 交易密码
+    time: 时间
+  alipay:
+    name: 支付宝
+    button: 其实我用支付宝啦~
+  wechat:
+    name: 微信
+    button: 其实我用微信啦~
+  be-serious: (σ‘・д・)σ 给我认真填啦!
+  cry: 〒▽〒 呜呜呜~
+  thank: (o゜ω゜o) 谢谢欧尼酱!
+prompt:
+  pay:
+    account: 请给我账号~
+    password: 还有密码~
+    pin: 以及交易密码~
+  alipay: 那还是填支付宝吧~
+  wechat: 那填微信也行哦~
+  ok: "已经有 {value} 个欧尼酱告诉我啦！"
+  no: "已被残忍拒绝 {value} 次！"

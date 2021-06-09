@@ -1,14 +1,14 @@
 <template>
   <el-row>
-    <el-col
-      ><h2>
+    <el-col>
+      <h2>
         {{
-          this.$t("message.give-me-pay", {
-            name: $t("message." + pay.type + ".name"),
+          t("message.give-me-pay", {
+            name: t("message." + pay.type + ".name"),
           })
         }}
-      </h2></el-col
-    >
+      </h2>
+    </el-col>
     <el-col
       :xs="{ span: 24, offset: 0 }"
       :sm="{ span: 20, offset: 2 }"
@@ -17,24 +17,22 @@
       :xl="{ span: 8, offset: 8 }"
     >
       <el-form
+        ref="pay"
         :model="pay"
         :rules="rules"
-        ref="pay"
         label-width="135px"
-        @keyup.enter.native="submitForm('pay')"
+        @keyup.enter="submitForm('pay')"
       >
-        <el-form-item :label="$t('message.name')" prop="name">
+        <el-form-item :label="t('message.name')" prop="name">
           <el-input
             v-model="name"
             autofocus
-            :placeholder="$t('message.name-placeholder')"
+            :placeholder="t('message.name-placeholder')"
           >
           </el-input>
         </el-form-item>
         <el-form-item
-          :label="
-            $t('message.' + pay.type + '.name') + $t('message.pay.account')
-          "
+          :label="t('message.' + pay.type + '.name') + t('message.pay.account')"
           prop="account"
         >
           <el-input
@@ -51,23 +49,23 @@
         </el-form-item>
         <el-form-item
           :label="
-            $t('message.' + pay.type + '.name') + $t('message.pay.password')
+            t('message.' + pay.type + '.name') + t('message.pay.password')
           "
           prop="password"
         >
-          <el-input type="password" v-model="pay.password"></el-input>
+          <el-input v-model="pay.password" type="password"></el-input>
         </el-form-item>
         <el-form-item
-          :label="$t('message.' + pay.type + '.name') + $t('message.pay.pin')"
+          :label="t('message.' + pay.type + '.name') + t('message.pay.pin')"
           prop="pin"
         >
-          <el-input type="password" v-model="pay.pin"></el-input>
+          <el-input v-model="pay.pin" type="password"></el-input>
         </el-form-item>
-        <el-form-item style="text-align:center" label-width="0px"
-          ><el-checkbox v-model="checked">{{
-            $t("message.check")
-          }}</el-checkbox></el-form-item
-        >
+        <el-form-item style="text-align:center" label-width="0px">
+          <el-checkbox v-model="checked">
+            {{ t("message.check") }}
+          </el-checkbox>
+        </el-form-item>
         <el-form-item label-width="0px">
           <el-tooltip
             class="item"
@@ -79,10 +77,9 @@
               <el-button
                 plain
                 type="primary"
-                @click="giveYou"
                 :disabled="disabled.ok"
-                >{{ $t("message.ok") }}</el-button
-              >
+                @click="giveYou"
+              >{{ t("message.ok") }}</el-button>
             </span>
           </el-tooltip>
           <el-tooltip
@@ -96,17 +93,16 @@
                 plain
                 size="mini"
                 type="danger"
-                @click="resetForm('pay')"
                 :disabled="disabled.no"
-                >{{ $t("message.no") }}</el-button
-              >
+                @click="resetForm('pay')"
+              >{{ t("message.no") }}</el-button>
             </span>
           </el-tooltip>
           <el-tooltip
             v-if="pay.type == 'alipay'"
             class="item"
             effect="light"
-            :content="$t('prompt.wechat')"
+            :content="t('prompt.wechat')"
             placement="top"
           >
             <span style="margin-left: 10px;">
@@ -115,15 +111,14 @@
                 size="small"
                 type="success"
                 @click="useForm('wechat')"
-                >{{ $t("message.wechat.button") }}</el-button
-              >
+              >{{ t("message.wechat.button") }}</el-button>
             </span>
           </el-tooltip>
           <el-tooltip
             v-else-if="pay.type == 'wechat'"
             class="item"
             effect="light"
-            :content="$t('prompt.alipay')"
+            :content="t('prompt.alipay')"
             placement="top"
           >
             <span style="margin-left: 10px;">
@@ -132,8 +127,7 @@
                 size="small"
                 type="primary"
                 @click="useForm('alipay')"
-                >{{ $t("message.alipay.button") }}</el-button
-              >
+              >{{ t("message.alipay.button") }}</el-button>
             </span>
           </el-tooltip>
         </el-form-item>
@@ -142,11 +136,42 @@
   </el-row>
 </template>
 
-<script>
+<script lang="ts">
+import { watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { playLoveAudio, queryOkCounter, queryNoCounter } from "../utils";
 export default {
+  setup() {
+    const { t } = useI18n();
+
+    const prompt = {
+      ok: "还没有欧尼酱愿意告诉我支付宝……",
+      no: "还没有人胆敢拒绝我！",
+    };
+
+    const counter = {
+      ok: 0,
+      no: 0,
+    };
+
+    watch(
+      () => counter.ok,
+      value => {
+        prompt.ok = t("prompt.ok", { value });
+      },
+    );
+
+    watch(
+      () => counter.no,
+      value => {
+        prompt.no = t("prompt.no", { value });
+      },
+    );
+
+    return { prompt, t };
+  },
   data() {
-    let checkNumber = (rule, value, callback) => {
+    const checkNumber = (rule, value, callback) => {
       if (isNaN(value)) {
         callback(new Error("我记得交易密码是纯数字吧！"));
       } else {
@@ -166,10 +191,7 @@ export default {
         ok: 0,
         no: 0,
       },
-      prompt: {
-        ok: "还没有欧尼酱愿意告诉我支付宝……",
-        no: "还没有人胆敢拒绝我！",
-      },
+
       disabled: {
         ok: false,
         no: false,
@@ -178,7 +200,7 @@ export default {
         account: [
           {
             required: true,
-            message: this.$t("prompt.pay.account"),
+            message: this.t("prompt.pay.account"),
             trigger: "blur",
           },
           {
@@ -190,7 +212,7 @@ export default {
         password: [
           {
             required: true,
-            message: this.$t("prompt.pay.password"),
+            message: this.t("prompt.pay.password"),
             trigger: "blur",
           },
           { min: 6, message: "密码可能这么简单吗？", trigger: "blur" },
@@ -198,7 +220,7 @@ export default {
         pin: [
           {
             required: true,
-            message: this.$t("prompt.pay.pin"),
+            message: this.t("prompt.pay.pin"),
             trigger: "blur",
           },
           { len: 6, message: "交易密码是六位吧！", trigger: "blur" },
@@ -207,14 +229,7 @@ export default {
       },
     };
   },
-  watch: {
-    "counter.ok"(value) {
-      this.prompt.ok = this.$t("prompt.ok", { value });
-    },
-    "counter.no"(value) {
-      this.prompt.no = this.$t("prompt.no", { value });
-    },
-  },
+
   created() {
     this.queryOkCounter();
     this.queryNoCounter();
@@ -224,23 +239,23 @@ export default {
     queryNoCounter,
     giveYou() {
       if (this.checked) {
-        this.$refs["pay"].validate((valid) => {
+        this.$refs.pay.validate(valid => {
           if (valid) {
             this.$AV.User.loginWithEmail(
               this.pay.account,
-              this.pay.password
+              this.pay.password,
             ).then(
-              (user) => {
+              user => {
                 this.storeInfo();
               },
-              (error) => {
+              error => {
                 this.$message({
                   showClose: true,
                   message: "欧尼酱，先验证一下邮箱哦～",
                   type: "error",
                   center: true,
                 });
-              }
+              },
             );
           } else {
             this.$message({
@@ -261,13 +276,13 @@ export default {
       }
     },
     signUp(email, password) {
-      let user = new this.$AV.User();
+      const user = new this.$AV.User();
       user.setUsername(email);
       user.setPassword(password);
       user.setEmail(email);
 
       user.signUp().then(
-        (user) => {
+        user => {
           this.$AV.User.requestEmailVerify(email);
           this.$message({
             showClose: true,
@@ -276,7 +291,7 @@ export default {
             center: true,
           });
         },
-        (error) => {
+        error => {
           if (error.code === 203) {
             this.$message({
               showClose: true,
@@ -299,7 +314,7 @@ export default {
               offset: 80,
             });
           }
-        }
+        },
       );
     },
     useForm(formName) {
@@ -307,14 +322,14 @@ export default {
       this.pay.type = formName;
     },
     submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+      this.$refs[formName].validate(valid => {
         if (valid) {
           this.signUp(this.pay.account, this.pay.password);
         } else {
           this.$store.commit("decide", "wow");
           this.$message({
             showClose: true,
-            message: this.$t("message.be-serious"),
+            message: this.t("message.be-serious"),
             type: "warning",
             center: true,
           });
@@ -328,15 +343,15 @@ export default {
       this.updateCounter("no");
       this.$message({
         showClose: true,
-        message: this.$t("message.cry"),
+        message: this.t("message.cry"),
         type: "error",
         center: true,
       });
       this.$refs[formName].resetFields();
     },
     storeInfo() {
-      let Pay = this.$AV.Object.extend("Pay");
-      let pay = new Pay();
+      const Pay = this.$AV.Object.extend("Pay");
+      const pay = new Pay();
       pay.set("name", this.name);
       pay.set("type", this.pay.type);
       pay.set("account", this.pay.account);
@@ -349,13 +364,13 @@ export default {
           this.queryOkCounter();
           this.$message({
             showClose: true,
-            message: this.$t("message.thank"),
+            message: this.t("message.thank"),
             type: "success",
             center: true,
           });
           playLoveAudio();
         },
-        (error) => {
+        error => {
           if (error.code === 137) {
             this.$message({
               message: "欧尼酱的账号我已经收到了哦～",
@@ -367,22 +382,22 @@ export default {
               type: "warning",
             });
           }
-        }
+        },
       );
     },
     updateCounter(name) {
-      let counter = this.$AV.Object.extend("Counter");
+      const counter = this.$AV.Object.extend("Counter");
       new this.$AV.Query(counter)
         .equalTo("name", name)
         .first()
-        .then((counter) => {
+        .then(counter => {
           counter.increment("time", 1);
           return counter.save(null, { fetchWhenSave: true });
         })
-        .then((counter) => {
+        .then(counter => {
           this.counter[name] = counter.get("time");
         })
-        .catch((error) => {
+        .catch(error => {
           this.$message({
             showClose: true,
             message: "Code " + error.code + " : " + error.rawMessage,
@@ -394,7 +409,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .el-checkbox__label {
   white-space: normal;
   text-align: left;

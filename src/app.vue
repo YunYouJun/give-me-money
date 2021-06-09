@@ -1,68 +1,15 @@
 <template>
-  <div id="app">
-    <el-container>
-      <el-header>
-        <navbar></navbar>
-      </el-header>
-
-      <el-main>
-        <router-view />
-      </el-main>
-
-      <el-footer>
-        <hr />
-        <div>
-          <a href="https://www.unicef.cn/" target="_blank">联合国儿童基金会</a>
-        </div>
-        <vue-about-me :copyright="copyright"></vue-about-me>
-      </el-footer>
-    </el-container>
-  </div>
+  <router-view />
 </template>
 
-<script>
-import Navbar from "./components/common/Navbar";
-import VueAboutMe from "vue-about-me";
-export default {
-  name: "App",
-  components: {
-    Navbar,
-    VueAboutMe,
-  },
-  data() {
-    return {
-      header: "可爱的萝莉妹妹们",
-      msg: "欧尼酱，可以……告诉我……你的……支付宝吗？",
-      copyright: {
-        name: "Give Me Money!",
-        repo: "give-me-money",
-        author: "YunYouJun",
-        logo: "#icon-cloud-line",
-      },
-    };
-  },
-};
-</script>
+<script setup lang="ts">
+import { useHead } from "@vueuse/head";
 
-<style>
-body {
-  padding: 0;
-  margin: 0;
-}
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-hr {
-  opacity: 0.2;
-}
-.el-header {
-  padding: 0 !important;
-}
-.el-main {
-  padding: 0 0.5rem !important;
-}
-</style>
+// https://github.com/vueuse/head
+// you can use this to manipulate the document head in any components,
+// they will be rendered correctly in the html results with vite-ssg
+useHead({
+  title: "Give me money! | 我很可爱，请给我钱！",
+  meta: [{ name: "description", content: "我很可爱，请给我钱！" }],
+});
+</script>

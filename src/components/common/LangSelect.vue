@@ -1,42 +1,37 @@
 <template>
-  <el-select class="lang-select" v-model="currentLang" placeholder="语言">
-    <el-option
-      v-for="item in lang"
-      :key="item.code"
-      :label="item.label"
-      :value="item.code">
-    </el-option>
-  </el-select>
+  <div
+    class="lang-select"
+    :title="t('button.toggle_langs')"
+    style=""
+    @click="toggleLocales"
+  >
+    <i-mdi-translate />
+  </div>
 </template>
 
-<script>
-export default {
-  data () {
-    return {
-      currentLang: localStorage.getItem('lang')?localStorage.getItem('lang'):'zh-CN',
-      lang: [{
-        code: 'zh-CN',
-        label: '简体中文'
-      },{
-        code: 'en',
-        label: 'English'
-      }]
-    }
-  },
-  watch: {
-    currentLang (lang) {
-      localStorage.setItem('lang', lang)
-      this.$i18n.locale = lang
-    }
-  },
-}
+<script setup lang="ts">
+import { useI18n } from "vue-i18n";
+const { t, availableLocales, locale } = useI18n();
+
+locale.value = localStorage.getItem("lang") || "zh-CN";
+
+const toggleLocales = () => {
+  const locales = availableLocales;
+  const currentLang =
+    locales[(locales.indexOf(locale.value) + 1) % locales.length];
+  locale.value = currentLang;
+  localStorage.setItem("lang", currentLang);
+};
 </script>
 
 <style lang="scss">
 .lang-select {
-  width: 120px;
-  input {
-    border: 0px !important;
-  }
+  width: 4rem;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  font-size: large;
+  cursor: pointer;
 }
 </style>

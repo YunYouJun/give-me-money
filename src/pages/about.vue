@@ -3,19 +3,19 @@
     <h1>说明</h1>
     <p class="explain" v-html="explain"></p>
     <p class="explain">
-      <img class="avatar" src="../assets/img/mea.jpg" />
-      <br />
-      实在想打钱，不如捐给
-      <a href="https://www.unicef.cn/" target="_blank">联合国儿童基金会</a
-      >，谢谢！
+      <img class="avatar" src="/img/mea.jpg" />
+      <br />实在想打钱，不如捐给
+      <a href="https://www.unicef.cn/" target="_blank">联合国儿童基金会</a>，谢谢！
     </p>
     <div id="vcomments"></div>
   </div>
 </template>
-<script>
+
+<script lang="ts">
+import { defineComponent } from "vue";
 import Valine from "valine";
-import { initValine } from "../plugins/valine";
-export default {
+
+export default defineComponent({
   data() {
     return {
       explain:
@@ -23,17 +23,15 @@ export default {
     };
   },
   mounted() {
-    window.AV = this.$AV;
-    const Valine = require("valine");
-    new Valine({
+    window.valine = new Valine({
       el: "#vcomments",
-      appId: process.env.appId,
-      appKey: process.env.appKey,
+      appId: import.meta.env.VITE_APP_ID,
+      appKey: import.meta.env.VITE_APP_KEY,
       avatar: "",
       placeholder: "欧尼酱，可以……给我……你的……评论吗？",
     });
   },
-};
+});
 </script>
 
 <style scoped>
