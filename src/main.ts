@@ -7,7 +7,6 @@ import App from "./App.vue";
 import "./styles/main.scss";
 
 // app.config.productionTip = false;
-
 const routes = setupLayouts(generatedRoutes);
 
 // https://github.com/antfu/vite-ssg
