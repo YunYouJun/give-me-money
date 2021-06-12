@@ -1,0 +1,62 @@
+// global
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#app {
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+hr {
+  opacity: 0.2;
+}
+
+// custom
+#vcomments {
+  margin: 0 5rem;
+}
+
+@media screen and (max-device-width: 768px) {
+  #vcomments {
+    margin: 0;
+  }
+}
+
+.avatar {
+  background: #fcfcfc;
+  border-radius: 50%;
+  width: 96px;
+  height: 96px;
+  object-position: center top;
+  object-fit: cover;
+  padding: 0.2rem;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.12);
+  transition: 0.4s;
+
+  &:hover {
+    box-shadow: 0 0 2rem rgba(0, 0, 0, 0.12);
+  }
+}
+
+#nprogress {
+  pointer-events: none;
+
+  .bar {
+    --tw-bg-opacity: 1;
+    background-color: rgba(0, 0, 0, var(--tw-bg-opacity));
+    opacity: 0.75;
+
+    position: fixed;
+    z-index: 1031;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 2px;
+  }
+}

@@ -6,11 +6,28 @@
     <title>Give me money!</title>
     <link rel="icon" href="favicon.png" type="image/png" />
     <!-- 图标 -->
-    <!-- add this in your html -->
     <script src="https://code.iconify.design/2/2.0.0/iconify.min.js"></script>
+    <meta name="msapplication-TileColor" content="#000000" />
+    <meta name="theme-color" content="#ffffff" />
   </head>
   <body>
     <div id="app"></div>
+    <script>
+      (function() {
+        const prefersDark =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const setting = localStorage.getItem("color-schema") || "auto";
+        if (setting === "dark" || (prefersDark && setting !== "light")) {
+          document.documentElement.classList.toggle("dark", true);
+        }
+      })();
+    </script>
     <script type="module" src="./src/main.ts"></script>
+    <!-- valine cdn -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/valine/dist/Valine.min.js"
+      defer
+    ></script>
   </body>
 </html>

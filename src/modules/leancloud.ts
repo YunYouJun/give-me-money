@@ -21,5 +21,4 @@ AV.init(config);
 
 export const install: UserModule = ({ app }) => {
   app.config.globalProperties.$AV = AV;
-  window.AV = AV;
 };

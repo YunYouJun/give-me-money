@@ -11,16 +11,16 @@
 
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
+import { isClient } from "~/utils/isClient";
 const { t, availableLocales, locale } = useI18n();
-
-locale.value = localStorage.getItem("lang") || "zh-CN";
 
 const toggleLocales = () => {
   const locales = availableLocales;
   const currentLang =
     locales[(locales.indexOf(locale.value) + 1) % locales.length];
   locale.value = currentLang;
-  localStorage.setItem("lang", currentLang);
+  // eslint-disable-next-line no-unused-expressions
+  isClient ? localStorage.setItem("lang", currentLang) : "";
 };
 </script>
 

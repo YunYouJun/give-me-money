@@ -1,5 +1,6 @@
 import { UserModule } from "~/types";
 import { createStore } from "vuex";
+import { isClient } from "~/utils/isClient";
 
 export interface State {
   /**
@@ -24,5 +25,8 @@ export const store = createStore<State>({
 });
 
 export const install: UserModule = ({ app }) => {
+  if (!isClient) {
+    return;
+  }
   app.use(store);
 };

@@ -27,3 +27,7 @@ node_modules/
 
 # dotenv environment variables file
 .env
+
+# vite
+.vite-ssg-temp
+components.d.ts

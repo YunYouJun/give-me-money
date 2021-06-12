@@ -16,64 +16,54 @@
   </el-carousel>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { ElCarousel } from "element-plus";
-import { defineComponent, watch, ref } from "vue";
+import { watch, ref } from "vue";
 import { useStore } from "vuex";
 
-export default defineComponent({
-  name: "DisplayImage",
-  setup() {
-    const carousel = ref<typeof ElCarousel | null>(null);
-    const album = {
-      wow: {
-        path: "/img/0.jpg",
-        label: "好吗？",
-      },
-      thank: {
-        path: "/img/1.jpg",
-        label: "那个……谢谢啦……",
-      },
-      hum: {
-        path: "/img/2.jpg",
-        label: "哼！",
-      },
-    };
-
-    const store = useStore();
-
-    /**
-     * 设置轮播索引
-     */
-    function setActiveItem(index: string) {
-      carousel.value?.setActiveItem(index);
-    }
-
-    watch(
-      () => store.state.decision,
-      (val: string) => {
-        switch (val) {
-          case "wow":
-            setActiveItem("wow");
-            break;
-          case "ok":
-            setActiveItem("thank");
-            break;
-          case "no":
-            setActiveItem("hum");
-            break;
-          default:
-            break;
-        }
-      },
-    );
-
-    return {
-      album,
-      carousel,
-    };
+const carousel = ref<typeof ElCarousel | null>(null);
+const album = {
+  wow: {
+    path: "/img/0.jpg",
+    label: "好吗？",
   },
-});
+  thank: {
+    path: "/img/1.jpg",
+    label: "那个……谢谢啦……",
+  },
+  hum: {
+    path: "/img/2.jpg",
+    label: "哼！",
+  },
+};
+
+const store = useStore();
+
+/**
+ * 设置轮播索引
+ */
+function setActiveItem(index: string) {
+  carousel.value?.setActiveItem(index);
+}
+
+watch(
+  () => store.state.decision,
+  (val: string) => {
+    switch (val) {
+      case "wow":
+        setActiveItem("wow");
+        break;
+      case "ok":
+        setActiveItem("thank");
+        break;
+      case "no":
+        setActiveItem("hum");
+        break;
+      default:
+        break;
+    }
+  },
+);
 </script>
 
 <style lang="scss">

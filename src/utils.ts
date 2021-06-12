@@ -1,14 +1,17 @@
+import { ElMessage } from "element-plus";
+import AV from "leancloud-storage";
+
 export function queryOkCounter() {
-  let queryPay = new this.$AV.Query("Pay");
-  queryPay.count().then(
-    (count) => {
-      this.counter.ok = count;
+  const queryPay = new AV.Query("Pay");
+  return queryPay.count().then(
+    count => {
+      return count;
     },
-    (error) => {
+    error => {
       // not exist
-      if (error.code == 101) {
-        let Pay = this.$AV.Object.extend("Pay");
-        let pay = new Pay();
+      if (error.code === 101) {
+        const Pay = AV.Object.extend("Pay");
+        const pay = new Pay();
         pay.set("name", "Test");
         pay.set("type", "alipay");
         pay.set("account", "test@yunyoujun.cn");
@@ -17,33 +20,33 @@ export function queryOkCounter() {
         pay.save();
         console.log("Init Pay Class.");
       }
-      this.$message({
+      ElMessage({
         showClose: true,
         message: "Code " + error.code + " : " + error.rawMessage,
         type: "warning",
       });
-    }
+    },
   );
 }
 
-export function queryNoCounter() {
-  let queryNo = new this.$AV.Query("Counter");
+export function queryNoCounter(): Promise<number> {
+  const queryNo = new AV.Query("Counter");
   queryNo.equalTo("name", "no");
-  queryNo
+  return queryNo
     .find()
-    .then((data) => {
-      this.counter.no = data[0].get("time");
+    .then(data => {
+      return data[0].get("time");
     })
-    .catch((error) => {
-      if (error.code == 101) {
-        let Counter = this.$AV.Object.extend("Counter");
-        let counter = new Counter();
+    .catch(error => {
+      if (error.code === 101) {
+        const Counter = AV.Object.extend("Counter");
+        const counter = new Counter();
         counter.set("name", "no");
         counter.set("time", 0);
         counter.save();
         console.log("Init Counter Class.");
       }
-      this.$message({
+      ElMessage({
         showClose: true,
         message: "Code " + error.code + " : " + error.rawMessage,
         type: "warning",

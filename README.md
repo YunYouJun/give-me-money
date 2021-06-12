@@ -12,11 +12,13 @@ I'm so cute. Please give me money.
 
 ## About
 
-这是自己几年前 Parcel 刚出的时候，写[Parcel.js + Vue 搭建笔记](https://www.yunyoujun.cn/note/vue-parcel-demo/)，拿来练手的小玩意儿。所以代码很丑，也没做啥后端校验。 因为之前 API 次数被人恶意刷完了，所以重置了数据，现在加了邮箱验证才能提交。
+这是自己几年前 Parcel 刚出的时候，写[Parcel.js + Vue 搭建笔记](https://www.yunyoujun.cn/note/vue-parcel-demo/)（已使用 Vite + Vue3 + TypeScript 重构），拿来练手的小玩意儿。所以代码很丑，也没做啥后端校验。 因为之前 API 次数被人恶意刷完了，所以重置了数据，现在加了邮箱验证才能提交。
 
-大家乐呵乐呵完事了，我本身也是白嫖的 LeanCloud 的开发版，刷数据最多也就到 LeanCloud 的每日上限。
+乐呵乐呵完事了，我本身也是白嫖的 LeanCloud 的开发版，刷数据最多也就到 LeanCloud 的每日上限。
 
-大家要真想打钱，也不用给我打，有现成的 [联合国儿童基金会](https://www.unicef.cn/)。
+大家要想打钱，也不用给我打，有现成的 [联合国儿童基金会](https://www.unicef.cn/)。
+
+~~[要是真想给我打钱，也不是不行，哼！](https://sponsors.yunyoujun.cn)~~
 
 最后，欧尼酱，da i su ki。 （网页声音预警，看到有欧尼酱说不小心社会性死亡了。）
 
@@ -38,12 +40,17 @@ I'm so cute. Please give me money.
 
 ## Base
 
-- [Vue](https://vuejs.org)
-- [Parcel](https://parceljs.org)
+- ~~[Parcel](https://parceljs.org)~~
+- [Vite](https://vitejs.dev/)
+- ~~[Vue](https://vuejs.org)~~
+- [Vue3](https://v3.vuejs.org)
 - [Vuex](https://vuex.vuejs.org)
-- [iconfont](http://iconfont.cn)
-- [Element](https://github.com/ElemeFE/element/)
+- [iconify](https://iconify.design/)
+- ~~[Element](https://github.com/ElemeFE/element/)~~
+- [Element-Plus](https://github.com/element-plus/element-plus/)
 - [element-theme-ink](https://github.com/YunYouJun/element-theme-ink/)
+- [vue-i18n](https://github.com/intlify/vue-i18n-next)
+- [TypeScript](https://www.typescriptlang.org/)
 
 ## Storage
 

@@ -20,18 +20,27 @@
   </el-menu>
 </template>
 
-<script setup lang="ts">
-import { computed } from "vue";
+<script lang="ts">
+import { computed, defineComponent } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
-const { t } = useI18n();
-const route = useRoute();
-const activeMenuIndex = computed(() => {
-  return route.path;
+
+export default defineComponent({
+  setup() {
+    const { t } = useI18n();
+    const route = useRoute();
+    const activeMenuIndex = computed(() => {
+      return route.path;
+    });
+    return {
+      t,
+      activeMenuIndex,
+    };
+  },
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .right-menu {
   float: right;
   height: 60px;
