@@ -7,7 +7,6 @@ import ViteIcons, { ViteIconsResolver } from "vite-plugin-icons";
 import ViteComponents from "vite-plugin-components";
 import Markdown from "vite-plugin-md";
 import WindiCSS from "vite-plugin-windicss";
-import { VitePWA } from "vite-plugin-pwa";
 import VueI18n from "@intlify/vite-plugin-vue-i18n";
 import styleImport from "vite-plugin-style-import";
 
@@ -112,23 +111,6 @@ export default defineConfig({
     // https://github.com/antfu/vite-plugin-windicss
     WindiCSS({
       safelist: "prose prose-sm m-auto text-left",
-    }),
-
-    // https://github.com/antfu/vite-plugin-pwa
-    VitePWA({
-      registerType: "autoUpdate",
-      manifest: {
-        name: "Give Me Money!",
-        short_name: "Money!",
-        theme_color: "#000000",
-        icons: [
-          {
-            src: "/money.png",
-            sizes: "200x200",
-            type: "image/png",
-          },
-        ],
-      },
     }),
 
     // https://github.com/intlify/vite-plugin-vue-i18n
