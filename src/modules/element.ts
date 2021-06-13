@@ -20,7 +20,9 @@ import {
   ElCheckbox,
   ElCarousel,
   ElCarouselItem,
-  ElPagination
+  ElPagination,
+  ElLoading,
+  ElMessage
 } from "element-plus";
 
 import "element-theme-ink";
@@ -45,7 +47,9 @@ const components = [
   ElCheckbox,
   ElCarousel,
   ElCarouselItem,
-  ElPagination
+  ElPagination,
+  ElLoading,
+  ElMessage
 ];
 
 export const install: UserModule = ({ app }) => {
