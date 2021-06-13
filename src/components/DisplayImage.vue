@@ -11,7 +11,7 @@
       :name="name"
       :label="item.label"
     >
-      <img style="width:100%" :src="item.path" :alt="item.label" />
+      <img style="width: 100%" :src="item.path" :alt="item.label" />
     </el-carousel-item>
   </el-carousel>
 </template>

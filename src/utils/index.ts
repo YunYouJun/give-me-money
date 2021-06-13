@@ -4,10 +4,10 @@ import AV from "leancloud-storage";
 export function queryOkCounter() {
   const queryPay = new AV.Query("Pay");
   return queryPay.count().then(
-    count => {
+    (count) => {
       return count;
     },
-    error => {
+    (error) => {
       // not exist
       if (error.code === 101) {
         const Pay = AV.Object.extend("Pay");
@@ -25,7 +25,7 @@ export function queryOkCounter() {
         message: "Code " + error.code + " : " + error.rawMessage,
         type: "warning",
       });
-    },
+    }
   );
 }
 
@@ -34,10 +34,10 @@ export function queryNoCounter(): Promise<number> {
   queryNo.equalTo("name", "no");
   return queryNo
     .find()
-    .then(data => {
+    .then((data) => {
       return data[0].get("time");
     })
-    .catch(error => {
+    .catch((error) => {
       if (error.code === 101) {
         const Counter = AV.Object.extend("Counter");
         const counter = new Counter();

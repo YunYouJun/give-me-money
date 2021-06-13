@@ -20,8 +20,8 @@ const messages = Object.fromEntries(
           ...value.default,
         },
       ];
-    },
-  ),
+    }
+  )
 );
 
 export const install: UserModule = ({ app }) => {

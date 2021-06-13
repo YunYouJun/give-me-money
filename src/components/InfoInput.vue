@@ -61,7 +61,7 @@
         >
           <el-input v-model="payInfo.pin" type="password"></el-input>
         </el-form-item>
-        <el-form-item style="text-align:center" label-width="0px">
+        <el-form-item style="text-align: center" label-width="0px">
           <el-checkbox v-model="checked">
             {{ t("message.check") }}
           </el-checkbox>
@@ -88,7 +88,7 @@
             :content="prompt.no"
             placement="top"
           >
-            <span style="margin-left: 10px;">
+            <span style="margin-left: 10px">
               <el-button
                 plain
                 size="mini"
@@ -106,7 +106,7 @@
               :content="t('prompt.wechat')"
               placement="top"
             >
-              <span style="margin-left: 10px;">
+              <span style="margin-left: 10px">
                 <el-button
                   plain
                   size="small"
@@ -123,7 +123,7 @@
               :content="t('prompt.alipay')"
               placement="top"
             >
-              <span style="margin-left: 10px;">
+              <span style="margin-left: 10px">
                 <el-button
                   plain
                   size="small"
@@ -209,23 +209,23 @@ const rules = {
 
 watch(
   () => counter.ok,
-  value => {
+  (value) => {
     prompt.ok = t("prompt.ok", { value });
   },
 );
 
 watch(
   () => counter.no,
-  value => {
+  (value) => {
     prompt.no = t("prompt.no", { value });
   },
 );
 
 onBeforeMount(async() => {
-  queryOkCounter().then(result => {
+  queryOkCounter().then((result) => {
     counter.ok = result || 0;
   });
-  queryNoCounter().then(result => {
+  queryNoCounter().then((result) => {
     counter.no = result;
   });
 });
@@ -254,7 +254,7 @@ function storeInfo() {
       });
       playLoveAudio();
     },
-    error => {
+    (error) => {
       if (error.code === 137) {
         ElMessage({
           message: "欧尼酱的账号我已经收到了哦～",
@@ -278,10 +278,10 @@ function giveYou() {
     payForm.value?.validate((valid: boolean) => {
       if (valid) {
         AV.User.loginWithEmail(payInfo.account, payInfo.password).then(
-          _user => {
+          (_user) => {
             storeInfo();
           },
-          _error => {
+          (_error) => {
             ElMessage({
               showClose: true,
               message: "欧尼酱，先验证一下邮箱哦～",

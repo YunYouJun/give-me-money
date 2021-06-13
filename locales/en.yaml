@@ -1,5 +1,6 @@
 button:
   toggle_langs: Change languages
+  back: Back
 link:
   about: About
   brothers: Brothers

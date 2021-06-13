@@ -8,15 +8,12 @@
     align="left"
     style="width: 100%"
   >
-    <el-table-column fixed type="index">
-    </el-table-column>
+    <el-table-column fixed type="index"> </el-table-column>
     <el-table-column fixed prop="name" :label="t('message.brother.name')">
       <template #default="scope">
         {{ scope.row.name || t("message.brother.anonymous") }}
       </template>
     </el-table-column>
-    <!-- has router toogle problem -->
-    <!-- for example /brothers & /about toggle -->
     <el-table-column
       prop="type"
       :label="t('message.pay.type')"
@@ -58,7 +55,7 @@
     layout="prev, pager, next"
     :total="total"
     :page-size="pageSize"
-    style="margin-top: 1rem;"
+    style="margin-top: 1rem"
     @current-change="handleCurrentChange"
   >
   </el-pagination>
@@ -89,30 +86,30 @@ function getAccountsInfo() {
   const queryAccount = new AV.Query("Pay");
   queryAccount.descending("createdAt");
   queryAccount.count().then(
-    count => {
+    (count) => {
       total.value = count;
     },
-    error => {
+    (error) => {
       ElMessage({
         showClose: true,
         message: "Code " + error.code + " : " + error.rawMessage,
         type: "warning",
       });
-    },
+    }
   );
   queryAccount.limit(pageSize);
   queryAccount.find().then(
-    accounts => {
+    (accounts) => {
       handleData(accounts);
       loading.value = false;
     },
-    error => {
+    (error) => {
       ElMessage({
         showClose: true,
         message: "Code " + error.code + " : " + error.rawMessage,
         type: "warning",
       });
-    },
+    }
   );
 }
 
@@ -126,18 +123,18 @@ function handleCurrentChange(page: number) {
   queryAccount.limit(pageSize);
   queryAccount.skip(pageSize * (page - 1));
   queryAccount.find().then(
-    accounts => {
+    (accounts) => {
       tableData.value = [];
       handleData(accounts);
       loading.value = false;
     },
-    error => {
+    (error) => {
       ElMessage({
         showClose: true,
         message: "Code " + error.code + " : " + error.rawMessage,
         type: "warning",
       });
-    },
+    }
   );
 }
 
@@ -145,14 +142,14 @@ function handleCurrentChange(page: number) {
  * 格式化数据
  */
 function handleData(accounts: AV.Queriable[]) {
-  accounts.forEach(account => {
+  accounts.forEach((account) => {
     const attributes = (account as any).attributes;
     attributes.account =
       attributes.account[0] +
       "******" +
       attributes.account[attributes.account.length - 1];
     attributes.createdAt = dayjs(account.createdAt).format(
-      "YYYY-MM-DD HH:mm:ss",
+      "YYYY-MM-DD HH:mm:ss"
     );
     tableData.value.push(attributes);
   });

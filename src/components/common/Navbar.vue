@@ -20,23 +20,15 @@
   </el-menu>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from "vue";
+<script setup lang="ts">
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 
-export default defineComponent({
-  setup() {
-    const { t } = useI18n();
-    const route = useRoute();
-    const activeMenuIndex = computed(() => {
-      return route.path;
-    });
-    return {
-      t,
-      activeMenuIndex,
-    };
-  },
+const { t } = useI18n();
+const route = useRoute();
+const activeMenuIndex = computed(() => {
+  return route.path;
 });
 </script>
 

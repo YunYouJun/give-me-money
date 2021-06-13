@@ -2,6 +2,8 @@
 .cache
 dist
 .DS_Store
+
+# lock
 yarn.lock
 package-lock.json
 pnpm-lock.yaml
@@ -29,5 +31,6 @@ node_modules/
 .env
 
 # vite
-.vite-ssg-temp
 components.d.ts
+.vite-ssg-dist
+.vite-ssg-temp

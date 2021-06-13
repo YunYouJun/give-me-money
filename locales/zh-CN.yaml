@@ -1,5 +1,6 @@
 button:
   toggle_langs: 切换语言
+  back: 返回
 link:
   about: 关于
   brothers: 哥哥们~

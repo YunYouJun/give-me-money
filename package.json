@@ -2,24 +2,38 @@
   "name": "give-me-money",
   "private": true,
   "version": "1.0.0",
-  "description": "Please give me money.",
-  "scripts": {
-    "start": "npm run dev",
-    "dev": "vite --port 2333 --open",
-    "build": "cross-env NODE_ENV=production vite-ssg build",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
-  },
+  "description": "Please give me money. 我很可爱，请给我钱！",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/YunYouJun/give-me-money.git"
   },
   "author": "YunYouJun <me@yunyoujun.cn>",
-  "license": "MIT",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "vite --port 2333 --open",
+    "build": "cross-env NODE_ENV=production vite-ssg build",
+    "lint": "npx eslint --ext .js,.ts,.json,.vue --fix .",
+    "serve": "vite preview"
+  },
   "bugs": {
     "url": "https://github.com/YunYouJun/give-me-money/issues"
   },
   "homepage": "https://github.com/YunYouJun/give-me-money#readme",
+  "dependencies": {
+    "@vueuse/core": "^5.0.2",
+    "@vueuse/head": "^0.6.0",
+    "dayjs": "^1.10.5",
+    "element-plus": "1.0.2-beta.48",
+    "element-theme-ink": "^1.1.3",
+    "leancloud-storage": "^4.11.1",
+    "nprogress": "^0.2.0",
+    "vue": "^3.1.1",
+    "vue-about-me": "^1.0.0-alpha.5",
+    "vue-i18n": "^9.1.6",
+    "vue-router": "^4.0.8",
+    "vuex": "^4.0.1"
+  },
   "devDependencies": {
     "@iconify/json": "^1.1.355",
     "@intlify/vite-plugin-vue-i18n": "^2.2.1",
@@ -27,10 +41,11 @@
     "@vitejs/plugin-vue": "^1.2.3",
     "@vue/compiler-sfc": "^3.1.1",
     "@vue/server-renderer": "^3.1.1",
-    "@yunyoujun/eslint-config": "^0.0.6",
+    "@yunyoujun/eslint-config": "^0.2.0",
     "cross-env": "^7.0.3",
-    "element-plus": "1.0.2-beta.45",
     "eslint": "^7.28.0",
+    "markdown-it-link-attributes": "^3.0.0",
+    "markdown-it-prism": "^2.1.6",
     "sass": "^1.34.1",
     "typescript": "^4.3.2",
     "vite": "^2.3.7",
@@ -42,19 +57,5 @@
     "vite-plugin-vue-layouts": "^0.3.1",
     "vite-plugin-windicss": "^0.17.1",
     "vite-ssg": "^0.11.2"
-  },
-  "dependencies": {
-    "@vueuse/core": "^5.0.2",
-    "@vueuse/head": "^0.6.0",
-    "dayjs": "^1.10.5",
-    "element-theme-ink": "^1.1.3",
-    "leancloud-storage": "^4.11.1",
-    "nprogress": "^0.2.0",
-    "vue": "^3.1.1",
-    "vue-about-me": "^1.0.0-alpha.5",
-    "vue-i18n": "^9.1.6",
-    "vue-router": "^4.0.8",
-    "vuex": "^4.0.1",
-    "workbox-window": "^6.1.5"
   }
 }

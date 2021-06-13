@@ -5,10 +5,14 @@ import Pages from "vite-plugin-pages";
 import Layouts from "vite-plugin-vue-layouts";
 import ViteIcons, { ViteIconsResolver } from "vite-plugin-icons";
 import ViteComponents from "vite-plugin-components";
+
 import Markdown from "vite-plugin-md";
+import Prism from "markdown-it-prism";
+import LinkAttributes from "markdown-it-link-attributes";
+
 import WindiCSS from "vite-plugin-windicss";
 import VueI18n from "@intlify/vite-plugin-vue-i18n";
-import styleImport from "vite-plugin-style-import";
+import StyleImport from "vite-plugin-style-import";
 
 export default defineConfig({
   resolve: {
@@ -21,17 +25,19 @@ export default defineConfig({
       include: [/\.vue$/, /\.md$/],
     }),
 
-    styleImport({
+    StyleImport({
       libs: [
         {
           libraryName: "element-plus",
           esModule: true,
           ensureStyleFile: true,
-          resolveStyle: name => {
+          resolveStyle: (name) => {
             name = name.slice(3);
-            return `element-plus/packages/theme-chalk/src/${name}.scss`;
+            // return `element-plus/packages/theme-chalk/src/${name}.scss`;
+            // return `element-theme-ink/src/${name}.scss`;
+            return `element-theme-ink/dist/${name}.css`;
           },
-          resolveComponent: name => {
+          resolveComponent: (name) => {
             return `element-plus/lib/${name}`;
           },
         },
@@ -52,37 +58,14 @@ export default defineConfig({
       headEnabled: true,
 
       markdownItSetup(md) {
-        // https://github.com/markdown-it/markdown-it/blob/master/docs/architecture.md#renderer
-        // Remember old renderer, if overridden, or proxy to default renderer
-        const defaultRender =
-          md.renderer.rules.link_open ||
-          function(tokens: any, idx: any, options: any, env: any, self: any) {
-            return self.renderToken(tokens, idx, options);
-          };
-
-        md.renderer.rules.link_open = function(
-          tokens: any,
-          idx: string | number,
-          options: any,
-          env: any,
-          self: any,
-        ) {
-          const hrefIndex = tokens[idx].attrIndex("href");
-          const href = tokens[idx].attrs[hrefIndex][1];
-          if (href.startsWith("http://") || href.startsWith("https://")) {
-            // If you are sure other plugins can't add `target` - drop check below
-            const aIndex = tokens[idx].attrIndex("target");
-
-            if (aIndex < 0) {
-              tokens[idx].attrPush(["target", "_blank"]); // add new attribute
-            } else {
-              tokens[idx].attrs[aIndex][1] = "_blank"; // replace value of existing attr
-            }
-          }
-
-          // pass token to default renderer.
-          return defaultRender(tokens, idx, options, env, self);
-        };
+        md.use(Prism);
+        md.use(LinkAttributes, {
+          pattern: /^https?:\/\//,
+          attrs: {
+            target: "_blank",
+            rel: "noopener",
+          },
+        });
       },
     }),
 
@@ -92,16 +75,12 @@ export default defineConfig({
       extensions: ["vue", "md"],
 
       // allow auto import and register components used in markdown
-      customLoaderMatcher: id => id.endsWith(".md"),
-
-      globalComponentsDeclaration: true,
+      customLoaderMatcher: (id) => id.endsWith(".md"),
 
       // auto import icons
       customComponentResolvers: [
         // https://github.com/antfu/vite-plugin-icons
-        ViteIconsResolver({
-          // enabledCollections: ['carbon']
-        }),
+        ViteIconsResolver(),
       ],
     }),
 
@@ -118,6 +97,7 @@ export default defineConfig({
       include: [path.resolve(__dirname, "locales/**")],
     }),
   ],
+
   // https://github.com/antfu/vite-ssg
   ssgOptions: {
     script: "async",
