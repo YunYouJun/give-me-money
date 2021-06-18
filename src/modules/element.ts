@@ -18,11 +18,9 @@ import {
   ElTooltip,
   ElInput,
   ElCheckbox,
-  ElCarousel,
-  ElCarouselItem,
   ElPagination,
   ElLoading,
-  ElMessage
+  ElMessage,
 } from "element-plus";
 
 import "element-theme-ink";
@@ -45,11 +43,9 @@ const components = [
   ElTooltip,
   ElInput,
   ElCheckbox,
-  ElCarousel,
-  ElCarouselItem,
   ElPagination,
   ElLoading,
-  ElMessage
+  ElMessage,
 ];
 
 export const install: UserModule = ({ app }) => {

@@ -1,27 +1,27 @@
 <template>
-  <el-carousel
-    ref="carousel"
-    :autoplay="false"
-    indicator-position="none"
-    arrow="never"
-  >
-    <el-carousel-item
-      v-for="(item, name) in album"
-      :key="name"
-      :name="name"
-      :label="item.label"
+  <el-row>
+    <el-col
+      :xs="{ span: 24, offset: 0 }"
+      :sm="{ span: 16, offset: 4 }"
+      :md="{ span: 16, offset: 4 }"
+      :lg="{ span: 12, offset: 6 }"
+      :xl="{ span: 8, offset: 8 }"
     >
-      <img style="width: 100%" :src="item.path" :alt="item.label" />
-    </el-carousel-item>
-  </el-carousel>
+      <img
+        ref="loliImg"
+        class="loli-img"
+        :src="album.wow.path"
+        :alt="album.wow.label"
+      />
+    </el-col>
+  </el-row>
 </template>
 
 <script setup lang="ts">
-import { ElCarousel } from "element-plus";
 import { watch, ref } from "vue";
 import { useStore } from "vuex";
 
-const carousel = ref<typeof ElCarousel | null>(null);
+const loliImg = ref<HTMLImageElement | null>();
 const album = {
   wow: {
     path: "/img/0.jpg",
@@ -42,8 +42,10 @@ const store = useStore();
 /**
  * 设置轮播索引
  */
-function setActiveItem(index: string) {
-  carousel.value?.setActiveItem(index);
+function setActiveItem(index: "wow" | "thank" | "hum") {
+  if (loliImg.value) {
+    loliImg.value.src = album[index].path;
+  }
 }
 
 watch(
@@ -67,18 +69,14 @@ watch(
 </script>
 
 <style lang="scss">
-.el-carousel__container {
-  height: 400px !important;
-}
-@media screen and (max-device-width: 768px) {
-  .el-carousel__container {
-    height: 350px !important;
-  }
-}
-
-@media screen and (max-device-width: 480px) {
-  .el-carousel__container {
-    height: 190px !important;
+.loli-img {
+  width: 100%;
+  max-height: 400px;
+  transition: 0.4s;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  &:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   }
 }
 </style>

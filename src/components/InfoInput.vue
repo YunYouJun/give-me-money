@@ -1,142 +1,137 @@
 <template>
-  <el-row>
-    <el-col>
-      <h2>
-        {{
-          t("message.give-me-pay", {
-            name: t("message." + payInfo.type + ".name"),
-          })
-        }}
-      </h2>
-    </el-col>
-    <el-col
-      :xs="{ span: 24, offset: 0 }"
-      :sm="{ span: 20, offset: 2 }"
-      :md="{ span: 16, offset: 4 }"
-      :lg="{ span: 12, offset: 6 }"
-      :xl="{ span: 8, offset: 8 }"
+  <div style="max-width: 1000px; margin: auto">
+    <h2 :style="{ textAlign: 'center' }">
+      {{
+        t("message.give-me-pay", {
+          name: t("message." + payInfo.type + ".name"),
+        })
+      }}
+    </h2>
+
+    <el-form
+      ref="payForm"
+      :model="payInfo"
+      :rules="rules"
+      label-width="135px"
+      @keyup.enter="submitForm"
     >
-      <el-form
-        ref="payForm"
-        :model="payInfo"
-        :rules="rules"
-        label-width="135px"
-        @keyup.enter="submitForm"
+      <el-form-item :label="t('message.name')" prop="name">
+        <el-input
+          v-model="name"
+          autofocus
+          :placeholder="t('message.name-placeholder')"
+        >
+        </el-input>
+      </el-form-item>
+      <el-form-item
+        :label="
+          t('message.' + payInfo.type + '.name') + t('message.pay.account')
+        "
+        prop="account"
       >
-        <el-form-item :label="t('message.name')" prop="name">
-          <el-input
-            v-model="name"
-            autofocus
-            :placeholder="t('message.name-placeholder')"
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item
-          :label="
-            t('message.' + payInfo.type + '.name') + t('message.pay.account')
-          "
-          prop="account"
+        <el-input
+          v-model="payInfo.account"
+          autofocus
+          placeholder="需要验证邮箱才行哦～"
         >
-          <el-input
-            v-model="payInfo.account"
-            autofocus
-            placeholder="需要验证邮箱才行哦～"
-          >
-            <template #append>
-              <el-button icon="el-icon-message" @click="submitForm"></el-button>
-            </template>
-          </el-input>
-        </el-form-item>
-        <el-form-item
-          :label="
-            t('message.' + payInfo.type + '.name') + t('message.pay.password')
-          "
-          prop="password"
+          <template #append>
+            <el-button icon="el-icon-message" @click="submitForm"></el-button>
+          </template>
+        </el-input>
+      </el-form-item>
+      <el-form-item
+        :label="
+          t('message.' + payInfo.type + '.name') + t('message.pay.password')
+        "
+        prop="password"
+      >
+        <el-input v-model="payInfo.password" type="password"></el-input>
+      </el-form-item>
+      <el-form-item
+        :label="t('message.' + payInfo.type + '.name') + t('message.pay.pin')"
+        prop="pin"
+      >
+        <el-input
+          v-model="payInfo.pin"
+          type="password"
+          :maxlength="6"
+        ></el-input>
+      </el-form-item>
+      <el-form-item style="text-align: center" label-width="0px">
+        <el-checkbox v-model="checked">
+          {{ t("message.check") }}
+        </el-checkbox>
+      </el-form-item>
+      <el-form-item label-width="0px">
+        <el-tooltip
+          class="item"
+          effect="light"
+          :content="prompt.ok"
+          placement="top"
         >
-          <el-input v-model="payInfo.password" type="password"></el-input>
-        </el-form-item>
-        <el-form-item
-          :label="t('message.' + payInfo.type + '.name') + t('message.pay.pin')"
-          prop="pin"
-        >
-          <el-input v-model="payInfo.pin" type="password"></el-input>
-        </el-form-item>
-        <el-form-item style="text-align: center" label-width="0px">
-          <el-checkbox v-model="checked">
-            {{ t("message.check") }}
-          </el-checkbox>
-        </el-form-item>
-        <el-form-item label-width="0px">
-          <el-tooltip
-            class="item"
-            effect="light"
-            :content="prompt.ok"
-            placement="top"
+          <el-button
+            plain
+            type="primary"
+            :disabled="disabled.ok"
+            @click="giveYou"
           >
+            {{ t("message.ok") }}
+          </el-button>
+        </el-tooltip>
+        <el-tooltip
+          class="item"
+          effect="light"
+          :content="prompt.no"
+          placement="top"
+        >
+          <span style="margin-left: 10px">
             <el-button
               plain
-              type="primary"
-              :disabled="disabled.ok"
-              @click="giveYou"
-            >
-              {{ t("message.ok") }}
-            </el-button>
-          </el-tooltip>
+              size="mini"
+              type="danger"
+              :disabled="disabled.no"
+              @click="resetForm"
+            >{{ t("message.no") }}</el-button>
+          </span>
+        </el-tooltip>
+
+        <span v-show="payInfo.type === 'alipay'">
           <el-tooltip
             class="item"
             effect="light"
-            :content="prompt.no"
+            :content="t('prompt.wechat')"
             placement="top"
           >
             <span style="margin-left: 10px">
               <el-button
                 plain
-                size="mini"
-                type="danger"
-                :disabled="disabled.no"
-                @click="resetForm"
-              >{{ t("message.no") }}</el-button>
+                size="small"
+                type="success"
+                @click="useForm('wechat')"
+              >{{ t("message.wechat.button") }}</el-button>
             </span>
           </el-tooltip>
-
-          <span v-show="payInfo.type === 'alipay'">
-            <el-tooltip
-              class="item"
-              effect="light"
-              :content="t('prompt.wechat')"
-              placement="top"
-            >
-              <span style="margin-left: 10px">
-                <el-button
-                  plain
-                  size="small"
-                  type="success"
-                  @click="useForm('wechat')"
-                >{{ t("message.wechat.button") }}</el-button>
-              </span>
-            </el-tooltip>
-          </span>
-          <span v-show="payInfo.type === 'wechat'">
-            <el-tooltip
-              class="item"
-              effect="light"
-              :content="t('prompt.alipay')"
-              placement="top"
-            >
-              <span style="margin-left: 10px">
-                <el-button
-                  plain
-                  size="small"
-                  type="primary"
-                  @click="useForm('alipay')"
-                >{{ t("message.alipay.button") }}</el-button>
-              </span>
-            </el-tooltip>
-          </span>
-        </el-form-item>
-      </el-form>
-    </el-col>
-  </el-row>
+        </span>
+        <span v-show="payInfo.type === 'wechat'">
+          <el-tooltip
+            class="item"
+            effect="light"
+            :content="t('prompt.alipay')"
+            placement="top"
+          >
+            <span style="margin-left: 10px">
+              <el-button
+                plain
+                size="small"
+                type="primary"
+                @click="useForm('alipay')"
+              >{{ t("message.alipay.button") }}</el-button>
+            </span>
+          </el-tooltip>
+        </span>
+      </el-form-item>
+    </el-form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -170,10 +165,10 @@ const disabled = reactive({
   no: false,
 });
 
-const prompt = {
+const prompt = reactive({
   ok: "还没有欧尼酱愿意告诉我支付宝……",
   no: "还没有人胆敢拒绝我！",
-};
+});
 
 const rules = {
   account: [
@@ -202,8 +197,21 @@ const rules = {
       message: t("prompt.pay.pin"),
       trigger: "blur",
     },
-    { type: "number", message: "我记得交易密码是纯数字吧！" },
     { len: 6, message: "交易密码是六位吧！", trigger: "blur" },
+    {
+      validator: (
+        rule: any,
+        value: number,
+        callback: (err: Error | null) => void,
+      ) => {
+        if (isNaN(value)) {
+          callback(new Error("我记得交易密码是纯数字吧！"));
+        } else {
+          callback(null);
+        }
+      },
+      trigger: "blur",
+    },
   ],
 };
 
