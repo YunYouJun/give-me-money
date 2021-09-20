@@ -1,11 +1,11 @@
-import { UserModule } from "~/types";
-import { createStore } from "vuex";
+import { createStore } from 'vuex'
+import { UserModule } from '~/types'
 
 export interface State {
   /**
    * 选择
    */
-  decision: string;
+  decision: string
 }
 
 // define injection key
@@ -13,19 +13,19 @@ export interface State {
 
 export const store = createStore<State>({
   state: {
-    decision: "",
+    decision: '',
   },
   mutations: {
     decide(state, decision) {
-      state.decision = decision;
+      state.decision = decision
     },
   },
   actions: {},
-});
+})
 
 export const install: UserModule = ({ app, isClient }) => {
-  if (!isClient) {
-    return;
-  }
-  app.use(store);
-};
+  if (!isClient)
+    return
+
+  app.use(store)
+}

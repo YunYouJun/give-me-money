@@ -18,54 +18,53 @@
 </template>
 
 <script setup lang="ts">
-import { watch, ref } from "vue";
-import { useStore } from "vuex";
+import { watch, ref } from 'vue'
+import { useStore } from 'vuex'
 
-const loliImg = ref<HTMLImageElement | null>();
+const loliImg = ref<HTMLImageElement | null>()
 const album = {
   wow: {
-    path: "/img/0.jpg",
-    label: "好吗？",
+    path: '/img/0.jpg',
+    label: '好吗？',
   },
   thank: {
-    path: "/img/1.jpg",
-    label: "那个……谢谢啦……",
+    path: '/img/1.jpg',
+    label: '那个……谢谢啦……',
   },
   hum: {
-    path: "/img/2.jpg",
-    label: "哼！",
+    path: '/img/2.jpg',
+    label: '哼！',
   },
-};
+}
 
-const store = useStore();
+const store = useStore()
 
 /**
  * 设置轮播索引
  */
-function setActiveItem(index: "wow" | "thank" | "hum") {
-  if (loliImg.value) {
-    loliImg.value.src = album[index].path;
-  }
+function setActiveItem(index: 'wow' | 'thank' | 'hum') {
+  if (loliImg.value)
+    loliImg.value.src = album[index].path
 }
 
 watch(
   () => store.state.decision,
   (val: string) => {
     switch (val) {
-      case "wow":
-        setActiveItem("wow");
-        break;
-      case "ok":
-        setActiveItem("thank");
-        break;
-      case "no":
-        setActiveItem("hum");
-        break;
+      case 'wow':
+        setActiveItem('wow')
+        break
+      case 'ok':
+        setActiveItem('thank')
+        break
+      case 'no':
+        setActiveItem('hum')
+        break
       default:
-        break;
+        break
     }
   },
-);
+)
 </script>
 
 <style lang="scss">

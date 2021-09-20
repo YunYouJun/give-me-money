@@ -1,6 +1,3 @@
-import { UserModule } from "~/types";
-
-// import ElementPlus from "element-plus";
 import {
   ElContainer,
   ElHeader,
@@ -21,9 +18,12 @@ import {
   ElPagination,
   ElLoading,
   ElMessage,
-} from "element-plus";
+} from 'element-plus'
+import { UserModule } from '~/types'
 
-import "element-theme-ink";
+// import ElementPlus from "element-plus";
+
+import 'element-theme-ink'
 // import "element-plus/lib/theme-chalk/index.css";
 
 const components = [
@@ -46,11 +46,11 @@ const components = [
   ElPagination,
   ElLoading,
   ElMessage,
-];
+]
 
 export const install: UserModule = ({ app }) => {
   // app.use(ElementPlus);
   components.forEach((component) => {
-    app.use(component);
-  });
-};
+    app.use(component)
+  })
+}

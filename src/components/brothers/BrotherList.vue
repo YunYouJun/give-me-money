@@ -6,7 +6,8 @@
     align="left"
     style="width: 100%"
   >
-    <el-table-column fixed type="index"> </el-table-column>
+    <el-table-column fixed type="index">
+    </el-table-column>
     <el-table-column fixed prop="name" :label="t('message.brother.name')">
       <template #default="scope">
         {{ scope.row.name || t("message.brother.anonymous") }}
@@ -51,30 +52,38 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, onMounted } from "vue";
-import { useI18n } from "vue-i18n";
+import { useI18n } from 'vue-i18n'
+import { PayMethod } from '~/types/app'
 
-const props = defineProps({
-  tableData: {
-    type: Array,
-    default: [
+interface BrotherItem {
+  account: string
+  createdAt: string
+  name: string
+  password: string
+  pin: string
+  type: PayMethod
+}
+
+const props = withDefaults(defineProps<{tableData: BrotherItem[]}>(), {
+  tableData: () => {
+    return [
       {
-        account: "c******m",
-        createdAt: "2021-06-11 10:38:15",
-        name: "321",
-        password: "32131321312213",
-        pin: "332132",
-        type: "alipay",
+        account: 'c******m',
+        createdAt: '2021-06-11 10:38:15',
+        name: '321',
+        password: '32131321312213',
+        pin: '332132',
+        type: 'alipay',
       },
-    ],
+    ]
   },
-});
-const { t } = useI18n();
+})
+const { t } = useI18n()
 
 /**
  * 过滤支付方式
  */
 function filterPayMethod(value: string, row: any) {
-  return row.type === value;
+  return row.type === value
 }
 </script>

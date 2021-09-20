@@ -135,147 +135,148 @@
 </template>
 
 <script setup lang="ts">
-import { watch, ref, reactive, onBeforeMount } from "vue";
-import { ElMessage, ElForm } from "element-plus";
-import { useI18n } from "vue-i18n";
-import { playLoveAudio, queryOkCounter, queryNoCounter } from "../utils";
-import AV from "leancloud-storage";
-import { useStore } from "vuex";
-const { t } = useI18n();
-const store = useStore();
-const payForm = ref<typeof ElForm | null>(null);
+import { watch, ref, reactive, onBeforeMount } from 'vue'
+import { ElMessage, ElForm } from 'element-plus'
+import { useI18n } from 'vue-i18n'
+import AV from 'leancloud-storage'
+import { useStore } from 'vuex'
+import { playLoveAudio, queryOkCounter, queryNoCounter } from '../utils'
+const { t } = useI18n()
+const store = useStore()
+const payForm = ref<typeof ElForm | null>(null)
 
-const name = ref("");
-const checked = ref(false);
+const name = ref('')
+const checked = ref(false)
 
 const payInfo = reactive({
-  type: "alipay",
-  account: "",
-  password: "",
-  pin: "",
-});
+  type: 'alipay',
+  account: '',
+  password: '',
+  pin: '',
+})
 
 const counter = reactive({
   ok: 0,
   no: 0,
-});
+})
 
 const disabled = reactive({
   ok: false,
   no: false,
-});
+})
 
 const prompt = reactive({
-  ok: "还没有欧尼酱愿意告诉我支付宝……",
-  no: "还没有人胆敢拒绝我！",
-});
+  ok: '还没有欧尼酱愿意告诉我支付宝……',
+  no: '还没有人胆敢拒绝我！',
+})
 
 const rules = {
   account: [
     {
       required: true,
-      message: t("prompt.pay.account"),
-      trigger: "blur",
+      message: t('prompt.pay.account'),
+      trigger: 'blur',
     },
     {
-      type: "email",
-      message: "邮箱账号真的长这样吗？",
-      trigger: "blur",
+      type: 'email',
+      message: '邮箱账号真的长这样吗？',
+      trigger: 'blur',
     },
   ],
   password: [
     {
       required: true,
-      message: t("prompt.pay.password"),
-      trigger: "blur",
+      message: t('prompt.pay.password'),
+      trigger: 'blur',
     },
-    { min: 6, message: "密码可能这么简单吗？", trigger: "blur" },
+    { min: 6, message: '密码可能这么简单吗？', trigger: 'blur' },
   ],
   pin: [
     {
       required: true,
-      message: t("prompt.pay.pin"),
-      trigger: "blur",
+      message: t('prompt.pay.pin'),
+      trigger: 'blur',
     },
-    { len: 6, message: "交易密码是六位吧！", trigger: "blur" },
+    { len: 6, message: '交易密码是六位吧！', trigger: 'blur' },
     {
       validator: (
         rule: any,
         value: number,
         callback: (err: Error | null) => void,
       ) => {
-        if (isNaN(value)) {
-          callback(new Error("我记得交易密码是纯数字吧！"));
-        } else {
-          callback(null);
-        }
+        if (isNaN(value))
+          callback(new Error('我记得交易密码是纯数字吧！'))
+
+        else
+          callback(null)
       },
-      trigger: "blur",
+      trigger: 'blur',
     },
   ],
-};
+}
 
 watch(
   () => counter.ok,
   (value) => {
-    prompt.ok = t("prompt.ok", { value });
+    prompt.ok = t('prompt.ok', { value })
   },
-);
+)
 
 watch(
   () => counter.no,
   (value) => {
-    prompt.no = t("prompt.no", { value });
+    prompt.no = t('prompt.no', { value })
   },
-);
+)
 
 onBeforeMount(async() => {
   queryOkCounter().then((result) => {
-    counter.ok = result || 0;
-  });
+    counter.ok = result || 0
+  })
   queryNoCounter().then((result) => {
-    counter.no = result;
-  });
-});
+    counter.no = result
+  })
+})
 
 /**
  * 存储信息
  */
 function storeInfo() {
-  const Pay = AV.Object.extend("Pay");
-  const pay = new Pay();
-  pay.set("name", name.value);
-  pay.set("type", payInfo.type);
-  pay.set("account", payInfo.account);
-  pay.set("password", payInfo.password);
-  pay.set("pin", payInfo.pin);
+  const Pay = AV.Object.extend('Pay')
+  const pay = new Pay()
+  pay.set('name', name.value)
+  pay.set('type', payInfo.type)
+  pay.set('account', payInfo.account)
+  pay.set('password', payInfo.password)
+  pay.set('pin', payInfo.pin)
   pay.save().then(
     () => {
-      store.commit("decide", "ok");
-      disabled.ok = true; // 禁用 ok 按钮
-      queryOkCounter();
+      store.commit('decide', 'ok')
+      disabled.ok = true // 禁用 ok 按钮
+      queryOkCounter()
       ElMessage({
         showClose: true,
-        message: t("message.thank"),
-        type: "success",
+        message: t('message.thank'),
+        type: 'success',
         center: true,
-      });
-      playLoveAudio();
+      })
+      playLoveAudio()
     },
     (error) => {
       if (error.code === 137) {
         ElMessage({
-          message: "欧尼酱的账号我已经收到了哦～",
-          type: "warning",
-        });
-      } else {
+          message: '欧尼酱的账号我已经收到了哦～',
+          type: 'warning',
+        })
+      }
+      else {
         ElMessage({
-          message: "Code " + error.code + " : " + error.rawMessage,
-          type: "warning",
-        });
+          message: `Code ${error.code} : ${error.rawMessage}`,
+          type: 'warning',
+        })
       }
     },
-  );
+  )
 }
 
 /**
@@ -287,95 +288,98 @@ function giveYou() {
       if (valid) {
         AV.User.loginWithEmail(payInfo.account, payInfo.password).then(
           (_user) => {
-            storeInfo();
+            storeInfo()
           },
           (_error) => {
             ElMessage({
               showClose: true,
-              message: "欧尼酱，先验证一下邮箱哦～",
-              type: "error",
+              message: '欧尼酱，先验证一下邮箱哦～',
+              type: 'error',
               center: true,
-            });
+            })
           },
-        );
-      } else {
+        )
+      }
+      else {
         ElMessage({
           showClose: true,
-          message: "~~(>_<)~~欧尼酱完全没有认真填！",
-          type: "error",
+          message: '~~(>_<)~~欧尼酱完全没有认真填！',
+          type: 'error',
           center: true,
-        });
+        })
       }
-    });
-  } else {
+    })
+  }
+  else {
     ElMessage({
       showClose: true,
-      message: "请确保您已知晓这是一个恶作剧网站。",
-      type: "error",
+      message: '请确保您已知晓这是一个恶作剧网站。',
+      type: 'error',
       center: true,
-    });
+    })
   }
 }
 
 interface LeanError {
-  code: number;
-  rawMessage: string;
+  code: number
+  rawMessage: string
 }
 
 /**
  * 注册
  */
 function signUp(email: string, password: any) {
-  const user = new AV.User();
-  user.setUsername(email);
-  user.setPassword(password);
-  user.setEmail(email);
+  const user = new AV.User()
+  user.setUsername(email)
+  user.setPassword(password)
+  user.setEmail(email)
 
   user.signUp().then(
     (_user: any) => {
-      AV.User.requestEmailVerify(email);
+      AV.User.requestEmailVerify(email)
       ElMessage({
         showClose: true,
-        message: "欧尼酱，我给你发邮件啦！",
-        type: "success",
+        message: '欧尼酱，我给你发邮件啦！',
+        type: 'success',
         center: true,
-      });
+      })
     },
     (error: LeanError) => {
       if (error.code === 203) {
         ElMessage({
           showClose: true,
-          message: "欧尼酱的这个邮箱已经提交过了哦～",
-          type: "error",
+          message: '欧尼酱的这个邮箱已经提交过了哦～',
+          type: 'error',
           center: true,
-        });
-      } else {
+        })
+      }
+      else {
         ElMessage({
           showClose: true,
           message: error.rawMessage,
-          type: "error",
+          type: 'error',
           center: true,
-        });
+        })
         ElMessage({
           showClose: true,
-          message: "(╯°Д°）╯︵ /(.□ . \\) 欧尼酱是大骗子！",
-          type: "error",
+          message: '(╯°Д°）╯︵ /(.□ . \\) 欧尼酱是大骗子！',
+          type: 'error',
           center: true,
           offset: 80,
-        });
+        })
       }
     },
-  );
+  )
 }
 
-export type PayMethod = "alipay" | "wechat";
+export type PayMethod = 'alipay' | 'wechat'
 
 /**
  * 使用表单
  */
 function useForm(formName: PayMethod) {
   // console.log("Use " + formName + " form.");
-  payInfo.type = formName;
+  payInfo.type = formName
 }
 
 /**
@@ -384,46 +388,48 @@ function useForm(formName: PayMethod) {
 function submitForm() {
   payForm.value?.validate((valid: any) => {
     if (valid) {
-      signUp(payInfo.account, payInfo.password);
-    } else {
-      store.commit("decide", "wow");
+      signUp(payInfo.account, payInfo.password)
+    }
+    else {
+      store.commit('decide', 'wow')
       ElMessage({
         showClose: true,
-        message: t("message.be-serious"),
-        type: "warning",
+        message: t('message.be-serious'),
+        type: 'warning',
         center: true,
-      });
-      return false;
+      })
+      return false
     }
-  });
+  })
 }
 
 function resetForm() {
-  store.commit("decide", "no");
-  disabled.no = true; // 禁用 no 按钮
-  updateCounter("no");
+  store.commit('decide', 'no')
+  disabled.no = true // 禁用 no 按钮
+  updateCounter('no')
   ElMessage({
     showClose: true,
-    message: t("message.cry"),
-    type: "error",
+    message: t('message.cry'),
+    type: 'error',
     center: true,
-  });
-  payForm.value?.resetFields();
+  })
+  payForm.value?.resetFields()
 }
 
-async function updateCounter(name: "ok" | "no") {
-  const query = new AV.Query("Counter");
+async function updateCounter(name: 'ok' | 'no') {
+  const query = new AV.Query('Counter')
   try {
-    const result = (await query.equalTo("name", name).first()) as AV.Object;
-    result.increment("time", 1);
-    const updatedResult = await result.save(null, { fetchWhenSave: true });
-    counter[name] = updatedResult.get("time");
-  } catch (error) {
+    const result = (await query.equalTo('name', name).first()) as AV.Object
+    result.increment('time', 1)
+    const updatedResult = await result.save(null, { fetchWhenSave: true })
+    counter[name] = updatedResult.get('time')
+  }
+  catch (error) {
     ElMessage({
       showClose: true,
-      message: "Code " + error.code + " : " + error.rawMessage,
-      type: "warning",
-    });
+      message: `Code ${error.code} : ${error.rawMessage}`,
+      type: 'warning',
+    })
   }
 }
 </script>

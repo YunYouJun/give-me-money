@@ -11,9 +11,6 @@ pnpm-lock.yaml
 # parcel
 .parcel-cache
 
-# editor
-.vscode
-
 # Logs
 logs
 *.log
@@ -30,7 +27,8 @@ node_modules/
 # dotenv environment variables file
 .env
 
-# vite
+# vitesse
 components.d.ts
+auto-imports.d.ts
 .vite-ssg-dist
 .vite-ssg-temp

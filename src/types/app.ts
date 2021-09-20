@@ -1,1 +1,1 @@
-export type PayMethod = "wechat" | "alipay";
+export type PayMethod = 'wechat' | 'alipay'
