@@ -1,3 +1,6 @@
+@import './element.scss';
+@import './markdown.scss';
+
 // global
 body {
   padding: 0;
@@ -16,11 +19,6 @@ hr {
   opacity: 0.2;
 }
 
-// element
-.el-header {
-  padding: 0 !important;
-}
-
 // custom
 #vcomments {
   margin: 0 5rem;
@@ -33,6 +31,7 @@ hr {
 }
 
 .avatar {
+  display: inline-block;
   background: #fcfcfc;
   border-radius: 50%;
   width: 96px;

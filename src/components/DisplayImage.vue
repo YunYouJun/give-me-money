@@ -19,7 +19,9 @@
 
 <script setup lang="ts">
 import { watch, ref } from 'vue'
-import { useStore } from 'vuex'
+import { useAppStore } from '~/stores/app'
+
+const app = useAppStore()
 
 const loliImg = ref<HTMLImageElement | null>()
 const album = {
@@ -37,8 +39,6 @@ const album = {
   },
 }
 
-const store = useStore()
-
 /**
  * 设置轮播索引
  */
@@ -48,7 +48,7 @@ function setActiveItem(index: 'wow' | 'thank' | 'hum') {
 }
 
 watch(
-  () => store.state.decision,
+  () => app.decision,
   (val: string) => {
     switch (val) {
       case 'wow':

@@ -8,6 +8,7 @@ import Layouts from 'vite-plugin-vue-layouts'
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import AutoImport from 'unplugin-auto-import/vite'
 
 import VueI18n from '@intlify/vite-plugin-vue-i18n'
@@ -19,7 +20,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 import LinkAttributes from 'markdown-it-link-attributes'
 
-const markdownWrapperClasses = 'prose prose-sm m-auto text-left'
+const markdownWrapperClasses = 'text-center'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -81,6 +82,7 @@ export default defineConfig({
           // componentPrefix: "",
           // enabledCollections: ['carbon']
         }),
+        // ElementPlusResolver(),
       ],
     }),
 

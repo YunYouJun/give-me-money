@@ -23,8 +23,8 @@ import { UserModule } from '~/types'
 
 // import ElementPlus from "element-plus";
 
-import 'element-theme-ink'
-// import "element-plus/lib/theme-chalk/index.css";
+// import 'element-theme-ink'
+import 'element-plus/dist/index.css'
 
 const components = [
   ElContainer,

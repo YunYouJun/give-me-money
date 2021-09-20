@@ -44,7 +44,8 @@ I'm so cute. Please give me money.
 - [Vite](https://vitejs.dev/)
 - ~~[Vue](https://vuejs.org)~~
 - [Vue3](https://v3.vuejs.org)
-- [Vuex](https://vuex.vuejs.org)
+- ~~[Vuex](https://vuex.vuejs.org)~~
+- [Pinia](https://pinia.esm.dev/)
 - [iconify](https://iconify.design/)
 - ~~[Element](https://github.com/ElemeFE/element/)~~
 - [Element-Plus](https://github.com/element-plus/element-plus/)

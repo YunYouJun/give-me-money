@@ -42,3 +42,7 @@ prompt:
   wechat: "Wechat is fine, too ~"
   ok: "{value} brothers have told us !"
   no: "We have been rejected {value} times !"
+
+error:
+  validator:
+    pin: I remember the transaction password is a pure number!

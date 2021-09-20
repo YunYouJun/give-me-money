@@ -42,3 +42,7 @@ prompt:
   wechat: 那填微信也行哦~
   ok: "已经有 {value} 个欧尼酱告诉我啦！"
   no: "已被残忍拒绝 {value} 次！"
+
+error:
+  validator:
+    pin: 我记得交易密码是纯数字吧！

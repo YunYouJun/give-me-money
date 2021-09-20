@@ -1,5 +1,7 @@
 <template>
-  <h3>{{ t("message.header") }}</h3>
+  <h3 class="mb-4">
+    {{ t("message.header") }}
+  </h3>
   <display-image></display-image>
   <info-input></info-input>
   <audio id="love-you" autoplay>

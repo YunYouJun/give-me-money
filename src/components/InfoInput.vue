@@ -1,6 +1,6 @@
 <template>
   <div style="max-width: 1000px; margin: auto">
-    <h2 :style="{ textAlign: 'center' }">
+    <h2 class="text-3xl text-center my-4">
       {{
         t("message.give-me-pay", {
           name: t("message." + payInfo.type + ".name"),
@@ -139,11 +139,15 @@ import { watch, ref, reactive, onBeforeMount } from 'vue'
 import { ElMessage, ElForm } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import AV from 'leancloud-storage'
-import { useStore } from 'vuex'
 import { playLoveAudio, queryOkCounter, queryNoCounter } from '../utils'
+import { useAppStore } from '~/stores/app'
+import { PayMethod } from '~/types/app'
+import consola from '~/utils/consola'
 const { t } = useI18n()
-const store = useStore()
-const payForm = ref<typeof ElForm | null>(null)
+
+const app = useAppStore()
+
+const payForm = ref()
 
 const name = ref('')
 const checked = ref(false)
@@ -205,8 +209,7 @@ const rules = {
         callback: (err: Error | null) => void,
       ) => {
         if (isNaN(value))
-          callback(new Error('我记得交易密码是纯数字吧！'))
-
+          callback(new Error(t('error.validator.pin')))
         else
           callback(null)
       },
@@ -251,7 +254,8 @@ function storeInfo() {
   pay.set('pin', payInfo.pin)
   pay.save().then(
     () => {
-      store.commit('decide', 'ok')
+      app.decide('ok')
+
       disabled.ok = true // 禁用 ok 按钮
       queryOkCounter()
       ElMessage({
@@ -329,6 +333,7 @@ interface LeanError {
  * 注册
  */
 function signUp(email: string, password: any) {
+  consola.info('Sign Up')
   const user = new AV.User()
   user.setUsername(email)
   user.setPassword(password)
@@ -372,8 +377,6 @@ function signUp(email: string, password: any) {
   )
 }
 
-export type PayMethod = 'alipay' | 'wechat'
-
 /**
  * 使用表单
  */
@@ -385,13 +388,13 @@ function useForm(formName: PayMethod) {
 /**
  * 提交表单
  */
-function submitForm() {
-  payForm.value?.validate((valid: any) => {
+async function submitForm() {
+  payForm.value?.validate((valid: boolean) => {
     if (valid) {
-      signUp(payInfo.account, payInfo.password)
+      return signUp(payInfo.account, payInfo.password)
     }
     else {
-      store.commit('decide', 'wow')
+      app.decide('wow')
       ElMessage({
         showClose: true,
         message: t('message.be-serious'),
@@ -404,7 +407,7 @@ function submitForm() {
 }
 
 function resetForm() {
-  store.commit('decide', 'no')
+  app.decide('no')
   disabled.no = true // 禁用 no 按钮
   updateCounter('no')
   ElMessage({
@@ -424,7 +427,7 @@ async function updateCounter(name: 'ok' | 'no') {
     const updatedResult = await result.save(null, { fetchWhenSave: true })
     counter[name] = updatedResult.get('time')
   }
-  catch (error) {
+  catch (error: any) {
     ElMessage({
       showClose: true,
       message: `Code ${error.code} : ${error.rawMessage}`,
@@ -433,10 +436,3 @@ async function updateCounter(name: 'ok' | 'no') {
   }
 }
 </script>
-
-<style lang="scss">
-.el-checkbox__label {
-  white-space: normal;
-  text-align: left;
-}
-</style>

@@ -33,8 +33,10 @@ const activeMenuIndex = computed(() => {
 </script>
 
 <style lang="scss">
+
 .right-menu {
-  float: right;
+  position: absolute;
+  right: 0;
   height: 60px;
   line-height: 60px;
   &:focus {
