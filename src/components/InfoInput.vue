@@ -35,7 +35,9 @@
           placeholder="需要验证邮箱才行哦～"
         >
           <template #append>
-            <el-button icon="el-icon-message" @click="submitForm"></el-button>
+            <el-button @click="submitForm">
+              <i-ri-message-line />
+            </el-button>
           </template>
         </el-input>
       </el-form-item>

@@ -1,9 +1,10 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import { isClient } from '~/utils/isClient'
 
-import enLocale from 'element-plus/lib/locale/lang/en'
-import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
+export const useAppStore = defineStore('app', async () => {
+  if (!isClient) return
+  const zhLocale = await import('element-plus/lib/locale/lang/zh-cn')
 
-export const useAppStore = defineStore('app', () => {
   /**
    * Current named of the user.
    */
@@ -17,11 +18,13 @@ export const useAppStore = defineStore('app', () => {
    * Set locale
    * @param value
    */
-  function setLocale(language: 'zh-CN' | 'en') {
-    if (language === 'zh-CN')
+  async function setLocale(language: 'zh-CN' | 'en') {
+    if (language === 'zh-CN') {
       locale.value = zhLocale
-    else
+    } else {
+      const enLocale = await import('element-plus/lib/locale/lang/en')
       locale.value = enLocale
+    }
   }
 
   function decide(value: 'ok' | 'wow' | 'no') {
