@@ -1,6 +1,6 @@
 import { createI18n } from 'vue-i18n'
 
-import { UserModule } from '~/types'
+import type { UserModule } from '~/types'
 import { isClient } from '~/utils/isClient'
 
 // import i18n resources
@@ -15,7 +15,8 @@ const messages = Object.fromEntries(
 )
 
 export const install: UserModule = ({ app }) => {
-  if (!isClient) return
+  if (!isClient)
+    return
 
   const localLanguage = localStorage.getItem('lang') as ('zh-CN' | 'en') || 'zh-CN'
 

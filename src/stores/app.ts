@@ -2,7 +2,8 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 import { isClient } from '~/utils/isClient'
 
 export const useAppStore = defineStore('app', async () => {
-  if (!isClient) return
+  if (!isClient)
+    return
   const zhLocale = await import('element-plus/lib/locale/lang/zh-cn')
 
   /**
@@ -21,7 +22,8 @@ export const useAppStore = defineStore('app', async () => {
   async function setLocale(language: 'zh-CN' | 'en') {
     if (language === 'zh-CN') {
       locale.value = zhLocale
-    } else {
+    }
+    else {
       const enLocale = await import('element-plus/lib/locale/lang/en')
       locale.value = enLocale
     }

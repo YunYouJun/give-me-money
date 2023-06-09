@@ -10,11 +10,13 @@ import 'virtual:windi-components.css'
 
 // for element
 import 'element-plus/dist/index.css'
+
 // your custom styles here
 import './styles/main.scss'
 
 // windicss utilities should be the last style import
 import 'virtual:windi-utilities.css'
+
 // windicss devtools support (dev only)
 import 'virtual:windi-devtools'
 

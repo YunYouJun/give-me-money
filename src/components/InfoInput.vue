@@ -1,150 +1,13 @@
-<template>
-  <div style="max-width: 1000px; margin: auto">
-    <h2 class="text-3xl text-center my-4">
-      {{
-        t("message.give-me-pay", {
-          name: t("message." + payInfo.type + ".name"),
-        })
-      }}
-    </h2>
-
-    <el-form
-      ref="payForm"
-      :model="payInfo"
-      :rules="rules"
-      label-width="135px"
-      @keyup.enter="submitForm"
-    >
-      <el-form-item :label="t('message.name')" prop="name">
-        <el-input
-          v-model="name"
-          autofocus
-          :placeholder="t('message.name-placeholder')"
-        >
-        </el-input>
-      </el-form-item>
-      <el-form-item
-        :label="
-          t('message.' + payInfo.type + '.name') + t('message.pay.account')
-        "
-        prop="account"
-      >
-        <el-input
-          v-model="payInfo.account"
-          autofocus
-          placeholder="需要验证邮箱才行哦～"
-        >
-          <template #append>
-            <el-button @click="submitForm">
-              <i-ri-message-line />
-            </el-button>
-          </template>
-        </el-input>
-      </el-form-item>
-      <el-form-item
-        :label="
-          t('message.' + payInfo.type + '.name') + t('message.pay.password')
-        "
-        prop="password"
-      >
-        <el-input v-model="payInfo.password" type="password"></el-input>
-      </el-form-item>
-      <el-form-item
-        :label="t('message.' + payInfo.type + '.name') + t('message.pay.pin')"
-        prop="pin"
-      >
-        <el-input
-          v-model="payInfo.pin"
-          type="password"
-          :maxlength="6"
-        ></el-input>
-      </el-form-item>
-      <el-form-item style="text-align: center" label-width="0px">
-        <el-checkbox v-model="checked">
-          {{ t("message.check") }}
-        </el-checkbox>
-      </el-form-item>
-      <el-form-item label-width="0px">
-        <el-tooltip
-          class="item"
-          effect="light"
-          :content="prompt.ok"
-          placement="top"
-        >
-          <el-button
-            plain
-            type="primary"
-            :disabled="disabled.ok"
-            @click="giveYou"
-          >
-            {{ t("message.ok") }}
-          </el-button>
-        </el-tooltip>
-        <el-tooltip
-          class="item"
-          effect="light"
-          :content="prompt.no"
-          placement="top"
-        >
-          <span style="margin-left: 10px">
-            <el-button
-              plain
-              size="mini"
-              type="danger"
-              :disabled="disabled.no"
-              @click="resetForm"
-            >{{ t("message.no") }}</el-button>
-          </span>
-        </el-tooltip>
-
-        <span v-show="payInfo.type === 'alipay'">
-          <el-tooltip
-            class="item"
-            effect="light"
-            :content="t('prompt.wechat')"
-            placement="top"
-          >
-            <span style="margin-left: 10px">
-              <el-button
-                plain
-                size="small"
-                type="success"
-                @click="useForm('wechat')"
-              >{{ t("message.wechat.button") }}</el-button>
-            </span>
-          </el-tooltip>
-        </span>
-        <span v-show="payInfo.type === 'wechat'">
-          <el-tooltip
-            class="item"
-            effect="light"
-            :content="t('prompt.alipay')"
-            placement="top"
-          >
-            <span style="margin-left: 10px">
-              <el-button
-                plain
-                size="small"
-                type="primary"
-                @click="useForm('alipay')"
-              >{{ t("message.alipay.button") }}</el-button>
-            </span>
-          </el-tooltip>
-        </span>
-      </el-form-item>
-    </el-form>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { watch, ref, reactive, onBeforeMount } from 'vue'
-import { ElMessage, ElForm } from 'element-plus'
+import { onBeforeMount, reactive, ref, watch } from 'vue'
+import { ElForm, ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import AV from 'leancloud-storage'
-import { playLoveAudio, queryOkCounter, queryNoCounter } from '../utils'
+import consola from 'consola'
+import { playLoveAudio, queryNoCounter, queryOkCounter } from '../utils'
 import { useAppStore } from '~/stores/app'
-import { PayMethod } from '~/types/app'
-import consola from '~/utils/consola'
+import type { PayMethod } from '~/types/app'
+
 const { t } = useI18n()
 
 const app = useAppStore()
@@ -210,7 +73,7 @@ const rules = {
         value: number,
         callback: (err: Error | null) => void,
       ) => {
-        if (isNaN(value))
+        if (Number.isNaN(value))
           callback(new Error(t('error.validator.pin')))
         else
           callback(null)
@@ -234,7 +97,7 @@ watch(
   },
 )
 
-onBeforeMount(async() => {
+onBeforeMount(async () => {
   queryOkCounter().then((result) => {
     counter.ok = result || 0
   })
@@ -438,3 +301,140 @@ async function updateCounter(name: 'ok' | 'no') {
   }
 }
 </script>
+
+<template>
+  <div style="max-width: 1000px; margin: auto">
+    <h2 class="text-3xl text-center my-4">
+      {{
+        t("message.give-me-pay", {
+          name: t(`message.${payInfo.type}.name`),
+        })
+      }}
+    </h2>
+
+    <ElForm
+      ref="payForm"
+      :model="payInfo"
+      :rules="rules"
+      label-width="135px"
+      @keyup.enter="submitForm"
+    >
+      <el-form-item :label="t('message.name')" prop="name">
+        <el-input
+          v-model="name"
+          autofocus
+          :placeholder="t('message.name-placeholder')"
+        />
+      </el-form-item>
+      <el-form-item
+        :label="
+          t(`message.${payInfo.type}.name`) + t('message.pay.account')
+        "
+        prop="account"
+      >
+        <el-input
+          v-model="payInfo.account"
+          autofocus
+          placeholder="需要验证邮箱才行哦～"
+        >
+          <template #append>
+            <el-button @click="submitForm">
+              <i-ri-message-line />
+            </el-button>
+          </template>
+        </el-input>
+      </el-form-item>
+      <el-form-item
+        :label="
+          t(`message.${payInfo.type}.name`) + t('message.pay.password')
+        "
+        prop="password"
+      >
+        <el-input v-model="payInfo.password" type="password" />
+      </el-form-item>
+      <el-form-item
+        :label="t(`message.${payInfo.type}.name`) + t('message.pay.pin')"
+        prop="pin"
+      >
+        <el-input
+          v-model="payInfo.pin"
+          type="password"
+          :maxlength="6"
+        />
+      </el-form-item>
+      <el-form-item style="text-align: center" label-width="0px">
+        <el-checkbox v-model="checked">
+          {{ t("message.check") }}
+        </el-checkbox>
+      </el-form-item>
+      <el-form-item label-width="0px">
+        <el-tooltip
+          class="item"
+          effect="light"
+          :content="prompt.ok"
+          placement="top"
+        >
+          <el-button
+            plain
+            type="primary"
+            :disabled="disabled.ok"
+            @click="giveYou"
+          >
+            {{ t("message.ok") }}
+          </el-button>
+        </el-tooltip>
+        <el-tooltip
+          class="item"
+          effect="light"
+          :content="prompt.no"
+          placement="top"
+        >
+          <span style="margin-left: 10px">
+            <el-button
+              plain
+              size="mini"
+              type="danger"
+              :disabled="disabled.no"
+              @click="resetForm"
+            >{{ t("message.no") }}</el-button>
+          </span>
+        </el-tooltip>
+
+        <span v-show="payInfo.type === 'alipay'">
+          <el-tooltip
+            class="item"
+            effect="light"
+            :content="t('prompt.wechat')"
+            placement="top"
+          >
+            <span style="margin-left: 10px">
+              <el-button
+                plain
+                size="small"
+                type="success"
+                @click="useForm('wechat')"
+              >{{ t("message.wechat.button") }}</el-button>
+            </span>
+          </el-tooltip>
+        </span>
+        <span v-show="payInfo.type === 'wechat'">
+          <el-tooltip
+            class="item"
+            effect="light"
+            :content="t('prompt.alipay')"
+            placement="top"
+          >
+            <span style="margin-left: 10px">
+              <el-button
+                plain
+                size="small"
+                type="primary"
+                @click="useForm('alipay')"
+              >{{ t("message.alipay.button") }}</el-button>
+            </span>
+          </el-tooltip>
+        </span>
+      </el-form-item>
+    </ElForm>
+  </div>
+</template>

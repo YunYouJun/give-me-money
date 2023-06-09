@@ -1,7 +1,7 @@
 import { ElMessage } from 'element-plus'
 import AV from 'leancloud-storage'
 
-import consola from '~/utils/consola'
+import consola from 'consola'
 
 export function queryOkCounter() {
   const queryPay = new AV.Query('Pay')

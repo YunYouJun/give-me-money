@@ -1,25 +1,25 @@
 import {
-  ElContainer,
-  ElHeader,
-  ElMain,
-  ElFooter,
-  ElMenu,
-  ElMenuItem,
-  ElRow,
+  ElButton,
+  ElCheckbox,
   ElCol,
+  ElContainer,
+  ElFooter,
   ElForm,
   ElFormItem,
+  ElHeader,
+  ElInput,
+  ElLoading,
+  ElMain,
+  ElMenu,
+  ElMenuItem,
+  ElMessage,
+  ElPagination,
+  ElRow,
   ElTable,
   ElTableColumn,
-  ElButton,
   ElTooltip,
-  ElInput,
-  ElCheckbox,
-  ElPagination,
-  ElLoading,
-  ElMessage,
 } from 'element-plus'
-import { UserModule } from '~/types'
+import type { UserModule } from '~/types'
 
 // import ElementPlus from "element-plus";
 

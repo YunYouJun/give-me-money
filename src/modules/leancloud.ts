@@ -1,5 +1,6 @@
 import AV from 'leancloud-storage'
-import { UserModule } from '~/types'
+import type { UserModule } from '~/types'
+
 // leancloud
 
 interface LeancloudConfig {

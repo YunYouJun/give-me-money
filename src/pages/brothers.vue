@@ -1,21 +1,5 @@
-<template>
-  <h2>{{ total + t("title.good-brothers") }}</h2>
-  <div ref="listRef">
-    <brother-list :table-data="tableData"></brother-list>
-  </div>
-  <el-pagination
-    background
-    layout="prev, pager, next"
-    :total="total"
-    :page-size="pageSize"
-    style="margin-top: 1rem"
-    @current-change="handleCurrentChange"
-  >
-  </el-pagination>
-</template>
-
 <script setup lang="ts">
-import { ElMessage, ElLoading } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AV from 'leancloud-storage'
@@ -133,3 +117,18 @@ onMounted(() => {
   getAccountsInfo()
 })
 </script>
+
+<template>
+  <h2>{{ total + t("title.good-brothers") }}</h2>
+  <div ref="listRef">
+    <brother-list :table-data="tableData" />
+  </div>
+  <el-pagination
+    background
+    layout="prev, pager, next"
+    :total="total"
+    :page-size="pageSize"
+    style="margin-top: 1rem"
+    @current-change="handleCurrentChange"
+  />
+</template>

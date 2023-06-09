@@ -1,24 +1,5 @@
-<template>
-  <el-row>
-    <el-col
-      :xs="{ span: 24, offset: 0 }"
-      :sm="{ span: 16, offset: 4 }"
-      :md="{ span: 16, offset: 4 }"
-      :lg="{ span: 12, offset: 6 }"
-      :xl="{ span: 8, offset: 8 }"
-    >
-      <img
-        ref="loliImg"
-        class="loli-img"
-        :src="album.wow.path"
-        :alt="album.wow.label"
-      />
-    </el-col>
-  </el-row>
-</template>
-
 <script setup lang="ts">
-import { watch, ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useAppStore } from '~/stores/app'
 
 const app = useAppStore()
@@ -66,6 +47,25 @@ watch(
   },
 )
 </script>
+
+<template>
+  <el-row>
+    <el-col
+      :xs="{ span: 24, offset: 0 }"
+      :sm="{ span: 16, offset: 4 }"
+      :md="{ span: 16, offset: 4 }"
+      :lg="{ span: 12, offset: 6 }"
+      :xl="{ span: 8, offset: 8 }"
+    >
+      <img
+        ref="loliImg"
+        class="loli-img"
+        :src="album.wow.path"
+        :alt="album.wow.label"
+      >
+    </el-col>
+  </el-row>
+</template>
 
 <style lang="scss">
 .loli-img {

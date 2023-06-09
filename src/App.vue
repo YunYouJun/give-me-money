@@ -1,9 +1,3 @@
-<template>
-  <el-config-provider :locale="app.locale">
-    <router-view />
-  </el-config-provider>
-</template>
-
 <script setup lang="ts">
 import { ElConfigProvider } from 'element-plus'
 import { useHead } from '@vueuse/head'
@@ -19,3 +13,9 @@ useHead({
   meta: [{ name: 'description', content: '我很可爱，请给我钱！' }],
 })
 </script>
+
+<template>
+  <ElConfigProvider :locale="app.locale">
+    <router-view />
+  </ElConfigProvider>
+</template>

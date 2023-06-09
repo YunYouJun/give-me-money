@@ -1,3 +1,19 @@
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+import { isClient } from '~/utils/isClient'
+
+const { t, availableLocales, locale } = useI18n()
+
+function toggleLocales() {
+  const locales = availableLocales
+  const currentLang
+    = locales[(locales.indexOf(locale.value) + 1) % locales.length]
+  locale.value = currentLang
+  // eslint-disable-next-line no-unused-expressions
+  isClient ? localStorage.setItem('lang', currentLang) : ''
+}
+</script>
+
 <template>
   <div
     class="lang-select"
@@ -8,21 +24,6 @@
     <i-mdi-translate />
   </div>
 </template>
-
-<script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-import { isClient } from '~/utils/isClient'
-const { t, availableLocales, locale } = useI18n()
-
-const toggleLocales = () => {
-  const locales = availableLocales
-  const currentLang
-    = locales[(locales.indexOf(locale.value) + 1) % locales.length]
-  locale.value = currentLang
-  // eslint-disable-next-line no-unused-expressions
-  isClient ? localStorage.setItem('lang', currentLang) : ''
-}
-</script>
 
 <style lang="scss">
 .lang-select {

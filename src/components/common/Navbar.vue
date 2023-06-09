@@ -1,25 +1,3 @@
-<template>
-  <el-menu
-    :default-active="activeMenuIndex"
-    class="gmm-menu"
-    mode="horizontal"
-    router
-  >
-    <el-menu-item index="/">
-      <img width="20" src="/money.png" />
-    </el-menu-item>
-    <el-menu-item index="/brothers">
-      {{ t("link.brothers") }}
-    </el-menu-item>
-    <el-menu-item index="/about">
-      {{ t("link.about") }}
-    </el-menu-item>
-    <div class="right-menu">
-      <lang-select class="right-menu-item"></lang-select>
-    </div>
-  </el-menu>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
@@ -32,8 +10,29 @@ const activeMenuIndex = computed(() => {
 })
 </script>
 
-<style lang="scss">
+<template>
+  <el-menu
+    :default-active="activeMenuIndex"
+    class="gmm-menu"
+    mode="horizontal"
+    router
+  >
+    <el-menu-item index="/">
+      <img width="20" src="/money.png">
+    </el-menu-item>
+    <el-menu-item index="/brothers">
+      {{ t("link.brothers") }}
+    </el-menu-item>
+    <el-menu-item index="/about">
+      {{ t("link.about") }}
+    </el-menu-item>
+    <div class="right-menu">
+      <lang-select class="right-menu-item" />
+    </div>
+  </el-menu>
+</template>
 
+<style lang="scss">
 .right-menu {
   position: absolute;
   right: 0;
