@@ -17,7 +17,8 @@ const config: LeancloudConfig = {
 if (import.meta.env.VITE_SERVER_URL)
   config.serverURL = import.meta.env.VITE_SERVER_URL
 
-AV.init(config)
+if (config.appId && config.appKey)
+  AV.init(config)
 
 export const install: UserModule = ({ app }) => {
   app.config.globalProperties.$AV = AV
