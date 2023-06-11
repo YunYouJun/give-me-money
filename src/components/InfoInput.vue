@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, reactive, ref, watch } from 'vue'
+import type { FormRules } from 'element-plus'
 import { ElForm, ElMessage } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import AV from 'leancloud-storage'
@@ -39,7 +40,7 @@ const prompt = reactive({
   no: '还没有人胆敢拒绝我！',
 })
 
-const rules = {
+const rules: FormRules = {
   account: [
     {
       required: true,
@@ -69,14 +70,14 @@ const rules = {
     { len: 6, message: '交易密码是六位吧！', trigger: 'blur' },
     {
       validator: (
-        rule: any,
-        value: number,
-        callback: (err: Error | null) => void,
+        rule,
+        value,
+        callback,
       ) => {
         if (Number.isNaN(value))
           callback(new Error(t('error.validator.pin')))
         else
-          callback(null)
+          callback()
       },
       trigger: 'blur',
     },
