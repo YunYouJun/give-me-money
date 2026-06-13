@@ -9,7 +9,7 @@ vi.mock('@unhead/vue', () => ({
 }))
 
 vi.mock('~/services/commentsConfig', () => ({
-  getCommentsUrl: () => 'https://apps.yunle.fun/',
+  getCommentsUrl: () => 'https://apps.yunle.fun/app/give-me-money',
 }))
 
 vi.mock('~/utils/externalNavigation', () => ({
@@ -19,8 +19,8 @@ vi.mock('~/utils/externalNavigation', () => ({
 const messages = {
   'zh-CN': {
     message: {
-      'open-comments': '去评论应用',
-      'redirecting-comments': '正在跳转到评论应用……',
+      'open-comments': '去应用评论页',
+      'redirecting-comments': '正在跳转到应用评论页……',
     },
   },
 }
@@ -47,8 +47,8 @@ describe('brothers page', () => {
   it('renders a fallback comments link and redirects on mount', () => {
     const wrapper = mountBrothersPage()
 
-    expect(wrapper.text()).toContain('正在跳转到评论应用')
-    expect(wrapper.get('a').attributes('href')).toBe('https://apps.yunle.fun/')
-    expect(redirectToExternalUrl).toHaveBeenCalledWith('https://apps.yunle.fun/')
+    expect(wrapper.text()).toContain('正在跳转到应用评论页')
+    expect(wrapper.get('a').attributes('href')).toBe('https://apps.yunle.fun/app/give-me-money')
+    expect(redirectToExternalUrl).toHaveBeenCalledWith('https://apps.yunle.fun/app/give-me-money')
   })
 })

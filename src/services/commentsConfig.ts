@@ -1,4 +1,4 @@
-const DEFAULT_COMMENTS_URL = 'https://apps.yunle.fun'
+const DEFAULT_COMMENTS_URL = 'https://apps.yunle.fun/app/give-me-money'
 
 export function getCommentsUrl(): string {
   const value = import.meta.env.VITE_GMM_COMMENTS_URL || DEFAULT_COMMENTS_URL

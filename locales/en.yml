@@ -22,11 +22,12 @@ message:
   must-acknowledge: Please acknowledge this is a prank site and the entered content is only used locally.
   loading: Loading...
   fake-submit-title: Nothing was submitted
-  fake-submit-description: This is only a prank. No account, password, or PIN was submitted or saved.
+  fake-submit-description: This is only a prank. No account, password, or PIN was submitted or saved. Comments open the Yunle app page, where Yunle handles sign-in before commenting.
   fake-reject-title: Rejected
   fake-reject-description: Rejected. Nothing was recorded on the server.
-  open-comments: Open comments app
-  redirecting-comments: Redirecting to the comments app...
+  open-comments: Open app comments
+  open-comments-login: Sign in and comment
+  redirecting-comments: Redirecting to app comments...
   pay:
     type: Type
     all: All

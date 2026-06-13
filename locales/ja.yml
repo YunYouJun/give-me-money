@@ -22,11 +22,12 @@ message:
   must-acknowledge: これはジョークサイトであり、入力内容はこのページ内の演出だけに使われることを確認してください。
   loading: 読み込み中……
   fake-submit-title: 実際には送信していません
-  fake-submit-description: これはジョークです。アカウント、パスワード、取引パスワードは送信も保存もされません。
+  fake-submit-description: これはジョークです。アカウント、パスワード、取引パスワードは送信も保存もされません。コメントは Yunle のアプリページで開き、ログイン後に投稿できます。
   fake-reject-title: 拒否しました
   fake-reject-description: 拒否しました。サーバーには記録されません。
-  open-comments: コメントアプリを開く
-  redirecting-comments: コメントアプリへ移動しています……
+  open-comments: アプリのコメントを開く
+  open-comments-login: Yunle にログインしてコメント
+  redirecting-comments: アプリのコメントへ移動しています……
   pay:
     type: 種類
     all: すべて

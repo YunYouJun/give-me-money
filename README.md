@@ -14,7 +14,7 @@ I'm so cute. Please give me money.
 
 这是自己几年前 Parcel 刚出的时候，写[Parcel.js + Vue 搭建笔记](https://www.yunyoujun.cn/note/vue-parcel-demo/)（已使用 Vite + Vue3 + TypeScript 重构），拿来练手的小玩意儿。所以代码很丑，也没做啥后端校验。现在主站只保留前端恶作剧效果，不会真实提交或保存账号、密码、交易密码。
 
-乐呵乐呵完事了，历史计数仍从云乐坊同一个 CloudBase 环境只读获取；评论互动统一放到云乐坊评论应用。
+乐呵乐呵完事了，历史计数仍从云乐坊同一个 CloudBase 环境只读获取；评论互动统一放到云乐坊对应应用的评论页。
 
 大家要想打钱，也不用给我打，有现成的 [联合国儿童基金会](https://www.unicef.cn/)。
 
@@ -76,13 +76,13 @@ pnpm install
 
 复制 `.env.example`，并重命名为 `.env`。
 
-在 `.env` 中填入云乐坊 CloudBase 环境和 publishable access key，用于读取历史计数。评论应用地址可按需覆盖。
+在 `.env` 中填入云乐坊 CloudBase 环境和 publishable access key，用于读取历史计数。应用评论页地址可按需覆盖。
 
 ```sh
 VITE_CLOUDBASE_ENV_ID=yunlefun-8g7ybcxc7345c490
 VITE_CLOUDBASE_REGION=ap-shanghai
 VITE_CLOUDBASE_ACCESS_KEY=xxxxxxx
-VITE_GMM_COMMENTS_URL=https://apps.yunle.fun
+VITE_GMM_COMMENTS_URL=https://apps.yunle.fun/app/give-me-money
 ```
 
 CloudBase 只需要保留 `counters` 集合：

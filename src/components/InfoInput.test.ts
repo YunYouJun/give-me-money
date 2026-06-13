@@ -23,7 +23,7 @@ vi.mock('~/services/giveMeMoneyApi', () => apiMocks)
 vi.mock('~/services/cloudbaseConfig', () => cloudbaseConfigMock)
 
 vi.mock('~/services/commentsConfig', () => ({
-  getCommentsUrl: () => 'https://apps.yunle.fun/',
+  getCommentsUrl: () => 'https://apps.yunle.fun/app/give-me-money',
 }))
 
 vi.mock('../utils', () => ({
@@ -45,7 +45,7 @@ const messages = {
       'counter-unavailable': '历史计数暂不可用。',
       'fake-reject-description': '已拒绝，不会记录到服务器。',
       'fake-reject-title': '已拒绝',
-      'fake-submit-description': '这只是恶作剧，没有提交或保存任何账号、密码、交易密码。',
+      'fake-submit-description': '这只是恶作剧，没有提交或保存任何账号、密码、交易密码。去评论时会打开云乐坊应用评论页，由云乐坊处理登录后评论。',
       'fake-submit-title': '没有真的提交',
       'give-me-pay': '欧尼酱，可以……告诉我……你的……{name}吗？',
       'loading': '加载中……',
@@ -54,7 +54,8 @@ const messages = {
       'name-placeholder': '人家也不是一定要知道你的名字啦～',
       'no': '残忍拒绝',
       'ok': '好的，给你!',
-      'open-comments': '去评论应用',
+      'open-comments': '去应用评论页',
+      'open-comments-login': '登录云乐坊并评论',
       'pay': {
         'account': '账号',
         'account-placeholder': '只在本页用于玩笑效果，不会提交保存',
@@ -178,7 +179,7 @@ describe('info input', () => {
     expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
   })
 
-  it('opens a no-save dialog for a valid fake submit without writing data', async () => {
+  it('opens a no-save dialog for a valid fake submit and points comments to Yunle login', async () => {
     const wrapper = mountInfoInput()
     await flushPromises()
     vi.clearAllMocks()
@@ -191,7 +192,8 @@ describe('info input', () => {
 
     expect(wrapper.get('[role="dialog"]').text()).toContain('没有真的提交')
     expect(wrapper.get('[role="dialog"]').text()).toContain('没有提交或保存任何账号、密码、交易密码')
-    expect(wrapper.get('.submission-dialog-action.is-primary').attributes('href')).toBe('https://apps.yunle.fun/')
+    expect(wrapper.get('[role="dialog"]').text()).toContain('登录云乐坊并评论')
+    expect(wrapper.get('.submission-dialog-action.is-primary').attributes('href')).toBe('https://apps.yunle.fun/app/give-me-money')
     expect(apiMocks.readOkCounter).not.toHaveBeenCalled()
     expect(apiMocks.readNoCounter).not.toHaveBeenCalled()
   })
@@ -211,7 +213,7 @@ describe('info input', () => {
 
   it('keeps ok counter tooltip separate from no counter failures', async () => {
     apiMocks.readOkCounter.mockResolvedValue(7)
-    apiMocks.readNoCounter.mockRejectedValue(new Error('Db or Table not exist: counters. Please check your request.'))
+    apiMocks.readNoCounter.mockRejectedValue(new Error('you can\'t request without auth'))
 
     const wrapper = mountInfoInput()
     await flushPromises()
@@ -219,6 +221,6 @@ describe('info input', () => {
     const tooltips = wrapper.findAll('.gmm-action-row .base-tooltip-content')
 
     expect(tooltips[0]?.text()).toBe('已经有 7 个欧尼酱参与过啦！')
-    expect(tooltips[1]?.text()).toContain('Db or Table not exist: counters')
+    expect(tooltips[1]?.text()).toBe('历史计数暂不可用。')
   })
 })

@@ -13,7 +13,7 @@ vi.mock('vue-router', () => ({
 }))
 
 vi.mock('~/services/commentsConfig', () => ({
-  getCommentsUrl: () => 'https://apps.yunle.fun/',
+  getCommentsUrl: () => 'https://apps.yunle.fun/app/give-me-money',
 }))
 
 const messages = {
@@ -58,13 +58,13 @@ beforeEach(() => {
 })
 
 describe('navbar', () => {
-  it('links to the comments app instead of the removed brothers route', () => {
+  it('links to the app comments page instead of the removed brothers route', () => {
     const wrapper = mountNavbar()
 
     const links = wrapper.findAll('a')
     const commentsLink = links.find(link => link.text() === '评论')
 
-    expect(commentsLink?.attributes('href')).toBe('https://apps.yunle.fun/')
+    expect(commentsLink?.attributes('href')).toBe('https://apps.yunle.fun/app/give-me-money')
     expect(commentsLink?.attributes('target')).toBe('_blank')
     expect(links.some(link => link.attributes('href') === '/brothers')).toBe(false)
     expect(wrapper.find('.gmm-nav-auth').exists()).toBe(false)

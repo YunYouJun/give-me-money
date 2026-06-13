@@ -22,11 +22,12 @@ message:
   must-acknowledge: 请先确认这是恶作剧网站，且填写内容只会在本页用于玩笑效果。
   loading: 加载中……
   fake-submit-title: 没有真的提交
-  fake-submit-description: 这只是恶作剧，没有提交或保存任何账号、密码、交易密码。
+  fake-submit-description: 这只是恶作剧，没有提交或保存任何账号、密码、交易密码。去评论时会打开云乐坊应用评论页，由云乐坊处理登录后评论。
   fake-reject-title: 已拒绝
   fake-reject-description: 已拒绝，不会记录到服务器。
-  open-comments: 去评论应用
-  redirecting-comments: 正在跳转到评论应用……
+  open-comments: 去应用评论页
+  open-comments-login: 登录云乐坊并评论
+  redirecting-comments: 正在跳转到应用评论页……
   pay:
     type: 类型
     all: 全部

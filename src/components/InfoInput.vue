@@ -5,7 +5,6 @@ import { computed, onMounted, reactive, shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { validatePayInfo } from '~/composables/usePayFormValidation'
 import { showToast } from '~/composables/useToast'
-import { getApiErrorMessage } from '~/services/apiError'
 import { isCloudbaseReady } from '~/services/cloudbaseConfig'
 import { getCommentsUrl } from '~/services/commentsConfig'
 import { useAppStore } from '~/stores/app'
@@ -61,6 +60,11 @@ const dialogMessage = computed(() => {
     return t('message.fake-reject-description')
   return t('message.fake-submit-description')
 })
+const dialogActionLabel = computed(() => {
+  if (dialogType.value === 'submit')
+    return t('message.open-comments-login')
+  return t('message.open-comments')
+})
 
 function clearError(field: keyof PayValidationErrors) {
   delete errors[field]
@@ -101,15 +105,15 @@ async function loadCounters() {
     if (okResult.status === 'fulfilled')
       counter.ok = okResult.value
     else
-      counterErrors.ok = getApiErrorMessage(okResult.reason)
+      counterErrors.ok = t('message.counter-unavailable')
 
     if (noResult.status === 'fulfilled')
       counter.no = noResult.value
     else
-      counterErrors.no = getApiErrorMessage(noResult.reason)
+      counterErrors.no = t('message.counter-unavailable')
   }
-  catch (error) {
-    setCounterErrors(getApiErrorMessage(error))
+  catch {
+    setCounterErrors(t('message.counter-unavailable'))
   }
   finally {
     loadingCounters.value = false
@@ -289,6 +293,7 @@ function rejectRequest() {
       :title="dialogTitle"
       :message="dialogMessage"
       :comments-url="commentsUrl"
+      :action-label="dialogActionLabel"
       @close="closeDialog"
     />
   </section>

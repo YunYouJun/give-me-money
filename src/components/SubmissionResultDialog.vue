@@ -1,5 +1,6 @@
 <script setup lang="ts">
 defineProps<{
+  actionLabel?: string
   commentsUrl: string
   message: string
   title: string
@@ -31,7 +32,7 @@ const emit = defineEmits<{
           target="_blank"
           rel="noopener"
         >
-          {{ $t("message.open-comments") }}
+          {{ actionLabel || $t("message.open-comments") }}
         </a>
         <button
           class="submission-dialog-action"
