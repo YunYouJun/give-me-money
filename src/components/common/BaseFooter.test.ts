@@ -53,4 +53,12 @@ describe('base footer', () => {
 
     expect(wrapper.getComponent({ name: 'VueAboutMe' }).props('isDark')).toBe(true)
   })
+
+  it('uses the current sponsor page in footer copyright', () => {
+    const wrapper = mount(BaseFooter)
+
+    expect(wrapper.getComponent({ name: 'VueAboutMe' }).props('copyright')).toMatchObject({
+      iconUrl: 'https://www.yunyoujun.cn/sponsors/',
+    })
+  })
 })

@@ -7,6 +7,7 @@ const copyright = {
   name: 'Give Me Money!',
   repo: 'give-me-money',
   author: 'YunYouJun',
+  iconUrl: 'https://www.yunyoujun.cn/sponsors/',
 }
 </script>
 
