@@ -304,12 +304,9 @@ async function rejectRequest() {
 
       <label class="gmm-field" for="pay-pin">
         <span class="gmm-field-label">{{ pinLabel }}</span>
-        <BaseInput
+        <BasePinInput
           id="pay-pin"
           v-model="payInfo.pin"
-          type="password"
-          inputmode="numeric"
-          :maxlength="6"
           :disabled="isBusy"
           :invalid="!!errors.pin"
           @update:model-value="clearError('pin')"
@@ -404,14 +401,14 @@ async function rejectRequest() {
   padding: 0.875rem 1rem;
   margin: 0 auto 1.25rem;
   text-align: left;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--gmm-border-soft);
   border-radius: 8px;
-  background: #fffdf8;
-  box-shadow: 0 8px 24px rgba(44, 62, 80, 0.06);
+  background: var(--gmm-panel-warm);
+  box-shadow: var(--gmm-shadow);
 
   &.is-error {
-    border-color: rgba(245, 108, 108, 0.35);
-    background: #fff7f7;
+    border-color: var(--gmm-danger-border);
+    background: var(--gmm-panel-danger);
   }
 }
 
@@ -422,12 +419,12 @@ async function rejectRequest() {
   line-height: 1.45;
 
   strong {
-    color: #2c3e50;
+    color: var(--gmm-text);
   }
 }
 
 .gmm-auth-error {
-  color: #c45656;
+  color: var(--gmm-danger-strong);
   font-size: 0.85rem;
 }
 
@@ -450,13 +447,13 @@ async function rejectRequest() {
 }
 
 .gmm-field-label {
-  color: #2c3e50;
+  color: var(--gmm-text);
   font-size: 0.925rem;
   font-weight: 600;
 }
 
 .gmm-field-error {
-  color: #b23a48;
+  color: var(--gmm-danger);
   font-size: 0.82rem;
   line-height: 1.35;
 }

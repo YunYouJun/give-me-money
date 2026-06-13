@@ -98,7 +98,7 @@ export default defineConfig({
       manifest: {
         name: '请给我钱',
         short_name: '给我钱',
-        theme_color: '#ffffff',
+        theme_color: '#fffaf0',
         icons: [
           {
             src: '/favicon.png',
@@ -136,7 +136,18 @@ export default defineConfig({
   },
 
   build: {
-    rollupOptions: {
+    rolldownOptions: {
+      onLog(level, log, defaultHandler) {
+        if (
+          typeof log !== 'string'
+          && log.code === 'INVALID_ANNOTATION'
+          && log.id?.includes('/node_modules/@vueuse/core/')
+        ) {
+          return
+        }
+
+        defaultHandler(level, log)
+      },
       output: {
         manualChunks(id) {
           if (id.includes('/node_modules/@cloudbase/js-sdk/'))

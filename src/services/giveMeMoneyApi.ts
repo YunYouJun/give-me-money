@@ -117,8 +117,10 @@ export async function listPayRecords(page: number, pageSize: number): Promise<Pa
   if (recordsResult.code)
     throw new Error(recordsResult.message || recordsResult.code)
 
+  const records = Array.isArray(recordsResult.data) ? recordsResult.data as unknown[] : []
+
   return {
-    items: recordsResult.data
+    items: records
       .map(normalizePayRecord)
       .filter((item): item is PayRecord => item !== null),
     total,

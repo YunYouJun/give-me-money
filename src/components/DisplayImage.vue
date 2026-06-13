@@ -58,11 +58,11 @@ const activeImage = computed(() => {
     box-shadow 0.25s ease,
     transform 0.25s ease;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--gmm-shadow);
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--gmm-shadow-strong);
   }
 }
 </style>

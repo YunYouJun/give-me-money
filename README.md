@@ -93,7 +93,7 @@ VITE_GMM_APP_ID=give-me-money
 
 需要在云乐坊 SSO / JSAPI Auth allowlist 中允许以下来源：
 
-- `https://gmm.yunyoujun.cn`
+- `https://gmm.yunle.fun`
 - `http://localhost:2333`
 - `http://127.0.0.1:2333`
 

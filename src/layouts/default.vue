@@ -23,7 +23,7 @@
   position: sticky;
   z-index: 10;
   top: 0;
-  background: rgba(255, 255, 255, 0.88);
+  background: color-mix(in srgb, var(--gmm-panel-solid) 88%, transparent);
   backdrop-filter: blur(12px);
 }
 

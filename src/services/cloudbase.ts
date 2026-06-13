@@ -1,5 +1,7 @@
-import cloudbase from '@cloudbase/js-sdk'
+import cloudbase from '@cloudbase/js-sdk/app'
 import { getCloudbaseConfig } from './cloudbaseConfig'
+import '@cloudbase/js-sdk/auth'
+import '@cloudbase/js-sdk/database'
 
 export type { CloudbaseConfig } from './cloudbaseConfig'
 

@@ -44,28 +44,29 @@ const { dismissToast, toasts } = useToast()
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.75rem 0.875rem;
+  color: var(--gmm-text);
   text-align: left;
   pointer-events: auto;
-  border: 1px solid rgba(31, 41, 51, 0.12);
+  border: 1px solid var(--gmm-border);
   border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 12px 28px rgba(31, 41, 51, 0.14);
+  background: var(--gmm-panel-solid);
+  box-shadow: var(--gmm-shadow-strong);
 }
 
 .toast--success {
-  border-color: rgba(31, 146, 91, 0.3);
+  border-color: var(--gmm-success-border);
 }
 
 .toast--warning {
-  border-color: rgba(196, 137, 36, 0.34);
+  border-color: var(--gmm-warning-border);
 }
 
 .toast--error {
-  border-color: rgba(196, 70, 70, 0.34);
+  border-color: var(--gmm-danger-border);
 }
 
 .toast--info {
-  border-color: rgba(71, 118, 171, 0.3);
+  border-color: var(--gmm-info-border);
 }
 
 .toast-message {

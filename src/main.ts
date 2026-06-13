@@ -8,6 +8,7 @@ import App from './App.vue'
 
 // your custom styles here
 import './styles/main.scss'
+import './logic/dark'
 
 import 'uno.css'
 

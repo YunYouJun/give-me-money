@@ -25,15 +25,15 @@ defineProps<{
   width: max-content;
   max-width: min(16rem, 80vw);
   padding: 0.4rem 0.55rem;
-  color: #2c3e50;
+  color: var(--gmm-text);
   font-size: 0.8125rem;
   line-height: 1.35;
   pointer-events: none;
   opacity: 0;
-  border: 1px solid rgba(44, 62, 80, 0.12);
+  border: 1px solid var(--gmm-border);
   border-radius: 6px;
-  background: #fff;
-  box-shadow: 0 8px 20px rgba(31, 41, 51, 0.14);
+  background: var(--gmm-panel-solid);
+  box-shadow: var(--gmm-shadow-strong);
   transform: translate(-50%, 0.25rem);
   transition:
     opacity 0.16s ease,

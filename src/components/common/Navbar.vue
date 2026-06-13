@@ -58,7 +58,8 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
   display: flex;
   align-items: stretch;
   padding: 0 max(1rem, calc((100vw - 1120px) / 2));
-  border-bottom: 1px solid rgba(44, 62, 80, 0.08);
+  color: var(--gmm-text);
+  border-bottom: 1px solid var(--gmm-border-soft);
 }
 
 .gmm-menu {
@@ -75,14 +76,14 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
   min-width: 4rem;
   height: 60px;
   padding: 0 1rem;
-  color: #2c3e50;
+  color: var(--gmm-text);
   text-decoration: none;
   border-bottom: 2px solid transparent;
 }
 
 .gmm-nav-link.is-active {
-  color: #0f6f78;
-  border-bottom-color: #0f6f78;
+  color: var(--gmm-primary);
+  border-bottom-color: var(--gmm-primary);
 }
 
 .gmm-nav-link.is-logo {
@@ -109,7 +110,7 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
   justify-content: center;
   width: 3.5rem;
   height: 60px;
-  color: #2c3e50;
+  color: var(--gmm-text);
   font-size: 1.25rem;
   text-decoration: none;
   border-bottom: 2px solid transparent;
@@ -120,8 +121,8 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
 
 .gmm-nav-icon-link:hover,
 .gmm-nav-icon-link:focus-visible {
-  color: #0f6f78;
-  background: rgba(15, 111, 120, 0.08);
+  color: var(--gmm-primary);
+  background: var(--gmm-primary-soft);
   outline: none;
 }
 

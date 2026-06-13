@@ -131,14 +131,14 @@ onMounted(() => {
   padding: 0.85rem 1rem;
   margin-bottom: 1rem;
   text-align: left;
-  border: 1px dashed rgba(0, 0, 0, 0.16);
+  border: 1px dashed var(--gmm-border-strong);
   border-radius: 8px;
-  background: #fffdf8;
+  background: var(--gmm-panel-warm);
 
   &.is-error {
-    color: #c45656;
-    border-color: rgba(245, 108, 108, 0.35);
-    background: #fff7f7;
+    color: var(--gmm-danger-strong);
+    border-color: var(--gmm-danger-border);
+    background: var(--gmm-panel-danger);
   }
 }
 

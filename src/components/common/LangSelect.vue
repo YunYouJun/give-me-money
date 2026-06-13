@@ -140,8 +140,8 @@ onBeforeUnmount(() => {
 
   &:hover,
   &:focus-visible {
-    color: #0f6f78;
-    background: rgba(15, 111, 120, 0.08);
+    color: var(--gmm-primary);
+    background: var(--gmm-primary-soft);
     outline: none;
   }
 }
@@ -172,10 +172,10 @@ onBeforeUnmount(() => {
   min-width: 9rem;
   padding: 0.35rem;
   text-align: left;
-  border: 1px solid rgba(44, 62, 80, 0.12);
+  border: 1px solid var(--gmm-border);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 14px 32px rgba(44, 62, 80, 0.12);
+  background: var(--gmm-panel-solid);
+  box-shadow: var(--gmm-shadow-strong);
 }
 
 .lang-select-option {
@@ -185,7 +185,7 @@ onBeforeUnmount(() => {
   gap: 0.75rem;
   min-height: 2.25rem;
   padding: 0 0.65rem;
-  color: #2c3e50;
+  color: var(--gmm-text);
   font: inherit;
   white-space: nowrap;
   cursor: pointer;
@@ -196,8 +196,8 @@ onBeforeUnmount(() => {
   &:hover,
   &:focus-visible,
   &.is-active {
-    color: #0f6f78;
-    background: rgba(15, 111, 120, 0.08);
+    color: var(--gmm-primary);
+    background: var(--gmm-primary-soft);
     outline: none;
   }
 

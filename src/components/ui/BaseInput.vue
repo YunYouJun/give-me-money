@@ -36,18 +36,18 @@ const model = defineModel<string>({ required: true })
   width: 100%;
   min-height: 2.35rem;
   padding: 0.45rem 0.65rem;
-  color: #2c3e50;
-  border: 1px solid rgba(44, 62, 80, 0.18);
+  color: var(--gmm-text);
+  border: 1px solid var(--gmm-border-strong);
   border-radius: 8px;
-  background: #fff;
+  background: var(--gmm-panel-solid);
 }
 
 .base-input:focus {
-  border-color: #0f6f78;
-  outline: 2px solid rgba(15, 111, 120, 0.14);
+  border-color: var(--gmm-primary);
+  outline: 2px solid var(--gmm-primary-focus);
 }
 
 .base-input.is-invalid {
-  border-color: #b23a48;
+  border-color: var(--gmm-danger);
 }
 </style>

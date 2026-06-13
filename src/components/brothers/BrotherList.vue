@@ -109,16 +109,17 @@ function getMethodLabel(type: PayRecord['type']) {
   align-items: center;
   justify-self: end;
   gap: 0.5rem;
+  color: var(--gmm-text);
   font-size: 0.925rem;
 }
 
 .brother-filter-select {
   min-height: 2rem;
   padding: 0.3rem 1.75rem 0.3rem 0.55rem;
-  color: #2c3e50;
-  border: 1px solid rgba(44, 62, 80, 0.16);
+  color: var(--gmm-text);
+  border: 1px solid var(--gmm-border-strong);
   border-radius: 8px;
-  background: #fff;
+  background: var(--gmm-panel-solid);
 }
 
 .brother-table-wrap {
@@ -131,28 +132,28 @@ function getMethodLabel(type: PayRecord['type']) {
   min-width: 840px;
   border-collapse: collapse;
   text-align: left;
-  background: #fff;
+  background: var(--gmm-panel-solid);
 }
 
 .brother-table th,
 .brother-table td {
   padding: 0.7rem 0.75rem;
-  border-bottom: 1px solid rgba(44, 62, 80, 0.1);
+  border-bottom: 1px solid var(--gmm-border);
 }
 
 .brother-table th {
-  color: #2c3e50;
+  color: var(--gmm-text);
   font-size: 0.85rem;
   font-weight: 700;
-  background: #fff8ec;
+  background: var(--gmm-panel-warm-strong);
 }
 
 .brother-table tbody tr:nth-child(even) {
-  background: #fbfdff;
+  background: var(--gmm-table-row);
 }
 
 .brother-empty-cell {
-  color: rgba(44, 62, 80, 0.68);
+  color: var(--gmm-muted);
   text-align: center;
 }
 

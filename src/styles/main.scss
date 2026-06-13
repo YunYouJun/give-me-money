@@ -1,10 +1,91 @@
 @use './markdown.scss';
 
+:root {
+  color-scheme: light;
+  --gmm-bg: #fffaf0;
+  --gmm-bg-soft: #f7fbff;
+  --gmm-bg-gradient: linear-gradient(180deg, #fffaf0 0%, #fff 34%, #f7fbff 100%);
+  --gmm-text: #2c3e50;
+  --gmm-heading: #1f2933;
+  --gmm-muted: #52616b;
+  --gmm-muted-strong: #64748b;
+  --gmm-primary: #0f6f78;
+  --gmm-primary-hover: #0a4f56;
+  --gmm-primary-soft: rgba(15, 111, 120, 0.08);
+  --gmm-primary-focus: rgba(15, 111, 120, 0.14);
+  --gmm-primary-border: rgba(15, 111, 120, 0.35);
+  --gmm-accent: #ffd966;
+  --gmm-accent-hover: #ffcf40;
+  --gmm-accent-border: rgba(255, 205, 86, 0.75);
+  --gmm-panel: rgba(255, 255, 255, 0.72);
+  --gmm-panel-solid: #fff;
+  --gmm-panel-warm: #fffdf8;
+  --gmm-panel-warm-strong: #fff8ec;
+  --gmm-panel-danger: #fff7f7;
+  --gmm-input-disabled-bg: #f7f8f8;
+  --gmm-table-row: #fbfdff;
+  --gmm-border: rgba(44, 62, 80, 0.12);
+  --gmm-border-soft: rgba(44, 62, 80, 0.08);
+  --gmm-border-strong: rgba(44, 62, 80, 0.18);
+  --gmm-shadow: 0 8px 24px rgba(44, 62, 80, 0.06);
+  --gmm-shadow-strong: 0 12px 28px rgba(31, 41, 51, 0.14);
+  --gmm-danger: #b23a48;
+  --gmm-danger-strong: #c45656;
+  --gmm-danger-soft: rgba(178, 58, 72, 0.12);
+  --gmm-danger-border: rgba(178, 58, 72, 0.35);
+  --gmm-success: #1f7a4d;
+  --gmm-success-border: rgba(31, 122, 77, 0.35);
+  --gmm-warning-border: rgba(196, 137, 36, 0.34);
+  --gmm-info-border: rgba(71, 118, 171, 0.3);
+  --gmm-selection: rgba(255, 205, 86, 0.45);
+}
+
+html.dark {
+  color-scheme: dark;
+  --gmm-bg: #101817;
+  --gmm-bg-soft: #151f21;
+  --gmm-bg-gradient: linear-gradient(180deg, #101817 0%, #141d1d 42%, #0f1518 100%);
+  --gmm-text: #e6edf0;
+  --gmm-heading: #f5efe2;
+  --gmm-muted: #a7b6b8;
+  --gmm-muted-strong: #bdc8c9;
+  --gmm-primary: #64d2c8;
+  --gmm-primary-hover: #8de0d7;
+  --gmm-primary-soft: rgba(100, 210, 200, 0.14);
+  --gmm-primary-focus: rgba(100, 210, 200, 0.22);
+  --gmm-primary-border: rgba(100, 210, 200, 0.4);
+  --gmm-accent: #f4c95d;
+  --gmm-accent-hover: #ffd86d;
+  --gmm-accent-border: rgba(244, 201, 93, 0.7);
+  --gmm-panel: rgba(24, 32, 32, 0.78);
+  --gmm-panel-solid: #182021;
+  --gmm-panel-warm: #201f1a;
+  --gmm-panel-warm-strong: #2a251b;
+  --gmm-panel-danger: #2a1d20;
+  --gmm-input-disabled-bg: #263132;
+  --gmm-table-row: #151e20;
+  --gmm-border: rgba(230, 237, 240, 0.14);
+  --gmm-border-soft: rgba(230, 237, 240, 0.09);
+  --gmm-border-strong: rgba(230, 237, 240, 0.2);
+  --gmm-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+  --gmm-shadow-strong: 0 14px 34px rgba(0, 0, 0, 0.36);
+  --gmm-danger: #ff8a91;
+  --gmm-danger-strong: #ff9aa1;
+  --gmm-danger-soft: rgba(255, 138, 145, 0.14);
+  --gmm-danger-border: rgba(255, 138, 145, 0.42);
+  --gmm-success: #72d99a;
+  --gmm-success-border: rgba(114, 217, 154, 0.42);
+  --gmm-warning-border: rgba(244, 201, 93, 0.42);
+  --gmm-info-border: rgba(104, 166, 222, 0.42);
+  --gmm-selection: rgba(244, 201, 93, 0.38);
+}
+
 // global
 body {
   padding: 0;
   margin: 0;
-  background: linear-gradient(180deg, #fffaf0 0%, #fff 34%, #f7fbff 100%);
+  color: var(--gmm-text);
+  background: var(--gmm-bg-gradient);
 }
 
 #app {
@@ -12,12 +93,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: var(--gmm-text);
 }
 
 ::selection {
-  color: #1f2933;
-  background: rgba(255, 205, 86, 0.45);
+  color: var(--gmm-heading);
+  background: var(--gmm-selection);
 }
 
 hr {
@@ -32,13 +113,13 @@ hr {
 .gmm-about-mark {
   display: block;
   margin: 0 auto 0.75rem;
-  color: #0f6f78;
+  color: var(--gmm-primary);
   font-size: 3rem;
 }
 
 .gmm-about-kicker {
   margin: 0 0 0.75rem;
-  color: #64748b;
+  color: var(--gmm-muted-strong);
   font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -47,7 +128,7 @@ hr {
 
 .gmm-about-hero h1 {
   margin: 0;
-  color: #1f2933;
+  color: var(--gmm-heading);
   font-size: 2.75rem;
   line-height: 1.1;
 }
@@ -55,7 +136,7 @@ hr {
 .gmm-about-lead {
   max-width: 38rem;
   margin: 1rem auto 0;
-  color: #52616b;
+  color: var(--gmm-muted);
   font-size: 1.0625rem;
   line-height: 1.8;
 }
@@ -68,25 +149,25 @@ hr {
   margin: 0 auto;
   overflow: hidden;
   text-align: left;
-  border: 1px solid rgba(44, 62, 80, 0.1);
+  border: 1px solid var(--gmm-border);
   border-radius: 8px;
-  background: rgba(44, 62, 80, 0.1);
+  background: var(--gmm-border);
 }
 
 .gmm-about-sections section {
   padding: 1.25rem;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--gmm-panel);
 }
 
 .gmm-about-sections h2 {
   margin: 0 0 0.65rem;
-  color: #1f2933;
+  color: var(--gmm-heading);
   font-size: 1rem;
 }
 
 .gmm-about-sections p {
   margin: 0;
-  color: #52616b;
+  color: var(--gmm-muted);
   font-size: 0.95rem;
   line-height: 1.75;
 }
@@ -105,12 +186,12 @@ hr {
   justify-content: center;
   min-height: 2.75rem;
   padding: 0 1rem;
-  color: #0f6f78;
+  color: var(--gmm-primary);
   font-weight: 700;
   text-decoration: none;
-  border: 1px solid rgba(15, 111, 120, 0.22);
+  border: 1px solid var(--gmm-primary-border);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.68);
+  background: var(--gmm-panel);
   transition:
     color 0.18s ease,
     border-color 0.18s ease,
@@ -120,24 +201,24 @@ hr {
 
 .gmm-about-action:hover,
 .gmm-about-action:focus-visible {
-  color: #0a4f56;
-  border-color: rgba(15, 111, 120, 0.42);
-  background: #fff;
+  color: var(--gmm-primary-hover);
+  border-color: var(--gmm-primary-border);
+  background: var(--gmm-panel-solid);
   outline: none;
   transform: translateY(-1px);
 }
 
 .gmm-about-action.is-primary {
-  color: #1f2933;
-  border-color: rgba(255, 205, 86, 0.75);
-  background: #ffd966;
+  color: var(--gmm-heading);
+  border-color: var(--gmm-accent-border);
+  background: var(--gmm-accent);
 }
 
 .gmm-about-action.is-primary:hover,
 .gmm-about-action.is-primary:focus-visible {
-  color: #1f2933;
-  border-color: rgba(255, 190, 45, 0.9);
-  background: #ffcf40;
+  color: var(--gmm-heading);
+  border-color: var(--gmm-accent-border);
+  background: var(--gmm-accent-hover);
 }
 
 @media (max-width: 640px) {
@@ -159,7 +240,7 @@ hr {
 
   .bar {
     --tw-bg-opacity: 1;
-    background-color: rgba(0, 0, 0, var(--tw-bg-opacity));
+    background-color: var(--gmm-primary);
     opacity: 0.75;
 
     position: fixed;

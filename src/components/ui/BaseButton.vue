@@ -45,11 +45,11 @@ function onClick(event: MouseEvent) {
   gap: 0.45rem;
   min-height: 2.25rem;
   padding: 0.45rem 0.875rem;
-  color: #2c3e50;
+  color: var(--gmm-text);
   cursor: pointer;
-  border: 1px solid rgba(44, 62, 80, 0.16);
+  border: 1px solid var(--gmm-border-strong);
   border-radius: 8px;
-  background: #fff;
+  background: var(--gmm-panel-solid);
 }
 
 .base-button--small {
@@ -59,18 +59,18 @@ function onClick(event: MouseEvent) {
 }
 
 .base-button--primary {
-  color: #0f6f78;
-  border-color: rgba(15, 111, 120, 0.35);
+  color: var(--gmm-primary);
+  border-color: var(--gmm-primary-border);
 }
 
 .base-button--danger {
-  color: #b23a48;
-  border-color: rgba(178, 58, 72, 0.35);
+  color: var(--gmm-danger);
+  border-color: var(--gmm-danger-border);
 }
 
 .base-button--success {
-  color: #1f7a4d;
-  border-color: rgba(31, 122, 77, 0.35);
+  color: var(--gmm-success);
+  border-color: var(--gmm-success-border);
 }
 
 .base-button:disabled {

@@ -31,3 +31,7 @@ components.d.ts
 auto-imports.d.ts
 .vite-ssg-dist
 .vite-ssg-temp
+
+# EdgeOne Pages
+.edgeone/
+.tef_dist/

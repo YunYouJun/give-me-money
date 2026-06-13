@@ -41,19 +41,19 @@ const model = defineModel<boolean>({ required: true })
   width: 1rem;
   height: 1rem;
   margin-top: 0.18rem;
-  border: 1px solid rgba(44, 62, 80, 0.3);
+  border: 1px solid var(--gmm-border-strong);
   border-radius: 4px;
-  background: #fff;
+  background: var(--gmm-panel-solid);
 }
 
 .base-checkbox-input:checked + .base-checkbox-box {
-  border-color: #0f6f78;
-  background: #0f6f78;
-  box-shadow: inset 0 0 0 3px #fff;
+  border-color: var(--gmm-primary);
+  background: var(--gmm-primary);
+  box-shadow: inset 0 0 0 3px var(--gmm-panel-solid);
 }
 
 .base-checkbox-input:focus-visible + .base-checkbox-box {
-  outline: 2px solid rgba(15, 111, 120, 0.24);
+  outline: 2px solid var(--gmm-primary-focus);
   outline-offset: 2px;
 }
 

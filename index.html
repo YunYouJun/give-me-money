@@ -7,13 +7,32 @@
     <link rel="icon" href="favicon.png" type="image/png" />
     <!-- 图标 -->
     <meta name="msapplication-TileColor" content="#000000" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#fffaf0" />
     <script>
       ;(function () {
+        const lightThemeColor = '#fffaf0'
+        const darkThemeColor = '#101817'
+
+        function getStoredColorScheme() {
+          try {
+            const value = localStorage.getItem('vueuse-color-scheme')
+            return value === 'dark' || value === 'light' ? value : 'auto'
+          } catch (error) {
+            return 'auto'
+          }
+        }
+
         const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-        const setting = localStorage.getItem('vueuse-color-scheme') || 'auto'
-        if (setting === 'dark' || (prefersDark && setting !== 'light'))
-          document.documentElement.classList.toggle('dark', true)
+        const setting = getStoredColorScheme()
+        const isDark = setting === 'dark' || (prefersDark && setting !== 'light')
+        const root = document.documentElement
+        const themeColor = document.querySelector('meta[name="theme-color"]')
+
+        root.classList.toggle('dark', isDark)
+        root.classList.toggle('light', !isDark)
+        root.style.colorScheme = isDark ? 'dark' : 'light'
+        if (themeColor) themeColor.setAttribute('content', isDark ? darkThemeColor : lightThemeColor)
       })()
     </script>
   </head>

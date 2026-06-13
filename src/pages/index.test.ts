@@ -62,6 +62,7 @@ describe('index page', () => {
     expect(wrapper.text()).toContain('可爱的萝莉妹妹们')
     expect(wrapper.find('[data-testid="display-image"]').exists()).toBe(true)
     expect(wrapper.find('[data-testid="info-input"]').exists()).toBe(true)
+    expect(wrapper.find('audio#love-you source[src="/audio/love.mp3"]').exists()).toBe(true)
     expect(sessionStorage.getItem('give-me-money:preview-warning-accepted')).toBe('true')
   })
 
@@ -74,5 +75,6 @@ describe('index page', () => {
     expect(wrapper.text()).not.toContain('NSFW 内容提醒')
     expect(wrapper.find('[data-testid="display-image"]').exists()).toBe(true)
     expect(wrapper.find('[data-testid="info-input"]').exists()).toBe(true)
+    expect(wrapper.find('audio#love-you source[src="/audio/love.mp3"]').exists()).toBe(true)
   })
 })

@@ -39,21 +39,21 @@ const { t } = useI18n()
   width: min(100%, 680px);
   padding: 2rem;
   margin: 4rem auto 2rem;
-  color: #2c3e50;
-  border: 1px solid rgba(178, 58, 72, 0.24);
+  color: var(--gmm-text);
+  border: 1px solid var(--gmm-danger-border);
   border-radius: 8px;
-  background: #fff7f7;
-  box-shadow: 0 10px 28px rgba(44, 62, 80, 0.08);
+  background: var(--gmm-panel-danger);
+  box-shadow: var(--gmm-shadow);
 }
 
 .nsfw-warning-icon {
-  color: #b23a48;
+  color: var(--gmm-danger);
   font-size: 3rem;
 }
 
 .nsfw-warning-title {
   margin: 0;
-  color: #1f2933;
+  color: var(--gmm-heading);
   font-size: 1.75rem;
   line-height: 1.2;
 }
@@ -61,7 +61,7 @@ const { t } = useI18n()
 .nsfw-warning-description {
   max-width: 32rem;
   margin: 0;
-  color: #52616b;
+  color: var(--gmm-muted);
   font-size: 1rem;
   line-height: 1.7;
 }
