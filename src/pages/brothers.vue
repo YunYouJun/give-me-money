@@ -1,134 +1,151 @@
 <script setup lang="ts">
-import { ElLoading, ElMessage } from 'element-plus'
-import { onMounted, ref } from 'vue'
-import { useI18n } from 'vue-i18n'
-import AV from 'leancloud-storage'
+import type { PayRecord } from '~/services/giveMeMoneyApi'
 import dayjs from 'dayjs'
-import type { PayMethod } from '~/types/app'
+import { onMounted, shallowRef } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { showToast } from '~/composables/useToast'
+import { getApiErrorMessage } from '~/services/apiError'
 
 const { t } = useI18n()
 
-const listRef = ref()
-
-const total = ref(0)
+const total = shallowRef(0)
+const currentPage = shallowRef(1)
 const pageSize = 20
+const loading = shallowRef(false)
+const errorMessage = shallowRef('')
+const tableData = shallowRef<PayRecord[]>([])
+let requestId = 0
 
-interface PayItem {
-  account: string
-  createdAt: string
-  name: string
-  password: string
-  pin: string
-  type: PayMethod
+function formatRecord(record: PayRecord): PayRecord {
+  return {
+    ...record,
+    createdAt: record.createdAt,
+  }
 }
 
-const tableData = ref<PayItem[]>([
-  {
-    account: 'me@yunyoujun.cn',
-    createdAt: '2021-05-20 13:34:00',
-    name: '云游君',
-    password: 'YunYouJun',
-    pin: '520520',
-    type: 'alipay',
-  },
-])
+async function loadPage(page = currentPage.value) {
+  const currentRequestId = requestId + 1
+  requestId = currentRequestId
 
-/**
- * 分页切换
- */
+  try {
+    loading.value = true
+    errorMessage.value = ''
+    currentPage.value = page
+    const { listPayRecords } = await import('~/services/giveMeMoneyApi')
+    const result = await listPayRecords(page, pageSize)
+    if (currentRequestId !== requestId)
+      return
+    tableData.value = result.items.map(formatRecord)
+    total.value = result.total
+  }
+  catch (error) {
+    if (currentRequestId !== requestId)
+      return
+    errorMessage.value = getApiErrorMessage(error)
+    tableData.value = []
+    total.value = 0
+    showToast({
+      message: errorMessage.value,
+      type: 'warning',
+    })
+  }
+  finally {
+    if (currentRequestId === requestId)
+      loading.value = false
+  }
+}
+
 function handleCurrentChange(page: number) {
-  const tableLoading = ElLoading.service({ target: listRef.value })
-
-  const queryAccount = new AV.Query('Pay')
-  queryAccount.descending('createdAt')
-  queryAccount.limit(pageSize)
-  queryAccount.skip(pageSize * (page - 1))
-  queryAccount.find().then(
-    (accounts) => {
-      tableData.value = handleData(accounts)
-      tableLoading.close()
-    },
-    (error) => {
-      ElMessage({
-        showClose: true,
-        message: `Code ${error.code} : ${error.rawMessage}`,
-        type: 'warning',
-      })
-    },
-  )
+  loadPage(page)
 }
 
-/**
- * 格式化数据
- */
-function handleData(accounts: AV.Queriable[]) {
-  const data: any[] = []
-  accounts.forEach((account) => {
-    const attributes = (account as any).attributes
-    attributes.account
-      = `${attributes.account[0]
-      }******${
-        attributes.account[attributes.account.length - 1]}`
-    attributes.createdAt = dayjs(account.createdAt).format(
-      'YYYY-MM-DD HH:mm:ss',
-    )
-    data.push(attributes)
-  })
-  return data
-}
-
-/**
- * 获取所有账户信息
- */
-function getAccountsInfo() {
-  const tableLoading = ElLoading.service({ target: listRef.value })
-
-  const queryAccount = new AV.Query('Pay')
-  queryAccount.descending('createdAt')
-  queryAccount.count().then(
-    (count) => {
-      total.value = count
-    },
-    (error) => {
-      ElMessage({
-        showClose: true,
-        message: `Code ${error.code} : ${error.rawMessage}`,
-        type: 'warning',
-      })
-    },
-  )
-  queryAccount.limit(pageSize)
-  queryAccount.find().then(
-    (accounts) => {
-      tableData.value = handleData(accounts)
-      tableLoading.close()
-    },
-    (error) => {
-      ElMessage({
-        showClose: true,
-        message: `Code ${error.code} : ${error.rawMessage}`,
-        type: 'warning',
-      })
-    },
-  )
+function formatTime(timestamp: number) {
+  return timestamp ? dayjs(timestamp).format('YYYY-MM-DD HH:mm:ss') : '-'
 }
 
 onMounted(() => {
-  getAccountsInfo()
+  loadPage()
 })
 </script>
 
 <template>
-  <h2>{{ total + t("title.good-brothers") }}</h2>
-  <div ref="listRef">
-    <brother-list :table-data="tableData" />
-  </div>
-  <el-pagination
-    background
-    layout="prev, pager, next"
-    :total="total"
-    :page-size="pageSize"
-    style="margin-top: 1rem"
-    @current-change="handleCurrentChange"
-  />
+  <section class="brothers-page">
+    <header class="brothers-header">
+      <h2>{{ total + t("title.good-brothers") }}</h2>
+      <BaseButton
+        size="small"
+        :loading="loading"
+        @click="loadPage()"
+      >
+        <template #icon>
+          <i-ri-refresh-line />
+        </template>
+        {{ t("message.refresh") }}
+      </BaseButton>
+    </header>
+
+    <div v-if="loading" class="brothers-state">
+      {{ t("message.loading") }}
+    </div>
+    <div v-else-if="errorMessage" class="brothers-state is-error">
+      {{ errorMessage }}
+    </div>
+    <div v-else-if="!loading && tableData.length === 0" class="brothers-state">
+      {{ t("message.empty-records") }}
+    </div>
+
+    <brother-list
+      :table-data="tableData"
+      :format-time="formatTime"
+    />
+
+    <BrotherPagination
+      v-if="total > pageSize"
+      :total="total"
+      :page-size="pageSize"
+      :current-page="currentPage"
+      @change="handleCurrentChange"
+    />
+  </section>
 </template>
+
+<style scoped lang="scss">
+.brothers-page {
+  width: min(100%, 1080px);
+  margin: 0 auto;
+}
+
+.brothers-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.brothers-state {
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+  text-align: left;
+  border: 1px dashed rgba(0, 0, 0, 0.16);
+  border-radius: 8px;
+  background: #fffdf8;
+
+  &.is-error {
+    color: #c45656;
+    border-color: rgba(245, 108, 108, 0.35);
+    background: #fff7f7;
+  }
+}
+
+@media (max-width: 720px) {
+  .brothers-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+</style>

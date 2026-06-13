@@ -10,24 +10,27 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6.0.8
+      - uses: actions/setup-node@v6
         with:
-          node-version: 16.x
+          node-version: 22.13.x
           cache: pnpm
 
       - name: Install
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build
         env:
-          VITE_APP_ID: ${{ secrets.appId }}
-          VITE_APP_KEY: ${{ secrets.appKey }}
-        run: npm run build
+          VITE_CLOUDBASE_ENV_ID: yunlefun-8g7ybcxc7345c490
+          VITE_CLOUDBASE_REGION: ap-shanghai
+          VITE_CLOUDBASE_ACCESS_KEY: ${{ secrets.CLOUDBASE_ACCESS_KEY }}
+          VITE_YUNLE_SSO_ORIGIN: https://www.yunle.fun
+          VITE_GMM_APP_ID: give-me-money
+        run: pnpm run build
 
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4.1.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: dist

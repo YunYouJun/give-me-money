@@ -14,16 +14,39 @@ message:
   title: 我很可爱，请给我钱！
   give-me-pay: '欧尼酱，可以……告诉我……你的……{name}吗？'
   header: 可爱的萝莉妹妹们
+  nsfw:
+    title: NSFW 内容提醒
+    description: 此页面包含恶作剧内容与可能在公共或工作场合不适合查看、播放的素材。请确认环境合适后再继续预览。
+    continue: 继续预览
   ok: 好的，给你!
   no: 残忍拒绝
   name: 你的名字
   name-placeholder: 人家也不是一定要知道你的名字啦～
+  yunle-account: 云乐坊账号
+  yunle-connected: '已登录：{name}'
+  yunle-login-required: 登录云乐坊账号后才可以提交或拒绝。
+  yunle-sync-unavailable: CloudBase 尚未配置，无法同步云乐坊账号。
+  yunle-login-unavailable: CloudBase 尚未配置，无法打开云乐坊登录。
+  yunle-app-login-required: 请先在云乐坊 App 内登录账号。
+  yunle-app-session-unavailable: 未能读取云乐坊 App 登录态。
+  yunle-popup-blocked: 浏览器拦截了登录弹窗，请允许弹窗后重试。
+  yunle-login-incomplete: 未完成云乐坊登录。
+  login-yunle: 登录云乐坊账号
+  logout: 退出登录
+  cloudbase-not-configured: 当前未配置 CloudBase 访问密钥，页面可浏览但暂时不能提交。
+  must-acknowledge: 请先确认这是恶作剧网站，并同意公开展示填写内容。
+  loading: 加载中……
+  refresh: 刷新
+  empty-records: 暂时还没有好心哥哥。
   pay:
     type: 类型
+    all: 全部
     account: 账号
+    account-placeholder: 提交前会自动脱敏，只公开部分字符
     password: 密码
     pin: 交易密码
     time: 时间
+    author: 提交账号
   alipay:
     name: 支付宝
     button: 其实我用支付宝啦~
@@ -45,4 +68,7 @@ prompt:
 
 error:
   validator:
+    account: 账号至少需要 2 个字符。
+    password: 密码至少需要 6 个字符。
+    pin-length: 交易密码需要 6 位数字。
     pin: 我记得交易密码是纯数字吧！

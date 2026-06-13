@@ -1,13 +1,10 @@
-import { ViteSSG } from 'vite-ssg'
+import type { UserModule } from './types'
 import { setupLayouts } from 'virtual:generated-layouts'
 
+import { ViteSSG } from 'vite-ssg'
+import generatedRoutes from '~pages'
 // import Previewer from 'virtual:vue-component-preview'
 import App from './App.vue'
-import type { UserModule } from './types'
-import generatedRoutes from '~pages'
-
-// for element
-import 'element-plus/dist/index.css'
 
 // your custom styles here
 import './styles/main.scss'
@@ -20,10 +17,10 @@ const routes = setupLayouts(generatedRoutes)
 export const createApp = ViteSSG(
   App,
   { routes, base: import.meta.env.BASE_URL },
-  (ctx) => {
+  async (ctx) => {
     // install all modules under `modules/`
-    Object.values(import.meta.glob<{ install: UserModule }>('./modules/*.ts', { eager: true }))
-      .forEach(i => i.install?.(ctx))
+    for (const module of Object.values(import.meta.glob<{ install: UserModule }>('./modules/*.ts', { eager: true })))
+      await module.install?.(ctx)
     // ctx.app.use(Previewer)
   },
 )

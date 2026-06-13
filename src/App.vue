@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import { ElConfigProvider } from 'element-plus'
-import { useHead } from '@vueuse/head'
-import { useAppStore } from './stores/app'
-
-const app = useAppStore()
+import { useHead } from '@unhead/vue'
 
 // https://github.com/vueuse/head
 // you can use this to manipulate the document head in any components,
@@ -15,7 +11,6 @@ useHead({
 </script>
 
 <template>
-  <ElConfigProvider :locale="app.locale">
-    <router-view />
-  </ElConfigProvider>
+  <router-view />
+  <BaseToastHost />
 </template>

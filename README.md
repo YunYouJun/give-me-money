@@ -12,9 +12,9 @@ I'm so cute. Please give me money.
 
 ## About
 
-这是自己几年前 Parcel 刚出的时候，写[Parcel.js + Vue 搭建笔记](https://www.yunyoujun.cn/note/vue-parcel-demo/)（已使用 Vite + Vue3 + TypeScript 重构），拿来练手的小玩意儿。所以代码很丑，也没做啥后端校验。 因为之前 API 次数被人恶意刷完了，所以重置了数据，现在加了邮箱验证才能提交。
+这是自己几年前 Parcel 刚出的时候，写[Parcel.js + Vue 搭建笔记](https://www.yunyoujun.cn/note/vue-parcel-demo/)（已使用 Vite + Vue3 + TypeScript 重构），拿来练手的小玩意儿。所以代码很丑，也没做啥后端校验。因为之前 API 次数被人恶意刷完了，所以重置了数据，现在改为登录云乐坊账号后才能提交。
 
-乐呵乐呵完事了，我本身也是白嫖的 LeanCloud 的开发版，刷数据最多也就到 LeanCloud 的每日上限。
+乐呵乐呵完事了，站点数据现在写入云乐坊同一个 CloudBase 环境。
 
 大家要想打钱，也不用给我打，有现成的 [联合国儿童基金会](https://www.unicef.cn/)。
 
@@ -48,14 +48,15 @@ I'm so cute. Please give me money.
 - [Pinia](https://pinia.esm.dev/)
 - [iconify](https://iconify.design/)
 - ~~[Element](https://github.com/ElemeFE/element/)~~
-- [Element-Plus](https://github.com/element-plus/element-plus/)
-- [element-theme-ink](https://github.com/YunYouJun/element-theme-ink/)
+- ~~[Element-Plus](https://github.com/element-plus/element-plus/)~~
+- ~~[element-theme-ink](https://github.com/YunYouJun/element-theme-ink/)~~
+- Local Vue UI components
 - [vue-i18n](https://github.com/intlify/vue-i18n-next)
 - [TypeScript](https://www.typescriptlang.org/)
 
 ## Storage
 
-采用 [LeanCloud](https://leancloud.cn/) 存储 （大家留给我的支付宝帐号，大概是能看到的~）
+采用 [CloudBase](https://cloudbase.net/) 存储，并通过云乐坊统一账号同步登录态。
 
 > 虽然至今都没有一个真的啊！摔！
 
@@ -70,24 +71,36 @@ I'm so cute. Please give me money.
 ```sh
 git clone https://github.com/YunYouJun/give-me-money.git
 cd give-me-money
-npm install
+pnpm install
 ```
 
 复制 `.env.example`，并重命名为 `.env`。
 
-在 `.env` 中填入你在 [LeanCloud](https://leancloud.app) 创建的应用的 `appID` 与 `appKey`。
+在 `.env` 中填入云乐坊 CloudBase 环境和 publishable access key。
 
 ```sh
-VITE_APP_ID=xxxxxxx
-VITE_APP_KEY=xxxxxxx
-# 只有国内版 LeanCloud 需要填写，所以更推荐直接使用国际版
-# VITE_SERVER_URL=https://xxx.example.com
+VITE_CLOUDBASE_ENV_ID=yunlefun-8g7ybcxc7345c490
+VITE_CLOUDBASE_REGION=ap-shanghai
+VITE_CLOUDBASE_ACCESS_KEY=xxxxxxx
+VITE_YUNLE_SSO_ORIGIN=https://www.yunle.fun
+VITE_YUNLE_APP_AUTH_ORIGIN=https://apps.yunle.fun
+VITE_GMM_APP_ID=give-me-money
 ```
+
+网页登录走 `www.yunle.fun` SSO；云乐坊 App 内打开时优先走 `apps.yunle.fun`
+注入的 `window.ylf.getAuthCode({ scope: ['profile', 'cloudbase:session'] })`，
+兑换到 CloudBase session 后再调用 Web SDK `auth.setSession()`。
+
+需要在云乐坊 SSO / JSAPI Auth allowlist 中允许以下来源：
+
+- `https://gmm.yunyoujun.cn`
+- `http://localhost:2333`
+- `http://127.0.0.1:2333`
 
 ### 运行
 
 ```sh
-npm run dev
+pnpm run dev
 # http://localhost:2333
 ```
 

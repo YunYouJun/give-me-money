@@ -1,24 +1,34 @@
 <script setup lang="ts">
-import { onBeforeMount, reactive, ref, watch } from 'vue'
-import type { FormRules } from 'element-plus'
-import { ElForm, ElMessage } from 'element-plus'
-import { useI18n } from 'vue-i18n'
-import AV from 'leancloud-storage'
-import consola from 'consola'
-import { playLoveAudio, queryNoCounter, queryOkCounter } from '../utils'
-import { useAppStore } from '~/stores/app'
+import type { PayValidationErrors } from '~/composables/usePayFormValidation'
 import type { PayMethod } from '~/types/app'
+import { computed, onMounted, reactive, shallowRef } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { validatePayInfo } from '~/composables/usePayFormValidation'
+import { showToast } from '~/composables/useToast'
+import { useYunleAuth } from '~/composables/useYunleAuth'
+import { getApiErrorMessage } from '~/services/apiError'
+import { useAppStore } from '~/stores/app'
+import { playLoveAudio } from '../utils'
+
+interface PayInfo {
+  type: PayMethod
+  account: string
+  password: string
+  pin: string
+}
 
 const { t } = useI18n()
-
 const app = useAppStore()
+const auth = useYunleAuth()
 
-const payForm = ref()
+const name = shallowRef('')
+const checked = shallowRef(false)
+const loadingCounters = shallowRef(false)
+const submitting = shallowRef(false)
+const rejecting = shallowRef(false)
+const apiError = shallowRef('')
 
-const name = ref('')
-const checked = ref(false)
-
-const payInfo = reactive({
+const payInfo = reactive<PayInfo>({
   type: 'alipay',
   account: '',
   password: '',
@@ -30,281 +40,171 @@ const counter = reactive({
   no: 0,
 })
 
-const disabled = reactive({
-  ok: false,
-  no: false,
+const errors = reactive<PayValidationErrors>({})
+
+const promptOk = computed(() => t('prompt.ok', { value: counter.ok }))
+const promptNo = computed(() => t('prompt.no', { value: counter.no }))
+const accountLabel = computed(() => t(`message.${payInfo.type}.name`) + t('message.pay.account'))
+const passwordLabel = computed(() => t(`message.${payInfo.type}.name`) + t('message.pay.password'))
+const pinLabel = computed(() => t(`message.${payInfo.type}.name`) + t('message.pay.pin'))
+const isBusy = computed(() => submitting.value || rejecting.value || auth.loading.value)
+const authErrorMessage = computed(() => {
+  if (!auth.error.value)
+    return ''
+  if (auth.error.value.startsWith('message.'))
+    return t(auth.error.value)
+  return auth.error.value
 })
 
-const prompt = reactive({
-  ok: '还没有欧尼酱愿意告诉我支付宝……',
-  no: '还没有人胆敢拒绝我！',
-})
-
-const rules: FormRules = {
-  account: [
-    {
-      required: true,
-      message: t('prompt.pay.account'),
-      trigger: 'blur',
-    },
-    {
-      type: 'email',
-      message: '邮箱账号真的长这样吗？',
-      trigger: 'blur',
-    },
-  ],
-  password: [
-    {
-      required: true,
-      message: t('prompt.pay.password'),
-      trigger: 'blur',
-    },
-    { min: 6, message: '密码可能这么简单吗？', trigger: 'blur' },
-  ],
-  pin: [
-    {
-      required: true,
-      message: t('prompt.pay.pin'),
-      trigger: 'blur',
-    },
-    { len: 6, message: '交易密码是六位吧！', trigger: 'blur' },
-    {
-      validator: (
-        rule,
-        value,
-        callback,
-      ) => {
-        if (Number.isNaN(value))
-          callback(new Error(t('error.validator.pin')))
-        else
-          callback()
-      },
-      trigger: 'blur',
-    },
-  ],
+function clearError(field: keyof PayValidationErrors) {
+  delete errors[field]
 }
 
-watch(
-  () => counter.ok,
-  (value) => {
-    prompt.ok = t('prompt.ok', { value })
-  },
-)
-
-watch(
-  () => counter.no,
-  (value) => {
-    prompt.no = t('prompt.no', { value })
-  },
-)
-
-onBeforeMount(async () => {
-  queryOkCounter().then((result) => {
-    counter.ok = result || 0
-  })
-  queryNoCounter().then((result) => {
-    counter.no = result
-  })
-})
-
-/**
- * 存储信息
- */
-function storeInfo() {
-  const Pay = AV.Object.extend('Pay')
-  const pay = new Pay()
-  pay.set('name', name.value)
-  pay.set('type', payInfo.type)
-  pay.set('account', payInfo.account)
-  pay.set('password', payInfo.password)
-  pay.set('pin', payInfo.pin)
-  pay.save().then(
-    () => {
-      app.decide('ok')
-
-      disabled.ok = true // 禁用 ok 按钮
-      queryOkCounter()
-      ElMessage({
-        showClose: true,
-        message: t('message.thank'),
-        type: 'success',
-        center: true,
-      })
-      playLoveAudio()
-    },
-    (error) => {
-      if (error.code === 137) {
-        ElMessage({
-          message: '欧尼酱的账号我已经收到了哦～',
-          type: 'warning',
-        })
-      }
-      else {
-        ElMessage({
-          message: `Code ${error.code} : ${error.rawMessage}`,
-          type: 'warning',
-        })
-      }
-    },
-  )
+function setErrors(nextErrors: PayValidationErrors) {
+  errors.account = nextErrors.account
+  errors.password = nextErrors.password
+  errors.pin = nextErrors.pin
 }
 
-/**
- * 给你
- */
-function giveYou() {
-  if (checked.value) {
-    payForm.value?.validate((valid: boolean) => {
-      if (valid) {
-        AV.User.loginWithEmail(payInfo.account, payInfo.password).then(
-          (_user) => {
-            storeInfo()
-          },
-          (_error) => {
-            ElMessage({
-              showClose: true,
-              message: '欧尼酱，先验证一下邮箱哦～',
-              type: 'error',
-              center: true,
-            })
-          },
-        )
-      }
-      else {
-        ElMessage({
-          showClose: true,
-          message: '~~(>_<)~~欧尼酱完全没有认真填！',
-          type: 'error',
-          center: true,
-        })
-      }
-    })
+function resetPayFields() {
+  payInfo.account = ''
+  payInfo.password = ''
+  payInfo.pin = ''
+  setErrors({})
+}
+
+async function loadCounters() {
+  if (!auth.isConfigured.value) {
+    apiError.value = t('message.cloudbase-not-configured')
+    return
   }
-  else {
-    ElMessage({
-      showClose: true,
-      message: '请确保您已知晓这是一个恶作剧网站。',
-      type: 'error',
-      center: true,
-    })
+
+  try {
+    loadingCounters.value = true
+    apiError.value = ''
+    const { getPayRecordCount, readNoCounter } = await import('~/services/giveMeMoneyApi')
+    const [ok, no] = await Promise.all([
+      getPayRecordCount(),
+      readNoCounter(),
+    ])
+    counter.ok = ok
+    counter.no = no
+  }
+  catch (error) {
+    apiError.value = getApiErrorMessage(error)
+  }
+  finally {
+    loadingCounters.value = false
   }
 }
 
-interface LeanError {
-  code: number
-  rawMessage: string
-}
+onMounted(async () => {
+  await auth.checkSession()
+  await loadCounters()
+})
 
-/**
- * 注册
- */
-function signUp(email: string, password: any) {
-  consola.info('Sign Up')
-  const user = new AV.User()
-  user.setUsername(email)
-  user.setPassword(password)
-  user.setEmail(email)
-
-  user.signUp().then(
-    (_user: any) => {
-      AV.User.requestEmailVerify(email)
-      ElMessage({
-        showClose: true,
-        message: '欧尼酱，我给你发邮件啦！',
-        type: 'success',
-        center: true,
-      })
-    },
-    (error: LeanError) => {
-      if (error.code === 203) {
-        ElMessage({
-          showClose: true,
-          message: '欧尼酱的这个邮箱已经提交过了哦～',
-          type: 'error',
-          center: true,
-        })
-      }
-      else {
-        ElMessage({
-          showClose: true,
-          message: error.rawMessage,
-          type: 'error',
-          center: true,
-        })
-        ElMessage({
-          showClose: true,
-          message: '(╯°Д°）╯︵ /(.□ . \\) 欧尼酱是大骗子！',
-          type: 'error',
-          center: true,
-          offset: 80,
-        })
-      }
-    },
-  )
-}
-
-/**
- * 使用表单
- */
 function useForm(formName: PayMethod) {
-  // console.log("Use " + formName + " form.");
   payInfo.type = formName
 }
 
-/**
- * 提交表单
- */
-async function submitForm() {
-  payForm.value?.validate((valid: boolean) => {
-    if (valid) {
-      return signUp(payInfo.account, payInfo.password)
-    }
-    else {
-      app.decide('wow')
-      ElMessage({
-        showClose: true,
-        message: t('message.be-serious'),
-        type: 'warning',
-        center: true,
-      })
-      return false
-    }
-  })
-}
-
-function resetForm() {
-  app.decide('no')
-  disabled.no = true // 禁用 no 按钮
-  updateCounter('no')
-  ElMessage({
-    showClose: true,
-    message: t('message.cry'),
-    type: 'error',
-    center: true,
-  })
-  payForm.value?.resetFields()
-}
-
-async function updateCounter(name: 'ok' | 'no') {
-  const query = new AV.Query('Counter')
-  try {
-    const result = (await query.equalTo('name', name).first()) as AV.Object
-    result.increment('time', 1)
-    const updatedResult = await result.save(null, { fetchWhenSave: true })
-    counter[name] = updatedResult.get('time')
-  }
-  catch (error: any) {
-    ElMessage({
-      showClose: true,
-      message: `Code ${error.code} : ${error.rawMessage}`,
+async function ensureLoggedIn() {
+  if (!auth.isConfigured.value) {
+    showToast({
+      message: t('message.cloudbase-not-configured'),
       type: 'warning',
     })
+    return false
+  }
+
+  if (auth.isAuthenticated.value)
+    return true
+
+  const user = await auth.loginWithYunle()
+  return !!user
+}
+
+async function giveYou() {
+  if (!checked.value) {
+    showToast({
+      message: t('message.must-acknowledge'),
+      type: 'error',
+    })
+    return
+  }
+
+  if (!await ensureLoggedIn())
+    return
+
+  const nextErrors = validatePayInfo(payInfo, key => t(key))
+  setErrors(nextErrors)
+  if (Object.keys(nextErrors).length > 0) {
+    app.decide('wow')
+    showToast({
+      message: t('message.be-serious'),
+      type: 'warning',
+    })
+    return
+  }
+
+  try {
+    submitting.value = true
+    const { createPayRecord } = await import('~/services/giveMeMoneyApi')
+    await createPayRecord({
+      appId: auth.config.appId,
+      name: name.value,
+      type: payInfo.type,
+      account: payInfo.account,
+      password: payInfo.password,
+      pin: payInfo.pin,
+    })
+    app.decide('ok')
+    counter.ok += 1
+    showToast({
+      message: t('message.thank'),
+      type: 'success',
+    })
+    playLoveAudio()
+  }
+  catch (error) {
+    showToast({
+      message: getApiErrorMessage(error),
+      type: 'warning',
+    })
+  }
+  finally {
+    submitting.value = false
+  }
+}
+
+async function rejectRequest() {
+  if (!await ensureLoggedIn())
+    return
+
+  try {
+    rejecting.value = true
+    app.decide('no')
+    const { incrementNoCounter } = await import('~/services/giveMeMoneyApi')
+    counter.no = await incrementNoCounter()
+    showToast({
+      message: t('message.cry'),
+      type: 'error',
+    })
+    resetPayFields()
+  }
+  catch (error) {
+    showToast({
+      message: getApiErrorMessage(error),
+      type: 'warning',
+    })
+  }
+  finally {
+    rejecting.value = false
   }
 }
 </script>
 
 <template>
-  <div style="max-width: 1000px; margin: auto">
+  <section class="gmm-form-shell">
     <h2 class="text-3xl text-center my-4">
       {{
         t("message.give-me-pay", {
@@ -313,129 +213,283 @@ async function updateCounter(name: 'ok' | 'no') {
       }}
     </h2>
 
-    <ElForm
-      ref="payForm"
-      :model="payInfo"
-      :rules="rules"
-      label-width="135px"
-      @keyup.enter="submitForm"
+    <div
+      class="gmm-auth-panel"
+      :class="{ 'is-error': !auth.isConfigured.value || authErrorMessage || apiError }"
     >
-      <el-form-item :label="t('message.name')" prop="name">
-        <el-input
+      <div class="gmm-auth-copy">
+        <strong>{{ t("message.yunle-account") }}</strong>
+        <span v-if="!auth.isConfigured.value">
+          {{ t("message.cloudbase-not-configured") }}
+        </span>
+        <span v-else-if="auth.user.value">
+          {{ t("message.yunle-connected", { name: auth.user.value.nickname }) }}
+        </span>
+        <span v-else>
+          {{ t("message.yunle-login-required") }}
+        </span>
+        <span v-if="authErrorMessage || apiError" class="gmm-auth-error">
+          {{ authErrorMessage || apiError }}
+        </span>
+      </div>
+
+      <div class="gmm-auth-actions">
+        <BaseButton
+          v-if="auth.user.value"
+          size="small"
+          @click="auth.logout"
+        >
+          <template #icon>
+            <i-ri-logout-box-r-line />
+          </template>
+          {{ t("message.logout") }}
+        </BaseButton>
+        <BaseButton
+          v-else
+          variant="primary"
+          :loading="auth.loading.value"
+          :disabled="!auth.isConfigured.value"
+          @click="auth.loginWithYunle"
+        >
+          <template #icon>
+            <i-ri-login-box-line />
+          </template>
+          {{ t("message.login-yunle") }}
+        </BaseButton>
+      </div>
+    </div>
+
+    <form
+      class="gmm-pay-form"
+      novalidate
+      @submit.prevent="giveYou"
+      @keyup.enter="giveYou"
+    >
+      <label class="gmm-field" for="payer-name">
+        <span class="gmm-field-label">{{ t("message.name") }}</span>
+        <BaseInput
+          id="payer-name"
           v-model="name"
           autofocus
           :placeholder="t('message.name-placeholder')"
+          :disabled="isBusy"
         />
-      </el-form-item>
-      <el-form-item
-        :label="
-          t(`message.${payInfo.type}.name`) + t('message.pay.account')
-        "
-        prop="account"
-      >
-        <el-input
+      </label>
+
+      <label class="gmm-field" for="pay-account">
+        <span class="gmm-field-label">{{ accountLabel }}</span>
+        <BaseInput
+          id="pay-account"
           v-model="payInfo.account"
-          autofocus
-          placeholder="需要验证邮箱才行哦～"
-        >
-          <template #append>
-            <el-button @click="submitForm">
-              <i-ri-message-line />
-            </el-button>
-          </template>
-        </el-input>
-      </el-form-item>
-      <el-form-item
-        :label="
-          t(`message.${payInfo.type}.name`) + t('message.pay.password')
-        "
-        prop="password"
-      >
-        <el-input v-model="payInfo.password" type="password" />
-      </el-form-item>
-      <el-form-item
-        :label="t(`message.${payInfo.type}.name`) + t('message.pay.pin')"
-        prop="pin"
-      >
-        <el-input
+          :placeholder="t('message.pay.account-placeholder')"
+          :disabled="isBusy"
+          :invalid="!!errors.account"
+          @update:model-value="clearError('account')"
+        />
+        <small v-if="errors.account" class="gmm-field-error">{{ errors.account }}</small>
+      </label>
+
+      <label class="gmm-field" for="pay-password">
+        <span class="gmm-field-label">{{ passwordLabel }}</span>
+        <BaseInput
+          id="pay-password"
+          v-model="payInfo.password"
+          type="password"
+          :disabled="isBusy"
+          :invalid="!!errors.password"
+          @update:model-value="clearError('password')"
+        />
+        <small v-if="errors.password" class="gmm-field-error">{{ errors.password }}</small>
+      </label>
+
+      <label class="gmm-field" for="pay-pin">
+        <span class="gmm-field-label">{{ pinLabel }}</span>
+        <BaseInput
+          id="pay-pin"
           v-model="payInfo.pin"
           type="password"
+          inputmode="numeric"
           :maxlength="6"
+          :disabled="isBusy"
+          :invalid="!!errors.pin"
+          @update:model-value="clearError('pin')"
         />
-      </el-form-item>
-      <el-form-item style="text-align: center" label-width="0px">
-        <el-checkbox v-model="checked">
+        <small v-if="errors.pin" class="gmm-field-error">{{ errors.pin }}</small>
+      </label>
+
+      <div class="gmm-check-row">
+        <BaseCheckbox v-model="checked" :disabled="isBusy">
           {{ t("message.check") }}
-        </el-checkbox>
-      </el-form-item>
-      <el-form-item label-width="0px">
-        <el-tooltip
-          class="item"
-          effect="light"
-          :content="prompt.ok"
-          placement="top"
-        >
-          <el-button
-            plain
-            type="primary"
-            :disabled="disabled.ok"
+        </BaseCheckbox>
+      </div>
+
+      <div class="gmm-action-row">
+        <BaseTooltip :content="loadingCounters ? t('message.loading') : promptOk">
+          <BaseButton
+            variant="primary"
+            :loading="submitting"
+            :disabled="rejecting"
             @click="giveYou"
           >
-            {{ t("message.ok") }}
-          </el-button>
-        </el-tooltip>
-        <el-tooltip
-          class="item"
-          effect="light"
-          :content="prompt.no"
-          placement="top"
-        >
-          <span style="margin-left: 10px">
-            <el-button
-              plain
-              size="mini"
-              type="danger"
-              :disabled="disabled.no"
-              @click="resetForm"
-            >{{ t("message.no") }}</el-button>
-          </span>
-        </el-tooltip>
+            <template #icon>
+              <i-ri-hand-heart-line />
+            </template>
+            {{ auth.isAuthenticated.value ? t("message.ok") : t("message.login-yunle") }}
+          </BaseButton>
+        </BaseTooltip>
 
-        <span v-show="payInfo.type === 'alipay'">
-          <el-tooltip
-            class="item"
-            effect="light"
-            :content="t('prompt.wechat')"
-            placement="top"
+        <BaseTooltip :content="loadingCounters ? t('message.loading') : promptNo">
+          <BaseButton
+            size="small"
+            variant="danger"
+            :loading="rejecting"
+            :disabled="submitting"
+            @click="rejectRequest"
           >
-            <span style="margin-left: 10px">
-              <el-button
-                plain
-                size="small"
-                type="success"
-                @click="useForm('wechat')"
-              >{{ t("message.wechat.button") }}</el-button>
-            </span>
-          </el-tooltip>
-        </span>
-        <span v-show="payInfo.type === 'wechat'">
-          <el-tooltip
-            class="item"
-            effect="light"
-            :content="t('prompt.alipay')"
-            placement="top"
+            <template #icon>
+              <i-ri-close-circle-line />
+            </template>
+            {{ t("message.no") }}
+          </BaseButton>
+        </BaseTooltip>
+
+        <BaseTooltip
+          v-if="payInfo.type === 'alipay'"
+          :content="t('prompt.wechat')"
+        >
+          <BaseButton
+            size="small"
+            variant="success"
+            :disabled="isBusy"
+            @click="useForm('wechat')"
           >
-            <span style="margin-left: 10px">
-              <el-button
-                plain
-                size="small"
-                type="primary"
-                @click="useForm('alipay')"
-              >{{ t("message.alipay.button") }}</el-button>
-            </span>
-          </el-tooltip>
-        </span>
-      </el-form-item>
-    </ElForm>
-  </div>
+            <template #icon>
+              <i-ri-wechat-pay-line />
+            </template>
+            {{ t("message.wechat.button") }}
+          </BaseButton>
+        </BaseTooltip>
+        <BaseTooltip
+          v-else
+          :content="t('prompt.alipay')"
+        >
+          <BaseButton
+            size="small"
+            variant="primary"
+            :disabled="isBusy"
+            @click="useForm('alipay')"
+          >
+            <template #icon>
+              <i-ri-alipay-line />
+            </template>
+            {{ t("message.alipay.button") }}
+          </BaseButton>
+        </BaseTooltip>
+      </div>
+    </form>
+  </section>
 </template>
+
+<style scoped lang="scss">
+.gmm-form-shell {
+  width: min(100%, 920px);
+  margin: 0 auto;
+}
+
+.gmm-auth-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  margin: 0 auto 1.25rem;
+  text-align: left;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  background: #fffdf8;
+  box-shadow: 0 8px 24px rgba(44, 62, 80, 0.06);
+
+  &.is-error {
+    border-color: rgba(245, 108, 108, 0.35);
+    background: #fff7f7;
+  }
+}
+
+.gmm-auth-copy {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.925rem;
+  line-height: 1.45;
+
+  strong {
+    color: #2c3e50;
+  }
+}
+
+.gmm-auth-error {
+  color: #c45656;
+  font-size: 0.85rem;
+}
+
+.gmm-auth-actions {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.gmm-pay-form {
+  display: grid;
+  gap: 1rem;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.gmm-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.gmm-field-label {
+  color: #2c3e50;
+  font-size: 0.925rem;
+  font-weight: 600;
+}
+
+.gmm-field-error {
+  color: #b23a48;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.gmm-check-row {
+  display: flex;
+  justify-content: center;
+}
+
+.gmm-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+@media (max-width: 720px) {
+  .gmm-auth-panel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gmm-auth-actions {
+    justify-content: flex-start;
+  }
+
+  .gmm-action-row {
+    justify-content: stretch;
+
+    :deep(.base-tooltip),
+    :deep(.base-button) {
+      width: 100%;
+    }
+  }
+}
+</style>

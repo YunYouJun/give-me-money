@@ -1,27 +1,14 @@
+import type { AppLocale } from '~/utils/locale'
 import { acceptHMRUpdate, defineStore } from 'pinia'
-
-import zhLocale from 'element-plus/lib/locale/lang/zh-cn'
-import enLocale from 'element-plus/lib/locale/lang/en'
+import { shallowRef } from 'vue'
+import { getInitialLocale } from '~/utils/locale'
 
 export const useAppStore = defineStore('app', () => {
-  /**
-   * Current named of the user.
-   */
-  const locale = ref(zhLocale)
-  /**
-   * 选择
-   */
-  const decision = ref('')
+  const language = shallowRef<AppLocale>(getInitialLocale())
+  const decision = shallowRef('')
 
-  /**
-   * Set locale
-   * @param value
-   */
-  async function setLocale(language: 'zh-CN' | 'en') {
-    if (language === 'zh-CN')
-      locale.value = zhLocale
-    else
-      locale.value = enLocale
+  async function setLocale(value: AppLocale) {
+    language.value = value
   }
 
   function decide(value: 'ok' | 'wow' | 'no') {
@@ -29,11 +16,10 @@ export const useAppStore = defineStore('app', () => {
   }
 
   return {
-    decision,
-    locale,
-
-    setLocale,
     decide,
+    decision,
+    language,
+    setLocale,
   }
 })
 

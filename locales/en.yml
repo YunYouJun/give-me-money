@@ -14,16 +14,39 @@ message:
   title: Give Me Money!
   give-me-pay: 'Dear brother, can you give me your {name}?'
   header: Lovely Loli
+  nsfw:
+    title: NSFW content warning
+    description: This prank page includes content and media that may not be suitable for public or work settings. Continue only when your surroundings are appropriate.
+    continue: Continue preview
   ok: OK ! Give you !
   no: Nooooo!
   name: Your Name
   name-placeholder: 'In fact, I don’t have to know your name.'
+  yunle-account: YunLeFun account
+  yunle-connected: 'Signed in as {name}'
+  yunle-login-required: Sign in with YunLeFun before submitting or rejecting.
+  yunle-sync-unavailable: CloudBase is not configured, so the YunLeFun account cannot be synced.
+  yunle-login-unavailable: CloudBase is not configured, so YunLeFun sign-in cannot be opened.
+  yunle-app-login-required: Please sign in to your account in the YunLeFun app first.
+  yunle-app-session-unavailable: Could not read the YunLeFun app session.
+  yunle-popup-blocked: The browser blocked the sign-in popup. Allow popups and try again.
+  yunle-login-incomplete: YunLeFun sign-in was not completed.
+  login-yunle: Sign in with YunLeFun
+  logout: Sign out
+  cloudbase-not-configured: CloudBase access key is not configured. The page can render, but API actions are disabled.
+  must-acknowledge: Please acknowledge that this is a prank site and the submitted content will be public.
+  loading: Loading...
+  refresh: Refresh
+  empty-records: No records yet.
   pay:
     type: Type
+    all: All
     account: Account
+    account-placeholder: It will be masked locally before being saved
     password: Password
     pin: Pin
     time: Time
+    author: Author
   alipay:
     name: 'Alipay '
     button: But I use Alipay.
@@ -45,4 +68,7 @@ prompt:
 
 error:
   validator:
+    account: Account must be at least 2 characters.
+    password: Password must be at least 6 characters.
+    pin-length: PIN must be 6 digits.
     pin: I remember the transaction password is a pure number!

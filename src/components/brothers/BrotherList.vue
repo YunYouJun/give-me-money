@@ -1,85 +1,165 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
+import type { PayRecord } from '~/services/giveMeMoneyApi'
 import type { PayMethod } from '~/types/app'
+import { computed, shallowRef } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-interface BrotherItem {
-  account: string
-  createdAt: string
-  name: string
-  password: string
-  pin: string
-  type: PayMethod
-}
+const props = defineProps<{
+  tableData: PayRecord[]
+  formatTime: (timestamp: number) => string
+}>()
 
-const props = withDefaults(defineProps<{ tableData: BrotherItem[] }>(), {
-  tableData: () => {
-    return [
-      {
-        account: 'c******m',
-        createdAt: '2021-06-11 10:38:15',
-        name: '321',
-        password: '32131321312213',
-        pin: '332132',
-        type: 'alipay',
-      },
-    ]
-  },
-})
+type MethodFilter = PayMethod | 'all'
+
 const { t } = useI18n()
+const methodFilter = shallowRef<MethodFilter>('all')
 
-/**
- * 过滤支付方式
- */
-function filterPayMethod(value: string, row: any) {
-  return row.type === value
+const visibleRecords = computed(() => {
+  if (methodFilter.value === 'all')
+    return props.tableData
+  return props.tableData.filter(record => record.type === methodFilter.value)
+})
+
+function getMethodLabel(type: PayRecord['type']) {
+  if (type === 'wechat')
+    return t('message.wechat.name')
+  if (type === 'alipay')
+    return t('message.alipay.name')
+  return type
 }
 </script>
 
 <template>
-  <el-table
-    :default-sort="{ prop: 'createdAt', order: 'descending' }"
-    :data="props.tableData"
-    stripe
-    align="left"
-    style="width: 100%"
-  >
-    <el-table-column fixed type="index" />
-    <el-table-column fixed prop="name" :label="t('message.brother.name')">
-      <template #default="scope">
-        {{ scope.row.name || t("message.brother.anonymous") }}
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="type"
-      :label="t('message.pay.type')"
-      width="100"
-      :filters="[
-        { text: '微信支付', value: 'wechat' },
-        { text: '支付宝', value: 'alipay' },
-      ]"
-      :filter-method="filterPayMethod"
-    >
-      <template #default="scope">
-        <i-ri-wechat-pay-line
-          v-if="scope.row.type === 'wechat'"
-          color="#2DC100"
-        />
-        <i-ri-alipay-line
-          v-else-if="scope.row.type === 'alipay'"
-          color="#00A3EE"
-        />
-        <span v-else>{{ scope.row.type }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column prop="account" :label="t('message.pay.account')" />
-    <el-table-column prop="password" :label="t('message.pay.password')" />
-    <el-table-column prop="pin" :label="t('message.pay.pin')" width="100" />
-    <el-table-column prop="createdAt" :label="t('message.pay.time')" sortable>
-      <template #default="scope">
-        <i class="el-icon-time" />
-        &nbsp;
-        <span>{{ scope.row.createdAt }}</span>
-      </template>
-    </el-table-column>
-  </el-table>
+  <div class="brother-list">
+    <label class="brother-filter">
+      <span>{{ t("message.pay.type") }}</span>
+      <select v-model="methodFilter" class="brother-filter-select">
+        <option value="all">
+          {{ t("message.pay.all") }}
+        </option>
+        <option value="wechat">
+          {{ t("message.wechat.name") }}
+        </option>
+        <option value="alipay">
+          {{ t("message.alipay.name") }}
+        </option>
+      </select>
+    </label>
+
+    <div class="brother-table-wrap">
+      <table class="brother-table">
+        <thead>
+          <tr>
+            <th scope="col">
+              #
+            </th>
+            <th scope="col">
+              {{ t("message.brother.name") }}
+            </th>
+            <th scope="col">
+              {{ t("message.pay.type") }}
+            </th>
+            <th scope="col">
+              {{ t("message.pay.account") }}
+            </th>
+            <th scope="col">
+              {{ t("message.pay.password") }}
+            </th>
+            <th scope="col">
+              {{ t("message.pay.pin") }}
+            </th>
+            <th scope="col">
+              {{ t("message.pay.author") }}
+            </th>
+            <th scope="col">
+              {{ t("message.pay.time") }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="visibleRecords.length === 0">
+            <td colspan="8" class="brother-empty-cell">
+              {{ t("message.empty-records") }}
+            </td>
+          </tr>
+          <tr v-for="(record, index) in visibleRecords" :key="record.id">
+            <td>{{ index + 1 }}</td>
+            <td>{{ record.name || t("message.brother.anonymous") }}</td>
+            <td>{{ getMethodLabel(record.type) }}</td>
+            <td>{{ record.accountMasked }}</td>
+            <td>{{ record.password }}</td>
+            <td>{{ record.pin }}</td>
+            <td>{{ record.authorName }}</td>
+            <td>{{ props.formatTime(record.createdAt) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>
+
+<style scoped lang="scss">
+.brother-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.brother-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-self: end;
+  gap: 0.5rem;
+  font-size: 0.925rem;
+}
+
+.brother-filter-select {
+  min-height: 2rem;
+  padding: 0.3rem 1.75rem 0.3rem 0.55rem;
+  color: #2c3e50;
+  border: 1px solid rgba(44, 62, 80, 0.16);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.brother-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.brother-table {
+  width: 100%;
+  min-width: 840px;
+  border-collapse: collapse;
+  text-align: left;
+  background: #fff;
+}
+
+.brother-table th,
+.brother-table td {
+  padding: 0.7rem 0.75rem;
+  border-bottom: 1px solid rgba(44, 62, 80, 0.1);
+}
+
+.brother-table th {
+  color: #2c3e50;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: #fff8ec;
+}
+
+.brother-table tbody tr:nth-child(even) {
+  background: #fbfdff;
+}
+
+.brother-empty-cell {
+  color: rgba(44, 62, 80, 0.68);
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .brother-filter {
+    justify-self: stretch;
+    justify-content: space-between;
+  }
+}
+</style>

@@ -1,22 +1,22 @@
 import path from 'node:path'
-import { defineConfig } from 'vite'
+import VueI18n from '@intlify/unplugin-vue-i18n/vite'
 import Vue from '@vitejs/plugin-vue'
 
-import Pages from 'vite-plugin-pages'
-import Layouts from 'vite-plugin-vue-layouts'
+import LinkAttributes from 'markdown-it-link-attributes'
+import Prism from 'markdown-it-prism'
+
+import UnoCSS from 'unocss/vite'
+import AutoImport from 'unplugin-auto-import/vite'
+import IconsResolver from 'unplugin-icons/resolver'
+import Icons from 'unplugin-icons/vite'
 
 import Components from 'unplugin-vue-components/vite'
-import AutoImport from 'unplugin-auto-import/vite'
-
-import VueI18n from '@intlify/unplugin-vue-i18n/vite'
-import Markdown from 'vite-plugin-md'
-import Prism from 'markdown-it-prism'
-import UnoCSS from 'unocss/vite'
+import Markdown from 'unplugin-vue-markdown/vite'
+import { defineConfig } from 'vite'
+import Pages from 'vite-plugin-pages'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// import VitePluginElementPlus from "vite-plugin-element-plus";
-
-import LinkAttributes from 'markdown-it-link-attributes'
+import Layouts from 'vite-plugin-vue-layouts-next'
 
 const markdownWrapperClasses = 'text-center'
 
@@ -33,63 +33,62 @@ export default defineConfig({
       include: [/\.vue$/, /\.md$/],
     }),
 
-    // VitePluginElementPlus({
-    //   // 如果你需要使用 [component name].scss 源文件，你需要把下面的注释取消掉。
-    //   // 对于所有的 API 你可以参考 https://github.com/element-plus/vite-plugin-element-plus
-    //   // 的文档注释
-    //   // useSource: true,
-    //   // 开发时使用 esm，打包时使用 cjs
-    //   format: mode === "development" ? "esm" : "cjs",
-    // }),
-
     // https://github.com/hannoeru/vite-plugin-pages
     Pages({
       extensions: ['vue', 'md'],
     }),
 
-    // https://github.com/JohnCampionJr/vite-plugin-vue-layouts
+    // https://github.com/dishait/vite-plugin-vue-layouts-next
     Layouts(),
 
-    // https://github.com/antfu/unplugin-auto-import
     AutoImport({
       imports: [
         'vue',
         'vue-router',
         'vue-i18n',
-        '@vueuse/head',
-        '@vueuse/core',
       ],
-      dts: true,
+      dts: false,
     }),
 
-    // https://github.com/antfu/unplugin-vue-components
     Components({
-    // allow auto load markdown components under `./src/components/`
       extensions: ['vue', 'md'],
-      // allow auto import and register components used in markdown
       include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
-      dts: 'src/components.d.ts',
+      dts: false,
+      resolvers: [
+        IconsResolver({
+          prefix: 'i',
+          enabledCollections: ['carbon', 'mdi', 'ri'],
+        }),
+      ],
+    }),
+
+    Icons({
+      compiler: 'vue3',
+      autoInstall: false,
     }),
 
     // https://github.com/unocss/unocss
     UnoCSS(),
 
-    // https://github.com/antfu/vite-plugin-md
+    // https://github.com/unplugin/unplugin-vue-markdown
     // Don't need this? Try vitesse-lite: https://github.com/antfu/vitesse-lite
     Markdown({
       wrapperClasses: markdownWrapperClasses,
       headEnabled: true,
-      markdownItSetup(md) {
+      markdownUses: [
         // https://prismjs.com/
-        md.use(Prism)
-        md.use(LinkAttributes, {
-          pattern: /^https?:\/\//,
-          attrs: {
-            target: '_blank',
-            rel: 'noopener',
+        Prism as never,
+        [
+          LinkAttributes as never,
+          {
+            pattern: /^https?:\/\//,
+            attrs: {
+              target: '_blank',
+              rel: 'noopener',
+            },
           },
-        })
-      },
+        ],
+      ],
     }),
 
     // https://github.com/antfu/vite-plugin-pwa
@@ -132,8 +131,25 @@ export default defineConfig({
   },
 
   optimizeDeps: {
-    include: ['vue', 'vue-router', '@vueuse/core'],
+    include: ['vue', 'vue-router'],
     exclude: ['vue-demi'],
+  },
+
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('/node_modules/@cloudbase/js-sdk/'))
+            return 'cloudbase'
+          if (id.includes('/node_modules/vue/')
+            || id.includes('/node_modules/vue-router/')
+            || id.includes('/node_modules/pinia/')) {
+            return 'vendor'
+          }
+          return undefined
+        },
+      },
+    },
   },
 
   ssr: {

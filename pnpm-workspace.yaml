@@ -1,0 +1,12 @@
+minimumReleaseAgeExclude:
+  - '@cloudbase/js-sdk@3.4.5'
+shellEmulator: true
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  - '@trickfilm400/rollup-plugin-off-main-thread@3.0.0-pre1'
+  - semver@6.3.1
+allowBuilds:
+  '@parcel/watcher': true
+  core-js-pure: true
+  esbuild: true
+  sharp: true

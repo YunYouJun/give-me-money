@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useAppStore } from '~/stores/app'
 
 const app = useAppStore()
 
-const loliImg = ref<HTMLImageElement | null>()
 const album = {
   wow: {
     path: '/img/0.jpg',
@@ -20,61 +19,49 @@ const album = {
   },
 }
 
-/**
- * 设置轮播索引
- */
-function setActiveItem(index: 'wow' | 'thank' | 'hum') {
-  if (loliImg.value)
-    loliImg.value.src = album[index].path
-}
-
-watch(
-  () => app.decision,
-  (val: string) => {
-    switch (val) {
-      case 'wow':
-        setActiveItem('wow')
-        break
-      case 'ok':
-        setActiveItem('thank')
-        break
-      case 'no':
-        setActiveItem('hum')
-        break
-      default:
-        break
-    }
-  },
-)
+const activeImage = computed(() => {
+  if (app.decision === 'ok')
+    return album.thank
+  if (app.decision === 'no')
+    return album.hum
+  return album.wow
+})
 </script>
 
 <template>
-  <el-row>
-    <el-col
-      :xs="{ span: 24, offset: 0 }"
-      :sm="{ span: 16, offset: 4 }"
-      :md="{ span: 16, offset: 4 }"
-      :lg="{ span: 12, offset: 6 }"
-      :xl="{ span: 8, offset: 8 }"
+  <figure class="loli-figure">
+    <img
+      class="loli-img"
+      :src="activeImage.path"
+      :alt="activeImage.label"
+      width="1200"
+      height="675"
+      decoding="async"
+      fetchpriority="high"
     >
-      <img
-        ref="loliImg"
-        class="loli-img"
-        :src="album.wow.path"
-        :alt="album.wow.label"
-      >
-    </el-col>
-  </el-row>
+  </figure>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
+.loli-figure {
+  width: min(100%, 680px);
+  margin: 0 auto 1.5rem;
+}
+
 .loli-img {
+  display: block;
   width: 100%;
+  aspect-ratio: 16 / 9;
   max-height: 400px;
-  transition: 0.4s;
-  border-radius: 5px;
+  object-fit: cover;
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+  border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
   &:hover {
+    transform: translateY(-1px);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   }
 }

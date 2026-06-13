@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import VueAboutMe from 'vue-about-me'
+import { VueAboutMe } from 'vue-about-me'
 import 'vue-about-me/style.css'
 
 const copyright = {
