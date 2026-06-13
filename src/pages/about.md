@@ -29,5 +29,5 @@ title: 关于
 
 <p class="gmm-about-actions">
   <a class="gmm-about-action is-primary" href="https://www.unicef.cn/" target="_blank" rel="noopener">捐给联合国儿童基金会</a>
-  <a class="gmm-about-action" href="https://sponsors.yunyoujun.cn" target="_blank" rel="noopener">真想给我打钱</a>
+  <a class="gmm-about-action" href="https://www.yunyoujun.cn/sponsors/" target="_blank" rel="noopener">真想给我打钱</a>
 </p>

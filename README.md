@@ -18,7 +18,7 @@ I'm so cute. Please give me money.
 
 大家要想打钱，也不用给我打，有现成的 [联合国儿童基金会](https://www.unicef.cn/)。
 
-~~[要是真想给我打钱，也不是不行，哼！](https://sponsors.yunyoujun.cn)~~
+~~[要是真想给我打钱，也不是不行，哼！](https://www.yunyoujun.cn/sponsors/)~~
 
 最后，欧尼酱，da i su ki。 （网页声音预警，看到有欧尼酱说不小心社会性死亡了。）
 
