@@ -5,10 +5,12 @@ import { computed, onMounted, reactive, shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { validatePayInfo } from '~/composables/usePayFormValidation'
 import { showToast } from '~/composables/useToast'
-import { useYunleAuth } from '~/composables/useYunleAuth'
 import { getApiErrorMessage } from '~/services/apiError'
+import { isCloudbaseReady } from '~/services/cloudbaseConfig'
+import { getCommentsUrl } from '~/services/commentsConfig'
 import { useAppStore } from '~/stores/app'
 import { playLoveAudio } from '../utils'
+import SubmissionResultDialog from './SubmissionResultDialog.vue'
 
 interface PayInfo {
   type: PayMethod
@@ -19,13 +21,12 @@ interface PayInfo {
 
 const { t } = useI18n()
 const app = useAppStore()
-const auth = useYunleAuth()
+const commentsUrl = getCommentsUrl()
 
 const name = shallowRef('')
 const checked = shallowRef(false)
 const loadingCounters = shallowRef(false)
-const submitting = shallowRef(false)
-const rejecting = shallowRef(false)
+const dialogType = shallowRef<'submit' | 'reject' | null>(null)
 const counterErrors = reactive({
   ok: '',
   no: '',
@@ -50,7 +51,16 @@ const promptNo = computed(() => counterErrors.no || t('prompt.no', { value: coun
 const accountLabel = computed(() => t(`message.${payInfo.type}.name`) + t('message.pay.account'))
 const passwordLabel = computed(() => t(`message.${payInfo.type}.name`) + t('message.pay.password'))
 const pinLabel = computed(() => t(`message.${payInfo.type}.name`) + t('message.pay.pin'))
-const isBusy = computed(() => submitting.value || rejecting.value || auth.loading.value)
+const dialogTitle = computed(() => {
+  if (dialogType.value === 'reject')
+    return t('message.fake-reject-title')
+  return t('message.fake-submit-title')
+})
+const dialogMessage = computed(() => {
+  if (dialogType.value === 'reject')
+    return t('message.fake-reject-description')
+  return t('message.fake-submit-description')
+})
 
 function clearError(field: keyof PayValidationErrors) {
   delete errors[field]
@@ -75,17 +85,17 @@ function setCounterErrors(ok = '', no = ok) {
 }
 
 async function loadCounters() {
-  if (!auth.isConfigured.value) {
-    setCounterErrors(t('message.cloudbase-not-configured'))
+  if (!isCloudbaseReady()) {
+    setCounterErrors(t('message.counter-unavailable'))
     return
   }
 
   try {
     loadingCounters.value = true
     setCounterErrors()
-    const { getPayRecordCount, readNoCounter } = await import('~/services/giveMeMoneyApi')
+    const { readNoCounter, readOkCounter } = await import('~/services/giveMeMoneyApi')
     const [okResult, noResult] = await Promise.allSettled([
-      getPayRecordCount(),
+      readOkCounter(),
       readNoCounter(),
     ])
     if (okResult.status === 'fulfilled')
@@ -106,33 +116,17 @@ async function loadCounters() {
   }
 }
 
-onMounted(async () => {
-  if (!auth.hasChecked.value)
-    await auth.checkSession()
-  await loadCounters()
-})
+onMounted(loadCounters)
 
 function useForm(formName: PayMethod) {
   payInfo.type = formName
 }
 
-async function ensureLoggedIn() {
-  if (!auth.isConfigured.value) {
-    showToast({
-      message: t('message.cloudbase-not-configured'),
-      type: 'warning',
-    })
-    return false
-  }
-
-  if (auth.isAuthenticated.value)
-    return true
-
-  const user = await auth.loginWithYunle()
-  return !!user
+function closeDialog() {
+  dialogType.value = null
 }
 
-async function giveYou() {
+function giveYou() {
   if (!checked.value) {
     showToast({
       message: t('message.must-acknowledge'),
@@ -140,9 +134,6 @@ async function giveYou() {
     })
     return
   }
-
-  if (!await ensureLoggedIn())
-    return
 
   const nextErrors = validatePayInfo(payInfo, key => t(key))
   setErrors(nextErrors)
@@ -155,60 +146,16 @@ async function giveYou() {
     return
   }
 
-  try {
-    submitting.value = true
-    const { createPayRecord } = await import('~/services/giveMeMoneyApi')
-    await createPayRecord({
-      appId: auth.config.appId,
-      name: name.value,
-      type: payInfo.type,
-      account: payInfo.account,
-      password: payInfo.password,
-      pin: payInfo.pin,
-    })
-    app.decide('ok')
-    counter.ok += 1
-    showToast({
-      message: t('message.thank'),
-      type: 'success',
-    })
-    playLoveAudio()
-  }
-  catch (error) {
-    showToast({
-      message: getApiErrorMessage(error),
-      type: 'warning',
-    })
-  }
-  finally {
-    submitting.value = false
-  }
+  app.decide('ok')
+  dialogType.value = 'submit'
+  resetPayFields()
+  playLoveAudio()
 }
 
-async function rejectRequest() {
-  if (!await ensureLoggedIn())
-    return
-
-  try {
-    rejecting.value = true
-    app.decide('no')
-    const { incrementNoCounter } = await import('~/services/giveMeMoneyApi')
-    counter.no = await incrementNoCounter()
-    showToast({
-      message: t('message.cry'),
-      type: 'error',
-    })
-    resetPayFields()
-  }
-  catch (error) {
-    showToast({
-      message: getApiErrorMessage(error),
-      type: 'warning',
-    })
-  }
-  finally {
-    rejecting.value = false
-  }
+function rejectRequest() {
+  app.decide('no')
+  dialogType.value = 'reject'
+  resetPayFields()
 }
 </script>
 
@@ -235,7 +182,6 @@ async function rejectRequest() {
           v-model="name"
           autofocus
           :placeholder="t('message.name-placeholder')"
-          :disabled="isBusy"
         />
       </label>
 
@@ -245,7 +191,6 @@ async function rejectRequest() {
           id="pay-account"
           v-model="payInfo.account"
           :placeholder="t('message.pay.account-placeholder')"
-          :disabled="isBusy"
           :invalid="!!errors.account"
           @update:model-value="clearError('account')"
         />
@@ -258,7 +203,6 @@ async function rejectRequest() {
           id="pay-password"
           v-model="payInfo.password"
           type="password"
-          :disabled="isBusy"
           :invalid="!!errors.password"
           @update:model-value="clearError('password')"
         />
@@ -270,7 +214,6 @@ async function rejectRequest() {
         <BasePinInput
           id="pay-pin"
           v-model="payInfo.pin"
-          :disabled="isBusy"
           :invalid="!!errors.pin"
           @update:model-value="clearError('pin')"
         />
@@ -278,7 +221,7 @@ async function rejectRequest() {
       </label>
 
       <div class="gmm-check-row">
-        <BaseCheckbox v-model="checked" :disabled="isBusy">
+        <BaseCheckbox v-model="checked">
           {{ t("message.check") }}
         </BaseCheckbox>
       </div>
@@ -287,8 +230,6 @@ async function rejectRequest() {
         <BaseTooltip :content="loadingCounters ? t('message.loading') : promptOk">
           <BaseButton
             variant="primary"
-            :loading="submitting"
-            :disabled="rejecting"
             @click="giveYou"
           >
             <template #icon>
@@ -302,8 +243,6 @@ async function rejectRequest() {
           <BaseButton
             size="small"
             variant="danger"
-            :loading="rejecting"
-            :disabled="submitting"
             @click="rejectRequest"
           >
             <template #icon>
@@ -320,7 +259,6 @@ async function rejectRequest() {
           <BaseButton
             size="small"
             variant="success"
-            :disabled="isBusy"
             @click="useForm('wechat')"
           >
             <template #icon>
@@ -336,7 +274,6 @@ async function rejectRequest() {
           <BaseButton
             size="small"
             variant="primary"
-            :disabled="isBusy"
             @click="useForm('alipay')"
           >
             <template #icon>
@@ -347,6 +284,13 @@ async function rejectRequest() {
         </BaseTooltip>
       </div>
     </form>
+    <SubmissionResultDialog
+      v-if="dialogType"
+      :title="dialogTitle"
+      :message="dialogMessage"
+      :comments-url="commentsUrl"
+      @close="closeDialog"
+    />
   </section>
 </template>
 

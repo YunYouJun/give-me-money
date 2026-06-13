@@ -1,16 +1,12 @@
 button:
   toggle_langs: Change languages
   back: Back
+  close: Close
 link:
   about: About
-  brothers: Brothers
-title:
-  good-brothers: ' Good brothers ~'
+  comments: Comments
 message:
-  check: I acknowledge that I understand this is a prank site; the information I filled out will be public at Brothers and wish to continue my submission.
-  brother:
-    name: Name
-    anonymous: Anonymous
+  check: I acknowledge this is a prank site, and the entered content is only used locally for the joke.
   title: Give Me Money!
   give-me-pay: 'Dear brother, can you give me your {name}?'
   header: Lovely Loli
@@ -22,27 +18,20 @@ message:
   no: Nooooo!
   name: Your Name
   name-placeholder: 'In fact, I don’t have to know your name.'
-  yunle-account: YunLeFun account
-  yunle-connected: 'Signed in as {name}'
-  yunle-login-required: Sign in with YunLeFun before submitting or rejecting.
-  yunle-sync-unavailable: CloudBase is not configured, so the YunLeFun account cannot be synced.
-  yunle-login-unavailable: CloudBase is not configured, so YunLeFun sign-in cannot be opened.
-  yunle-app-login-required: Please sign in to your account in the YunLeFun app first.
-  yunle-app-session-unavailable: Could not read the YunLeFun app session.
-  yunle-popup-blocked: The browser blocked the sign-in popup. Allow popups and try again.
-  yunle-login-incomplete: YunLeFun sign-in was not completed.
-  login-yunle: Sign in with YunLeFun
-  logout: Sign out
-  cloudbase-not-configured: CloudBase access key is not configured. The page can render, but API actions are disabled.
-  must-acknowledge: Please acknowledge that this is a prank site and the submitted content will be public.
+  counter-unavailable: Historical counters are temporarily unavailable.
+  must-acknowledge: Please acknowledge this is a prank site and the entered content is only used locally.
   loading: Loading...
-  refresh: Refresh
-  empty-records: No records yet.
+  fake-submit-title: Nothing was submitted
+  fake-submit-description: This is only a prank. No account, password, or PIN was submitted or saved.
+  fake-reject-title: Rejected
+  fake-reject-description: Rejected. Nothing was recorded on the server.
+  open-comments: Open comments app
+  redirecting-comments: Redirecting to the comments app...
   pay:
     type: Type
     all: All
     account: Account
-    account-placeholder: It will be masked locally before being saved
+    account-placeholder: Used only on this page for the joke; it will not be submitted
     password: Password
     pin: Pin
     time: Time
@@ -63,7 +52,7 @@ prompt:
     pin: And pay pin ~
   alipay: 'Alipay is fine, too ~'
   wechat: 'Wechat is fine, too ~'
-  ok: '{value} brothers have told us !'
+  ok: '{value} people have played along !'
   no: 'We have been rejected {value} times !'
 
 error:

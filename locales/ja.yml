@@ -1,16 +1,12 @@
 button:
   toggle_langs: 言語を切り替え
   back: 戻る
+  close: 閉じる
 link:
   about: このサイトについて
-  brothers: お兄さんたち~
-title:
-  good-brothers: ' 人のやさしいお兄さんたち~'
+  comments: コメント
 message:
-  check: これはジョークサイトであり、入力した情報が「お兄さんたち」ページで公開されることを理解したうえで、送信を続けます。
-  brother:
-    name: 名前
-    anonymous: 匿名
+  check: これはジョークサイトであり、入力内容はこのページ内の演出だけに使われることを理解したうえで続けます。
   title: 私はかわいいので、お金をください！
   give-me-pay: 'お兄ちゃん、あなたの{name}を……教えてくれる？'
   header: かわいい妹たち
@@ -22,27 +18,20 @@ message:
   no: 残酷に断る
   name: あなたの名前
   name-placeholder: 名前はどうしても知りたいわけじゃないよ～
-  yunle-account: YunLeFun アカウント
-  yunle-connected: 'ログイン中：{name}'
-  yunle-login-required: 送信または拒否するには YunLeFun にログインしてください。
-  yunle-sync-unavailable: CloudBase が設定されていないため、YunLeFun アカウントを同期できません。
-  yunle-login-unavailable: CloudBase が設定されていないため、YunLeFun ログインを開けません。
-  yunle-app-login-required: 先に YunLeFun アプリ内でアカウントにログインしてください。
-  yunle-app-session-unavailable: YunLeFun アプリのログイン状態を読み取れませんでした。
-  yunle-popup-blocked: ブラウザがログインポップアップをブロックしました。ポップアップを許可してから再試行してください。
-  yunle-login-incomplete: YunLeFun ログインが完了していません。
-  login-yunle: YunLeFun にログイン
-  logout: ログアウト
-  cloudbase-not-configured: CloudBase アクセスキーが設定されていません。ページは表示できますが、API 操作は一時的に無効です。
-  must-acknowledge: これはジョークサイトであり、送信内容が公開されることを先に確認してください。
+  counter-unavailable: 履歴カウンターは一時的に利用できません。
+  must-acknowledge: これはジョークサイトであり、入力内容はこのページ内の演出だけに使われることを確認してください。
   loading: 読み込み中……
-  refresh: 更新
-  empty-records: まだやさしいお兄さんはいません。
+  fake-submit-title: 実際には送信していません
+  fake-submit-description: これはジョークです。アカウント、パスワード、取引パスワードは送信も保存もされません。
+  fake-reject-title: 拒否しました
+  fake-reject-description: 拒否しました。サーバーには記録されません。
+  open-comments: コメントアプリを開く
+  redirecting-comments: コメントアプリへ移動しています……
   pay:
     type: 種類
     all: すべて
     account: アカウント
-    account-placeholder: 保存前にローカルでマスクされます
+    account-placeholder: このページ内の演出だけに使われ、送信されません
     password: パスワード
     pin: 取引パスワード
     time: 時刻

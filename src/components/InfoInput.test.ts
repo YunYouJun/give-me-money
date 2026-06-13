@@ -9,31 +9,22 @@ import BaseCheckbox from './ui/BaseCheckbox.vue'
 import BaseInput from './ui/BaseInput.vue'
 import BaseTooltip from './ui/BaseTooltip.vue'
 
-const authMock = vi.hoisted(() => ({
-  checkSession: vi.fn(),
-  config: { appId: 'give-me-money' },
-  error: { value: null as string | null },
-  hasChecked: { value: false },
-  isAuthenticated: { value: false },
-  isConfigured: { value: false },
-  loading: { value: false },
-  loginWithYunle: vi.fn(),
-  logout: vi.fn(),
-  user: { value: null as { nickname: string } | null },
-}))
-
 const apiMocks = vi.hoisted(() => ({
-  createPayRecord: vi.fn(),
-  getPayRecordCount: vi.fn(),
-  incrementNoCounter: vi.fn(),
   readNoCounter: vi.fn(),
+  readOkCounter: vi.fn(),
 }))
 
-vi.mock('~/composables/useYunleAuth', () => ({
-  useYunleAuth: () => authMock,
+const cloudbaseConfigMock = vi.hoisted(() => ({
+  isCloudbaseReady: vi.fn(),
 }))
 
 vi.mock('~/services/giveMeMoneyApi', () => apiMocks)
+
+vi.mock('~/services/cloudbaseConfig', () => cloudbaseConfigMock)
+
+vi.mock('~/services/commentsConfig', () => ({
+  getCommentsUrl: () => 'https://apps.yunle.fun/',
+}))
 
 vi.mock('../utils', () => ({
   playLoveAudio: vi.fn(),
@@ -41,26 +32,32 @@ vi.mock('../utils', () => ({
 
 const messages = {
   'zh-CN': {
+    button: {
+      close: '关闭',
+    },
     message: {
       'alipay': {
         button: '其实我用支付宝啦~',
         name: '支付宝',
       },
       'be-serious': '(σ‘・д・)σ 给我认真填啦!',
-      'check': '我确认公开展示填写内容。',
-      'cloudbase-not-configured': '当前未配置 CloudBase 访问密钥，页面可浏览但暂时不能提交。',
+      'check': '我确认这是恶作剧，只在本页使用。',
+      'counter-unavailable': '历史计数暂不可用。',
+      'fake-reject-description': '已拒绝，不会记录到服务器。',
+      'fake-reject-title': '已拒绝',
+      'fake-submit-description': '这只是恶作剧，没有提交或保存任何账号、密码、交易密码。',
+      'fake-submit-title': '没有真的提交',
       'give-me-pay': '欧尼酱，可以……告诉我……你的……{name}吗？',
       'loading': '加载中……',
-      'login-yunle': '登录云乐坊账号',
-      'logout': '退出登录',
-      'must-acknowledge': '请先确认这是恶作剧网站，并同意公开展示填写内容。',
+      'must-acknowledge': '请先确认这是恶作剧网站，且填写内容只会在本页用于玩笑效果。',
       'name': '你的名字',
       'name-placeholder': '人家也不是一定要知道你的名字啦～',
       'no': '残忍拒绝',
       'ok': '好的，给你!',
+      'open-comments': '去评论应用',
       'pay': {
         'account': '账号',
-        'account-placeholder': '提交前会自动脱敏，只公开部分字符',
+        'account-placeholder': '只在本页用于玩笑效果，不会提交保存',
         'password': '密码',
         'pin': '交易密码',
       },
@@ -68,14 +65,11 @@ const messages = {
         button: '其实我用微信啦~',
         name: '微信',
       },
-      'yunle-account': '云乐坊账号',
-      'yunle-connected': '已登录：{name}',
-      'yunle-login-required': '登录云乐坊账号后才可以提交或拒绝。',
     },
     prompt: {
       alipay: '那还是填支付宝吧~',
       no: '已被残忍拒绝 {value} 次！',
-      ok: '已经有 {value} 个欧尼酱告诉我啦！',
+      ok: '已经有 {value} 个欧尼酱参与过啦！',
       pay: {
         account: '请给我账号~',
         password: '还有密码~',
@@ -92,17 +86,6 @@ const messages = {
       },
     },
   },
-}
-
-function resetAuthMock() {
-  authMock.checkSession.mockResolvedValue(null)
-  authMock.error.value = null
-  authMock.hasChecked.value = false
-  authMock.isAuthenticated.value = false
-  authMock.isConfigured.value = false
-  authMock.loading.value = false
-  authMock.loginWithYunle.mockResolvedValue(null)
-  authMock.user.value = null
 }
 
 function mountInfoInput() {
@@ -130,8 +113,6 @@ function mountInfoInput() {
         IRiAlipayLine: true,
         IRiCloseCircleLine: true,
         IRiHandHeartLine: true,
-        IRiLoginBoxLine: true,
-        IRiLogoutBoxRLine: true,
         IRiWechatPayLine: true,
       },
     },
@@ -146,27 +127,24 @@ function findActionButton(wrapper: ReturnType<typeof mountInfoInput>, text: stri
 
 beforeEach(() => {
   vi.clearAllMocks()
-  resetAuthMock()
   clearToasts()
-  apiMocks.getPayRecordCount.mockResolvedValue(2)
+  cloudbaseConfigMock.isCloudbaseReady.mockReturnValue(true)
+  apiMocks.readOkCounter.mockResolvedValue(2)
   apiMocks.readNoCounter.mockResolvedValue(1)
 })
 
 describe('info input', () => {
-  it('requires acknowledgement before submitting', async () => {
-    authMock.isConfigured.value = true
-    authMock.isAuthenticated.value = true
-
+  it('requires acknowledgement before showing the fake submit dialog', async () => {
     const wrapper = mountInfoInput()
     await flushPromises()
 
     await findActionButton(wrapper, '好的，给你!').trigger('click')
 
     expect(useToast().toasts.value).toEqual([expect.objectContaining({
-      message: '请先确认这是恶作剧网站，并同意公开展示填写内容。',
+      message: '请先确认这是恶作剧网站，且填写内容只会在本页用于玩笑效果。',
       type: 'error',
     })])
-    expect(apiMocks.createPayRecord).not.toHaveBeenCalled()
+    expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
   })
 
   it('switches between Alipay and WeChat form labels', async () => {
@@ -182,10 +160,7 @@ describe('info input', () => {
     expect(wrapper.text()).toContain('微信账号')
   })
 
-  it('validates pin input before creating a pay record', async () => {
-    authMock.isConfigured.value = true
-    authMock.isAuthenticated.value = true
-
+  it('validates pin input before showing the fake submit dialog', async () => {
     const wrapper = mountInfoInput()
     await flushPromises()
 
@@ -200,26 +175,42 @@ describe('info input', () => {
       message: '(σ‘・д・)σ 给我认真填啦!',
       type: 'warning',
     })])
-    expect(apiMocks.createPayRecord).not.toHaveBeenCalled()
+    expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
   })
 
-  it('warns when submitting without CloudBase configuration', async () => {
+  it('opens a no-save dialog for a valid fake submit without writing data', async () => {
     const wrapper = mountInfoInput()
     await flushPromises()
+    vi.clearAllMocks()
 
     await wrapper.get('input[type="checkbox"]').setValue(true)
+    await wrapper.get('#pay-account').setValue('alice')
+    await wrapper.get('#pay-password').setValue('secret1')
+    await wrapper.get('#pay-pin').setValue('123456')
     await findActionButton(wrapper, '好的，给你!').trigger('click')
 
-    expect(useToast().toasts.value).toEqual([expect.objectContaining({
-      message: '当前未配置 CloudBase 访问密钥，页面可浏览但暂时不能提交。',
-      type: 'warning',
-    })])
-    expect(authMock.loginWithYunle).not.toHaveBeenCalled()
+    expect(wrapper.get('[role="dialog"]').text()).toContain('没有真的提交')
+    expect(wrapper.get('[role="dialog"]').text()).toContain('没有提交或保存任何账号、密码、交易密码')
+    expect(wrapper.get('.submission-dialog-action.is-primary').attributes('href')).toBe('https://apps.yunle.fun/')
+    expect(apiMocks.readOkCounter).not.toHaveBeenCalled()
+    expect(apiMocks.readNoCounter).not.toHaveBeenCalled()
   })
 
-  it('keeps pay record counter tooltip separate from no counter failures', async () => {
-    authMock.isConfigured.value = true
-    apiMocks.getPayRecordCount.mockResolvedValue(7)
+  it('opens a no-record dialog when rejecting', async () => {
+    const wrapper = mountInfoInput()
+    await flushPromises()
+    vi.clearAllMocks()
+
+    await findActionButton(wrapper, '残忍拒绝').trigger('click')
+
+    expect(wrapper.get('[role="dialog"]').text()).toContain('已拒绝')
+    expect(wrapper.get('[role="dialog"]').text()).toContain('不会记录到服务器')
+    expect(apiMocks.readOkCounter).not.toHaveBeenCalled()
+    expect(apiMocks.readNoCounter).not.toHaveBeenCalled()
+  })
+
+  it('keeps ok counter tooltip separate from no counter failures', async () => {
+    apiMocks.readOkCounter.mockResolvedValue(7)
     apiMocks.readNoCounter.mockRejectedValue(new Error('Db or Table not exist: counters. Please check your request.'))
 
     const wrapper = mountInfoInput()
@@ -227,7 +218,7 @@ describe('info input', () => {
 
     const tooltips = wrapper.findAll('.gmm-action-row .base-tooltip-content')
 
-    expect(tooltips[0]?.text()).toBe('已经有 7 个欧尼酱告诉我啦！')
+    expect(tooltips[0]?.text()).toBe('已经有 7 个欧尼酱参与过啦！')
     expect(tooltips[1]?.text()).toContain('Db or Table not exist: counters')
   })
 })

@@ -12,9 +12,9 @@ I'm so cute. Please give me money.
 
 ## About
 
-这是自己几年前 Parcel 刚出的时候，写[Parcel.js + Vue 搭建笔记](https://www.yunyoujun.cn/note/vue-parcel-demo/)（已使用 Vite + Vue3 + TypeScript 重构），拿来练手的小玩意儿。所以代码很丑，也没做啥后端校验。因为之前 API 次数被人恶意刷完了，所以重置了数据，现在改为登录云乐坊账号后才能提交。
+这是自己几年前 Parcel 刚出的时候，写[Parcel.js + Vue 搭建笔记](https://www.yunyoujun.cn/note/vue-parcel-demo/)（已使用 Vite + Vue3 + TypeScript 重构），拿来练手的小玩意儿。所以代码很丑，也没做啥后端校验。现在主站只保留前端恶作剧效果，不会真实提交或保存账号、密码、交易密码。
 
-乐呵乐呵完事了，站点数据现在写入云乐坊同一个 CloudBase 环境。
+乐呵乐呵完事了，历史计数仍从云乐坊同一个 CloudBase 环境只读获取；评论互动统一放到云乐坊评论应用。
 
 大家要想打钱，也不用给我打，有现成的 [联合国儿童基金会](https://www.unicef.cn/)。
 
@@ -36,7 +36,7 @@ I'm so cute. Please give me money.
 - 国际化
 - 表单校验
 - 可爱的出错提示
-- 记录每个大哥哥的账号并展示
+- 不保存敏感输入的本地恶作剧弹窗
 
 ## Base
 
@@ -56,7 +56,7 @@ I'm so cute. Please give me money.
 
 ## Storage
 
-采用 [CloudBase](https://cloudbase.net/) 存储，并通过云乐坊统一账号同步登录态。
+采用 [CloudBase](https://cloudbase.net/) 只读历史计数。主站不再登录、不写库、不保存表单输入。
 
 > 虽然至今都没有一个真的啊！摔！
 
@@ -76,26 +76,21 @@ pnpm install
 
 复制 `.env.example`，并重命名为 `.env`。
 
-在 `.env` 中填入云乐坊 CloudBase 环境和 publishable access key。
+在 `.env` 中填入云乐坊 CloudBase 环境和 publishable access key，用于读取历史计数。评论应用地址可按需覆盖。
 
 ```sh
 VITE_CLOUDBASE_ENV_ID=yunlefun-8g7ybcxc7345c490
 VITE_CLOUDBASE_REGION=ap-shanghai
 VITE_CLOUDBASE_ACCESS_KEY=xxxxxxx
-VITE_YUNLE_SSO_ORIGIN=https://www.yunle.fun
-VITE_YUNLE_APP_AUTH_ORIGIN=https://apps.yunle.fun
-VITE_GMM_APP_ID=give-me-money
+VITE_GMM_COMMENTS_URL=https://apps.yunle.fun
 ```
 
-网页登录走 `www.yunle.fun` SSO；云乐坊 App 内打开时优先走 `apps.yunle.fun`
-注入的 `window.ylf.getAuthCode({ scope: ['profile', 'cloudbase:session'] })`，
-兑换到 CloudBase session 后再调用 Web SDK `auth.setSession()`。
+CloudBase 只需要保留 `counters` 集合：
 
-需要在云乐坊 SSO / JSAPI Auth allowlist 中允许以下来源：
+- `counters/ok`: 历史参与数
+- `counters/no`: 历史拒绝数
 
-- `https://gmm.yunle.fun`
-- `http://localhost:2333`
-- `http://127.0.0.1:2333`
+建议删除或封禁旧的 `pay_records` 集合，避免继续保留敏感字段历史数据。
 
 ### 运行
 
