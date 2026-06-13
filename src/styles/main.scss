@@ -17,6 +17,8 @@
   --gmm-accent: #ffd966;
   --gmm-accent-hover: #ffcf40;
   --gmm-accent-border: rgba(255, 205, 86, 0.75);
+  --gmm-accent-text: #1f2933;
+  --gmm-accent-focus: rgba(255, 205, 86, 0.36);
   --gmm-panel: rgba(255, 255, 255, 0.72);
   --gmm-panel-solid: #fff;
   --gmm-panel-warm: #fffdf8;
@@ -57,6 +59,8 @@ html.dark {
   --gmm-accent: #f4c95d;
   --gmm-accent-hover: #ffd86d;
   --gmm-accent-border: rgba(244, 201, 93, 0.7);
+  --gmm-accent-text: #101817;
+  --gmm-accent-focus: rgba(244, 201, 93, 0.32);
   --gmm-panel: rgba(24, 32, 32, 0.78);
   --gmm-panel-solid: #182021;
   --gmm-panel-warm: #201f1a;
@@ -196,6 +200,7 @@ hr {
     color 0.18s ease,
     border-color 0.18s ease,
     background 0.18s ease,
+    box-shadow 0.18s ease,
     transform 0.18s ease;
 }
 
@@ -208,17 +213,25 @@ hr {
   transform: translateY(-1px);
 }
 
+.gmm-about-action:focus-visible {
+  box-shadow: 0 0 0 3px var(--gmm-primary-focus);
+}
+
 .gmm-about-action.is-primary {
-  color: var(--gmm-heading);
+  color: var(--gmm-accent-text);
   border-color: var(--gmm-accent-border);
   background: var(--gmm-accent);
 }
 
 .gmm-about-action.is-primary:hover,
 .gmm-about-action.is-primary:focus-visible {
-  color: var(--gmm-heading);
+  color: var(--gmm-accent-text);
   border-color: var(--gmm-accent-border);
   background: var(--gmm-accent-hover);
+}
+
+.gmm-about-action.is-primary:focus-visible {
+  box-shadow: 0 0 0 3px var(--gmm-accent-focus);
 }
 
 @media (max-width: 640px) {
