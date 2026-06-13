@@ -21,6 +21,7 @@ describe('base button', () => {
     })
 
     expect(wrapper.get('button').attributes('aria-busy')).toBe('true')
+    expect(wrapper.get('.base-button-spinner').classes()).toContain('i-svg-spinners-180-ring-with-bg')
     expect(wrapper.text()).toContain('Save')
   })
 })

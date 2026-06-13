@@ -9,9 +9,11 @@ import {
 import { ensureCloudbaseClient, getCurrentUser } from './cloudbase'
 import {
   createPayRecord,
+  getPayRecordCount,
   incrementNoCounter,
   listPayRecords,
   maskAccount,
+  readNoCounter,
 } from './giveMeMoneyApi'
 
 vi.mock('./cloudbase', () => ({
@@ -137,6 +139,24 @@ describe('giveMeMoneyApi', () => {
     ])
   })
 
+  it('treats a missing pay records collection as empty while reading', async () => {
+    const { collection } = createCollectionMock()
+    collection.count.mockResolvedValue({
+      code: 'DATABASE_COLLECTION_NOT_EXIST',
+      message: 'Db or Table not exist: pay_records. Please check your request.',
+    })
+    collection.get.mockResolvedValue({
+      code: 'DATABASE_COLLECTION_NOT_EXIST',
+      message: 'Db or Table not exist: pay_records. Please check your request.',
+    })
+
+    await expect(getPayRecordCount()).resolves.toBe(0)
+    await expect(listPayRecords(1, 20)).resolves.toEqual({
+      items: [],
+      total: 0,
+    })
+  })
+
   it('increments the initialized no counter for signed-in users', async () => {
     const { collection, db, docRef } = createCollectionMock()
     asMock(getCurrentUser).mockResolvedValue({
@@ -160,5 +180,15 @@ describe('giveMeMoneyApi', () => {
       time: { $inc: 1 },
       updatedAt: 1700000000000,
     })
+  })
+
+  it('treats a missing counters collection as zero while reading no counter', async () => {
+    const { collection } = createCollectionMock()
+    collection.get.mockResolvedValue({
+      code: 'DATABASE_COLLECTION_NOT_EXIST',
+      message: 'Db or Table not exist: counters. Please check your request.',
+    })
+
+    await expect(readNoCounter()).resolves.toBe(0)
   })
 })

@@ -31,7 +31,11 @@ function onClick(event: MouseEvent) {
     :aria-busy="loading ? 'true' : undefined"
     @click="onClick"
   >
-    <span v-if="loading" class="base-button-spinner" aria-hidden="true" />
+    <span
+      v-if="loading"
+      class="base-button-spinner i-svg-spinners-180-ring-with-bg"
+      aria-hidden="true"
+    />
     <slot name="icon" />
     <span class="base-button-label"><slot /></span>
   </button>
@@ -81,15 +85,6 @@ function onClick(event: MouseEvent) {
 .base-button-spinner {
   width: 0.85rem;
   height: 0.85rem;
-  border: 2px solid currentColor;
-  border-right-color: transparent;
-  border-radius: 50%;
-  animation: base-button-spin 0.8s linear infinite;
-}
-
-@keyframes base-button-spin {
-  to {
-    transform: rotate(360deg);
-  }
+  color: currentColor;
 }
 </style>

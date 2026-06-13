@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { VueAboutMe } from 'vue-about-me'
+import { isDark } from '~/logic/dark'
 import 'vue-about-me/style.css'
 
 const copyright = {
@@ -11,5 +12,5 @@ const copyright = {
 
 <template>
   <hr>
-  <VueAboutMe :copyright="copyright" />
+  <VueAboutMe :copyright="copyright" :is-dark="isDark" />
 </template>

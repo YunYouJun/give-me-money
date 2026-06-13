@@ -208,12 +208,26 @@ describe('info input', () => {
     await flushPromises()
 
     await wrapper.get('input[type="checkbox"]').setValue(true)
-    await findActionButton(wrapper, '登录云乐坊账号').trigger('click')
+    await findActionButton(wrapper, '好的，给你!').trigger('click')
 
     expect(useToast().toasts.value).toEqual([expect.objectContaining({
       message: '当前未配置 CloudBase 访问密钥，页面可浏览但暂时不能提交。',
       type: 'warning',
     })])
     expect(authMock.loginWithYunle).not.toHaveBeenCalled()
+  })
+
+  it('keeps pay record counter tooltip separate from no counter failures', async () => {
+    authMock.isConfigured.value = true
+    apiMocks.getPayRecordCount.mockResolvedValue(7)
+    apiMocks.readNoCounter.mockRejectedValue(new Error('Db or Table not exist: counters. Please check your request.'))
+
+    const wrapper = mountInfoInput()
+    await flushPromises()
+
+    const tooltips = wrapper.findAll('.gmm-action-row .base-tooltip-content')
+
+    expect(tooltips[0]?.text()).toBe('已经有 7 个欧尼酱告诉我啦！')
+    expect(tooltips[1]?.text()).toContain('Db or Table not exist: counters')
   })
 })

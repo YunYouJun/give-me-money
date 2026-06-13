@@ -43,6 +43,7 @@
     "@iconify-json/carbon": "1.2.23",
     "@iconify-json/mdi": "1.2.3",
     "@iconify-json/ri": "1.2.10",
+    "@iconify-json/svg-spinners": "^1.2.4",
     "@intlify/unplugin-vue-i18n": "11.2.3",
     "@types/markdown-it-link-attributes": "3.0.5",
     "@types/node": "25.9.2",

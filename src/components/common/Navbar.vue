@@ -1,12 +1,49 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import { useYunleAuth } from '~/composables/useYunleAuth'
 
 const { t } = useI18n()
 const route = useRoute()
+const auth = useYunleAuth()
 const activePath = computed(() => route.path)
 const githubUrl = 'https://github.com/YunYouJun/give-me-money'
+const authErrorMessage = computed(() => {
+  if (!auth.error.value)
+    return ''
+  if (auth.error.value.startsWith('message.'))
+    return t(auth.error.value)
+  return auth.error.value
+})
+const authLabel = computed(() => auth.user.value?.nickname || t('message.login-yunle'))
+const authTooltip = computed(() => {
+  if (!auth.isConfigured.value)
+    return t('message.cloudbase-not-configured')
+  if (authErrorMessage.value)
+    return authErrorMessage.value
+  if (auth.user.value) {
+    return `${t('message.yunle-connected', { name: auth.user.value.nickname })} / ${t('message.logout')}`
+  }
+  return t('message.yunle-login-required')
+})
+
+onMounted(async () => {
+  if (!auth.hasChecked.value && !auth.loading.value)
+    await auth.checkSession()
+})
+
+async function handleAuthClick() {
+  if (auth.user.value) {
+    await auth.logout()
+    return
+  }
+
+  if (!auth.isConfigured.value)
+    return
+
+  await auth.loginWithYunle()
+}
 </script>
 
 <template>
@@ -18,7 +55,7 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
         to="/"
         aria-label="Give Me Money"
       >
-        <img class="gmm-menu-logo" width="20" height="20" src="/money.png" alt="Give Me Money">
+        <span class="gmm-menu-logo i-ri-money-cny-circle-line" aria-hidden="true" />
       </RouterLink>
       <RouterLink
         class="gmm-nav-link"
@@ -36,6 +73,23 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
       </RouterLink>
     </div>
     <div class="gmm-nav-actions">
+      <BaseTooltip :content="authTooltip">
+        <BaseButton
+          class="gmm-nav-auth"
+          size="small"
+          :variant="auth.user.value ? 'neutral' : 'primary'"
+          :loading="auth.loading.value"
+          :disabled="!auth.user.value && !auth.isConfigured.value"
+          :aria-label="authTooltip"
+          @click="handleAuthClick"
+        >
+          <template #icon>
+            <i-ri-user-smile-line v-if="auth.user.value" />
+            <i-ri-login-box-line v-else />
+          </template>
+          <span class="gmm-nav-auth-label">{{ authLabel }}</span>
+        </BaseButton>
+      </BaseTooltip>
       <BaseTooltip content="GitHub">
         <a
           class="gmm-nav-icon-link"
@@ -92,6 +146,9 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
 
 .gmm-menu-logo {
   display: block;
+  width: 1.35rem;
+  height: 1.35rem;
+  color: currentColor;
 }
 
 .gmm-nav-actions {
@@ -102,6 +159,21 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
 
 .gmm-nav-actions :deep(.base-tooltip) {
   height: 60px;
+}
+
+.gmm-nav-auth {
+  align-self: center;
+  max-width: 10rem;
+  margin: 0 0.35rem;
+  white-space: nowrap;
+}
+
+.gmm-nav-auth-label {
+  display: inline-block;
+  max-width: 6.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
 }
 
 .gmm-nav-icon-link {
@@ -147,6 +219,16 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
   .right-menu-item {
     width: 4.75rem;
     flex-basis: 4.75rem;
+  }
+
+  .gmm-nav-auth {
+    width: 2.75rem;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .gmm-nav-auth-label {
+    display: none;
   }
 }
 </style>

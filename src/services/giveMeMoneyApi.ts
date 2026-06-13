@@ -47,6 +47,20 @@ function readNumber(value: unknown, fallback = 0): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : fallback
 }
 
+function hasMissingCollectionError(value: unknown, collectionName: string): boolean {
+  if (!isRecord(value))
+    return false
+
+  const message = [
+    readString(value.code),
+    readString(value.message),
+    readString(value.errMsg),
+  ].join(' ').toLowerCase()
+
+  return message.includes(collectionName)
+    && (message.includes('not exist') || message.includes('not_exist') || message.includes('not found'))
+}
+
 function normalizePayMethod(value: unknown): PayMethod {
   return value === 'wechat' ? 'wechat' : 'alipay'
 }
@@ -97,8 +111,12 @@ function normalizePayRecord(value: unknown): PayRecord | null {
 export async function getPayRecordCount(): Promise<number> {
   const { db } = ensureCloudbaseClient()
   const result = await db.collection(PAY_COLLECTION).count()
-  if (result.code)
+  if (result.code) {
+    if (hasMissingCollectionError(result, PAY_COLLECTION))
+      return 0
+
     throw new Error(result.message || result.code)
+  }
   return result.total
 }
 
@@ -114,8 +132,16 @@ export async function listPayRecords(page: number, pageSize: number): Promise<Pa
     getPayRecordCount(),
   ])
 
-  if (recordsResult.code)
+  if (recordsResult.code) {
+    if (hasMissingCollectionError(recordsResult, PAY_COLLECTION)) {
+      return {
+        items: [],
+        total: 0,
+      }
+    }
+
     throw new Error(recordsResult.message || recordsResult.code)
+  }
 
   const records = Array.isArray(recordsResult.data) ? recordsResult.data as unknown[] : []
 
@@ -156,8 +182,12 @@ export async function readNoCounter(): Promise<number> {
     .limit(1)
     .get()
 
-  if (result.code)
+  if (result.code) {
+    if (hasMissingCollectionError(result, COUNTER_COLLECTION))
+      return 0
+
     throw new Error(result.message || result.code)
+  }
 
   const first = result.data[0]
   if (!isRecord(first))

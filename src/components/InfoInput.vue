@@ -26,7 +26,10 @@ const checked = shallowRef(false)
 const loadingCounters = shallowRef(false)
 const submitting = shallowRef(false)
 const rejecting = shallowRef(false)
-const apiError = shallowRef('')
+const counterErrors = reactive({
+  ok: '',
+  no: '',
+})
 
 const payInfo = reactive<PayInfo>({
   type: 'alipay',
@@ -42,19 +45,12 @@ const counter = reactive({
 
 const errors = reactive<PayValidationErrors>({})
 
-const promptOk = computed(() => t('prompt.ok', { value: counter.ok }))
-const promptNo = computed(() => t('prompt.no', { value: counter.no }))
+const promptOk = computed(() => counterErrors.ok || t('prompt.ok', { value: counter.ok }))
+const promptNo = computed(() => counterErrors.no || t('prompt.no', { value: counter.no }))
 const accountLabel = computed(() => t(`message.${payInfo.type}.name`) + t('message.pay.account'))
 const passwordLabel = computed(() => t(`message.${payInfo.type}.name`) + t('message.pay.password'))
 const pinLabel = computed(() => t(`message.${payInfo.type}.name`) + t('message.pay.pin'))
 const isBusy = computed(() => submitting.value || rejecting.value || auth.loading.value)
-const authErrorMessage = computed(() => {
-  if (!auth.error.value)
-    return ''
-  if (auth.error.value.startsWith('message.'))
-    return t(auth.error.value)
-  return auth.error.value
-})
 
 function clearError(field: keyof PayValidationErrors) {
   delete errors[field]
@@ -73,25 +69,37 @@ function resetPayFields() {
   setErrors({})
 }
 
+function setCounterErrors(ok = '', no = ok) {
+  counterErrors.ok = ok
+  counterErrors.no = no
+}
+
 async function loadCounters() {
   if (!auth.isConfigured.value) {
-    apiError.value = t('message.cloudbase-not-configured')
+    setCounterErrors(t('message.cloudbase-not-configured'))
     return
   }
 
   try {
     loadingCounters.value = true
-    apiError.value = ''
+    setCounterErrors()
     const { getPayRecordCount, readNoCounter } = await import('~/services/giveMeMoneyApi')
-    const [ok, no] = await Promise.all([
+    const [okResult, noResult] = await Promise.allSettled([
       getPayRecordCount(),
       readNoCounter(),
     ])
-    counter.ok = ok
-    counter.no = no
+    if (okResult.status === 'fulfilled')
+      counter.ok = okResult.value
+    else
+      counterErrors.ok = getApiErrorMessage(okResult.reason)
+
+    if (noResult.status === 'fulfilled')
+      counter.no = noResult.value
+    else
+      counterErrors.no = getApiErrorMessage(noResult.reason)
   }
   catch (error) {
-    apiError.value = getApiErrorMessage(error)
+    setCounterErrors(getApiErrorMessage(error))
   }
   finally {
     loadingCounters.value = false
@@ -99,7 +107,8 @@ async function loadCounters() {
 }
 
 onMounted(async () => {
-  await auth.checkSession()
+  if (!auth.hasChecked.value)
+    await auth.checkSession()
   await loadCounters()
 })
 
@@ -213,52 +222,6 @@ async function rejectRequest() {
       }}
     </h2>
 
-    <div
-      class="gmm-auth-panel"
-      :class="{ 'is-error': !auth.isConfigured.value || authErrorMessage || apiError }"
-    >
-      <div class="gmm-auth-copy">
-        <strong>{{ t("message.yunle-account") }}</strong>
-        <span v-if="!auth.isConfigured.value">
-          {{ t("message.cloudbase-not-configured") }}
-        </span>
-        <span v-else-if="auth.user.value">
-          {{ t("message.yunle-connected", { name: auth.user.value.nickname }) }}
-        </span>
-        <span v-else>
-          {{ t("message.yunle-login-required") }}
-        </span>
-        <span v-if="authErrorMessage || apiError" class="gmm-auth-error">
-          {{ authErrorMessage || apiError }}
-        </span>
-      </div>
-
-      <div class="gmm-auth-actions">
-        <BaseButton
-          v-if="auth.user.value"
-          size="small"
-          @click="auth.logout"
-        >
-          <template #icon>
-            <i-ri-logout-box-r-line />
-          </template>
-          {{ t("message.logout") }}
-        </BaseButton>
-        <BaseButton
-          v-else
-          variant="primary"
-          :loading="auth.loading.value"
-          :disabled="!auth.isConfigured.value"
-          @click="auth.loginWithYunle"
-        >
-          <template #icon>
-            <i-ri-login-box-line />
-          </template>
-          {{ t("message.login-yunle") }}
-        </BaseButton>
-      </div>
-    </div>
-
     <form
       class="gmm-pay-form"
       novalidate
@@ -331,7 +294,7 @@ async function rejectRequest() {
             <template #icon>
               <i-ri-hand-heart-line />
             </template>
-            {{ auth.isAuthenticated.value ? t("message.ok") : t("message.login-yunle") }}
+            {{ t("message.ok") }}
           </BaseButton>
         </BaseTooltip>
 
@@ -393,46 +356,6 @@ async function rejectRequest() {
   margin: 0 auto;
 }
 
-.gmm-auth-panel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.875rem 1rem;
-  margin: 0 auto 1.25rem;
-  text-align: left;
-  border: 1px solid var(--gmm-border-soft);
-  border-radius: 8px;
-  background: var(--gmm-panel-warm);
-  box-shadow: var(--gmm-shadow);
-
-  &.is-error {
-    border-color: var(--gmm-danger-border);
-    background: var(--gmm-panel-danger);
-  }
-}
-
-.gmm-auth-copy {
-  display: grid;
-  gap: 0.25rem;
-  font-size: 0.925rem;
-  line-height: 1.45;
-
-  strong {
-    color: var(--gmm-text);
-  }
-}
-
-.gmm-auth-error {
-  color: var(--gmm-danger-strong);
-  font-size: 0.85rem;
-}
-
-.gmm-auth-actions {
-  display: flex;
-  flex-shrink: 0;
-}
-
 .gmm-pay-form {
   display: grid;
   gap: 1rem;
@@ -471,15 +394,6 @@ async function rejectRequest() {
 }
 
 @media (max-width: 720px) {
-  .gmm-auth-panel {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .gmm-auth-actions {
-    justify-content: flex-start;
-  }
-
   .gmm-action-row {
     justify-content: stretch;
 
