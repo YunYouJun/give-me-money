@@ -10,8 +10,16 @@ import BaseInput from './ui/BaseInput.vue'
 import BaseTooltip from './ui/BaseTooltip.vue'
 
 const apiMocks = vi.hoisted(() => ({
+  CounterAlreadySubmittedError: class CounterAlreadySubmittedError extends Error {},
+  CounterLoginRequiredError: class CounterLoginRequiredError extends Error {},
+  getApiErrorMessage: vi.fn((error: unknown) => {
+    if (error instanceof Error)
+      return error.message
+    return '请求失败，请稍后重试。'
+  }),
   readNoCounter: vi.fn(),
   readOkCounter: vi.fn(),
+  submitCounterVote: vi.fn(),
 }))
 
 const cloudbaseConfigMock = vi.hoisted(() => ({
@@ -43,9 +51,18 @@ const messages = {
       'be-serious': '(σ‘・д・)σ 给我认真填啦!',
       'check': '我确认这是恶作剧，只在本页使用。',
       'counter-unavailable': '历史计数暂不可用。',
-      'fake-reject-description': '已拒绝，不会记录到服务器。',
+      'counter-recorded': '已记录到公共计数器。',
+      'counter-record-failed': '计数失败：{reason}',
+      'login-required-title': '需要先登录',
+      'login-required-description': '请先登录云乐坊，登录后再回来提交一次计数。账号、密码和交易密码仍然不会保存。',
+      'login-required-action': '登录云乐坊',
+      'login-required-toast': '请先登录云乐坊后再提交。',
+      'already-submitted-title': '已经提交过啦',
+      'already-submitted-description': '每个登录用户只能提交一次，当前不会重复写入公共计数器。',
+      'already-submitted-toast': '你已经提交过一次啦。',
+      'fake-reject-description': '已记录一次拒绝，但不会保存账号、密码或交易密码。',
       'fake-reject-title': '已拒绝',
-      'fake-submit-description': '这只是恶作剧，没有提交或保存任何账号、密码、交易密码。去评论时会打开云乐坊应用评论页，由云乐坊处理登录后评论。',
+      'fake-submit-description': '这只是恶作剧，没有提交或保存任何账号、密码、交易密码。此次参与已记录到公共计数器。',
       'fake-submit-title': '没有真的提交',
       'give-me-pay': '欧尼酱，可以……告诉我……你的……{name}吗？',
       'loading': '加载中……',
@@ -132,6 +149,10 @@ beforeEach(() => {
   cloudbaseConfigMock.isCloudbaseReady.mockReturnValue(true)
   apiMocks.readOkCounter.mockResolvedValue(2)
   apiMocks.readNoCounter.mockResolvedValue(1)
+  apiMocks.submitCounterVote.mockImplementation(async (counterName: 'no' | 'ok') => ({
+    counterName,
+    value: counterName === 'ok' ? 3 : 2,
+  }))
 })
 
 describe('info input', () => {
@@ -179,7 +200,7 @@ describe('info input', () => {
     expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
   })
 
-  it('opens a no-save dialog for a valid fake submit and points comments to Yunle login', async () => {
+  it('records a valid fake submit once and keeps sensitive fields out of the dialog', async () => {
     const wrapper = mountInfoInput()
     await flushPromises()
     vi.clearAllMocks()
@@ -189,26 +210,71 @@ describe('info input', () => {
     await wrapper.get('#pay-password').setValue('secret1')
     await wrapper.get('#pay-pin').setValue('123456')
     await findActionButton(wrapper, '好的，给你!').trigger('click')
+    await flushPromises()
 
     expect(wrapper.get('[role="dialog"]').text()).toContain('没有真的提交')
     expect(wrapper.get('[role="dialog"]').text()).toContain('没有提交或保存任何账号、密码、交易密码')
     expect(wrapper.get('[role="dialog"]').text()).toContain('登录云乐坊并评论')
     expect(wrapper.get('.submission-dialog-action.is-primary').attributes('href')).toBe('https://apps.yunle.fun/app/give-me-money')
+    expect(apiMocks.submitCounterVote).toHaveBeenCalledWith('ok')
     expect(apiMocks.readOkCounter).not.toHaveBeenCalled()
     expect(apiMocks.readNoCounter).not.toHaveBeenCalled()
   })
 
-  it('opens a no-record dialog when rejecting', async () => {
+  it('records a rejection counter once', async () => {
     const wrapper = mountInfoInput()
     await flushPromises()
     vi.clearAllMocks()
 
     await findActionButton(wrapper, '残忍拒绝').trigger('click')
+    await flushPromises()
 
     expect(wrapper.get('[role="dialog"]').text()).toContain('已拒绝')
-    expect(wrapper.get('[role="dialog"]').text()).toContain('不会记录到服务器')
+    expect(wrapper.get('[role="dialog"]').text()).toContain('已记录一次拒绝')
+    expect(apiMocks.submitCounterVote).toHaveBeenCalledWith('no')
     expect(apiMocks.readOkCounter).not.toHaveBeenCalled()
     expect(apiMocks.readNoCounter).not.toHaveBeenCalled()
+  })
+
+  it('prompts the user to sign in before writing the public counter', async () => {
+    apiMocks.submitCounterVote.mockRejectedValueOnce(new apiMocks.CounterLoginRequiredError())
+
+    const wrapper = mountInfoInput()
+    await flushPromises()
+
+    await wrapper.get('input[type="checkbox"]').setValue(true)
+    await wrapper.get('#pay-account').setValue('alice')
+    await wrapper.get('#pay-password').setValue('secret1')
+    await wrapper.get('#pay-pin').setValue('123456')
+    await findActionButton(wrapper, '好的，给你!').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.get('[role="dialog"]').text()).toContain('需要先登录')
+    expect(wrapper.get('[role="dialog"]').text()).toContain('登录云乐坊')
+    expect(useToast().toasts.value).toEqual([expect.objectContaining({
+      message: '请先登录云乐坊后再提交。',
+      type: 'warning',
+    })])
+  })
+
+  it('does not write the public counter twice for the same user', async () => {
+    apiMocks.submitCounterVote.mockRejectedValueOnce(new apiMocks.CounterAlreadySubmittedError())
+
+    const wrapper = mountInfoInput()
+    await flushPromises()
+
+    await wrapper.get('input[type="checkbox"]').setValue(true)
+    await wrapper.get('#pay-account').setValue('alice')
+    await wrapper.get('#pay-password').setValue('secret1')
+    await wrapper.get('#pay-pin').setValue('123456')
+    await findActionButton(wrapper, '好的，给你!').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.get('[role="dialog"]').text()).toContain('已经提交过啦')
+    expect(useToast().toasts.value).toEqual([expect.objectContaining({
+      message: '你已经提交过一次啦。',
+      type: 'warning',
+    })])
   })
 
   it('keeps ok counter tooltip separate from no counter failures', async () => {

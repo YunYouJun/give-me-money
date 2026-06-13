@@ -19,12 +19,21 @@ message:
   name: 你的名字
   name-placeholder: 人家也不是一定要知道你的名字啦～
   counter-unavailable: 历史计数暂不可用。
+  counter-recorded: 已记录到公共计数器。
+  counter-record-failed: '计数失败：{reason}'
+  login-required-title: 需要先登录
+  login-required-description: 请先登录云乐坊，登录后再回来提交一次计数。账号、密码和交易密码仍然不会保存。
+  login-required-action: 登录云乐坊
+  login-required-toast: 请先登录云乐坊后再提交。
+  already-submitted-title: 已经提交过啦
+  already-submitted-description: 每个登录用户只能提交一次，当前不会重复写入公共计数器。
+  already-submitted-toast: 你已经提交过一次啦。
   must-acknowledge: 请先确认这是恶作剧网站，且填写内容只会在本页用于玩笑效果。
   loading: 加载中……
   fake-submit-title: 没有真的提交
-  fake-submit-description: 这只是恶作剧，没有提交或保存任何账号、密码、交易密码。去评论时会打开云乐坊应用评论页，由云乐坊处理登录后评论。
+  fake-submit-description: 这只是恶作剧，没有提交或保存任何账号、密码、交易密码。此次参与已记录到公共计数器。
   fake-reject-title: 已拒绝
-  fake-reject-description: 已拒绝，不会记录到服务器。
+  fake-reject-description: 已记录一次拒绝，但不会保存账号、密码或交易密码。
   open-comments: 去应用评论页
   open-comments-login: 登录云乐坊并评论
   redirecting-comments: 正在跳转到应用评论页……

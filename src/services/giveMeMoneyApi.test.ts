@@ -8,8 +8,11 @@ import {
 } from 'vitest'
 import { ensureCloudbaseClient } from './cloudbase'
 import {
+  CounterAlreadySubmittedError,
+  CounterLoginRequiredError,
   readNoCounter,
   readOkCounter,
+  submitCounterVote,
 } from './giveMeMoneyApi'
 
 vi.mock('./cloudbase', () => ({
@@ -34,6 +37,95 @@ function createCollectionMock() {
   asMock(ensureCloudbaseClient).mockReturnValue({ db })
 
   return { collection, db }
+}
+
+interface MockTransactionDocument {
+  create: (data: Record<string, unknown>) => Promise<unknown>
+  get: () => Promise<unknown>
+  set: (data: Record<string, unknown>) => Promise<unknown>
+  update: (data: Record<string, unknown>) => Promise<unknown>
+}
+
+interface MockTransactionCollection {
+  doc: (id: string) => MockTransactionDocument
+}
+
+interface MockTransaction {
+  collection: (name: string) => MockTransactionCollection
+}
+
+type TransactionCallback = (transaction: MockTransaction) => Promise<unknown>
+
+function createSubmissionMock() {
+  const counterCollection = {
+    get: vi.fn().mockResolvedValue({ data: [{ name: 'ok', time: 8 }] }),
+    limit: vi.fn(() => counterCollection),
+    where: vi.fn(() => counterCollection),
+  }
+
+  const voteDoc = {
+    create: vi.fn().mockResolvedValue({ inserted: 1 }),
+    get: vi.fn().mockResolvedValue({ data: null }),
+    set: vi.fn().mockResolvedValue({ updated: 1 }),
+    update: vi.fn().mockResolvedValue({ updated: 1 }),
+  }
+
+  const counterDoc = {
+    create: vi.fn().mockResolvedValue({ inserted: 1 }),
+    get: vi.fn().mockResolvedValue({ data: { name: 'ok', time: 7 } }),
+    set: vi.fn().mockResolvedValue({ updated: 1 }),
+    update: vi.fn().mockResolvedValue({ updated: 1 }),
+  }
+
+  const voteCollection = {
+    doc: vi.fn(() => voteDoc),
+  }
+  const counterTransactionCollection = {
+    doc: vi.fn(() => counterDoc),
+  }
+
+  const transaction: MockTransaction = {
+    collection: vi.fn((name: string) => {
+      if (name === 'counter_votes')
+        return voteCollection
+      return counterTransactionCollection
+    }),
+  }
+
+  const auth = {
+    getSession: vi.fn().mockResolvedValue({
+      data: {
+        session: {
+          user: {
+            id: 'user-1',
+            is_anonymous: false,
+          },
+        },
+      },
+      error: null,
+    }),
+  }
+
+  const db = {
+    collection: vi.fn(() => counterCollection),
+    command: {
+      inc: vi.fn((value: number) => ({ $inc: value })),
+    },
+    runTransaction: vi.fn((callback: TransactionCallback) => callback(transaction)),
+  }
+
+  asMock(ensureCloudbaseClient).mockReturnValue({ auth, db })
+
+  return {
+    auth,
+    counterCollection,
+    counterDoc,
+    counterTransactionCollection,
+    db,
+    transaction,
+    voteCollection,
+    voteDoc,
+  }
 }
 
 beforeEach(() => {
@@ -70,5 +162,72 @@ describe('giveMeMoneyApi', () => {
     })
 
     await expect(readOkCounter()).resolves.toBe(0)
+  })
+
+  it('requires a real signed-in user before submitting a counter vote', async () => {
+    const { auth, db } = createSubmissionMock()
+    auth.getSession.mockResolvedValue({ data: {}, error: null })
+
+    await expect(submitCounterVote('ok')).rejects.toBeInstanceOf(CounterLoginRequiredError)
+
+    expect(db.runTransaction).not.toHaveBeenCalled()
+  })
+
+  it('creates a per-user vote marker and increments the public counter in a transaction', async () => {
+    const { counterDoc, counterTransactionCollection, db, voteCollection, voteDoc } = createSubmissionMock()
+
+    await expect(submitCounterVote('ok')).resolves.toEqual({
+      counterName: 'ok',
+      value: 8,
+    })
+
+    expect(voteCollection.doc).toHaveBeenCalledWith('user-1')
+    expect(voteDoc.create).toHaveBeenCalledWith(expect.objectContaining({
+      counterName: 'ok',
+      uid: 'user-1',
+    }))
+    expect(counterTransactionCollection.doc).toHaveBeenCalledWith('ok')
+    expect(db.command.inc).toHaveBeenCalledWith(1)
+    expect(counterDoc.update).toHaveBeenCalledWith(expect.objectContaining({
+      name: 'ok',
+      time: { $inc: 1 },
+    }))
+  })
+
+  it('initializes a missing public counter document inside the transaction', async () => {
+    const { counterDoc } = createSubmissionMock()
+    counterDoc.update.mockResolvedValue({ updated: 0 })
+
+    await expect(submitCounterVote('no')).resolves.toEqual({
+      counterName: 'no',
+      value: 8,
+    })
+
+    expect(counterDoc.set).toHaveBeenCalledWith(expect.objectContaining({
+      name: 'no',
+      time: 1,
+    }))
+  })
+
+  it('does not increment when the user already submitted once', async () => {
+    const { counterDoc, voteDoc } = createSubmissionMock()
+    voteDoc.get.mockResolvedValue({ data: { counterName: 'ok', uid: 'user-1' } })
+
+    await expect(submitCounterVote('no')).rejects.toBeInstanceOf(CounterAlreadySubmittedError)
+
+    expect(voteDoc.create).not.toHaveBeenCalled()
+    expect(counterDoc.update).not.toHaveBeenCalled()
+  })
+
+  it('maps duplicate vote marker creation to an already-submitted error', async () => {
+    const { counterDoc, voteDoc } = createSubmissionMock()
+    voteDoc.create.mockRejectedValue({
+      code: 'DATABASE_DUPLICATE_KEY',
+      message: 'duplicate key',
+    })
+
+    await expect(submitCounterVote('ok')).rejects.toBeInstanceOf(CounterAlreadySubmittedError)
+
+    expect(counterDoc.update).not.toHaveBeenCalled()
   })
 })

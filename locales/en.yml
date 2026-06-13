@@ -19,12 +19,21 @@ message:
   name: Your Name
   name-placeholder: 'In fact, I don’t have to know your name.'
   counter-unavailable: Historical counters are temporarily unavailable.
+  counter-recorded: Recorded in the public counter.
+  counter-record-failed: 'Counter update failed: {reason}'
+  login-required-title: Sign-in required
+  login-required-description: Sign in to Yunle first, then come back and submit one counter entry. Account, password, and PIN values are still not saved.
+  login-required-action: Sign in to Yunle
+  login-required-toast: Please sign in to Yunle before submitting.
+  already-submitted-title: Already submitted
+  already-submitted-description: Each signed-in user can submit only once, so the public counter was not written again.
+  already-submitted-toast: You have already submitted once.
   must-acknowledge: Please acknowledge this is a prank site and the entered content is only used locally.
   loading: Loading...
   fake-submit-title: Nothing was submitted
-  fake-submit-description: This is only a prank. No account, password, or PIN was submitted or saved. Comments open the Yunle app page, where Yunle handles sign-in before commenting.
+  fake-submit-description: This is only a prank. No account, password, or PIN was submitted or saved. This play-along was recorded in the public counter.
   fake-reject-title: Rejected
-  fake-reject-description: Rejected. Nothing was recorded on the server.
+  fake-reject-description: One rejection was recorded, but no account, password, or PIN was saved.
   open-comments: Open app comments
   open-comments-login: Sign in and comment
   redirecting-comments: Redirecting to app comments...

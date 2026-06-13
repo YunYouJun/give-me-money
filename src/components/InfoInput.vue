@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PayValidationErrors } from '~/composables/usePayFormValidation'
+import type { CounterName } from '~/services/giveMeMoneyApi'
 import type { PayMethod } from '~/types/app'
 import { computed, onMounted, reactive, shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -25,7 +26,8 @@ const commentsUrl = getCommentsUrl()
 const name = shallowRef('')
 const checked = shallowRef(false)
 const loadingCounters = shallowRef(false)
-const dialogType = shallowRef<'submit' | 'reject' | null>(null)
+const submittingCounter = shallowRef<CounterName | null>(null)
+const dialogType = shallowRef<'already' | 'login' | 'reject' | 'submit' | null>(null)
 const counterErrors = reactive({
   ok: '',
   no: '',
@@ -50,17 +52,30 @@ const promptNo = computed(() => counterErrors.no || t('prompt.no', { value: coun
 const accountLabel = computed(() => t(`message.${payInfo.type}.name`) + t('message.pay.account'))
 const passwordLabel = computed(() => t(`message.${payInfo.type}.name`) + t('message.pay.password'))
 const pinLabel = computed(() => t(`message.${payInfo.type}.name`) + t('message.pay.pin'))
+const isSubmittingOk = computed(() => submittingCounter.value === 'ok')
+const isSubmittingNo = computed(() => submittingCounter.value === 'no')
+const isSubmitting = computed(() => submittingCounter.value !== null)
 const dialogTitle = computed(() => {
+  if (dialogType.value === 'already')
+    return t('message.already-submitted-title')
+  if (dialogType.value === 'login')
+    return t('message.login-required-title')
   if (dialogType.value === 'reject')
     return t('message.fake-reject-title')
   return t('message.fake-submit-title')
 })
 const dialogMessage = computed(() => {
+  if (dialogType.value === 'already')
+    return t('message.already-submitted-description')
+  if (dialogType.value === 'login')
+    return t('message.login-required-description')
   if (dialogType.value === 'reject')
     return t('message.fake-reject-description')
   return t('message.fake-submit-description')
 })
 const dialogActionLabel = computed(() => {
+  if (dialogType.value === 'login')
+    return t('message.login-required-action')
   if (dialogType.value === 'submit')
     return t('message.open-comments-login')
   return t('message.open-comments')
@@ -130,7 +145,56 @@ function closeDialog() {
   dialogType.value = null
 }
 
-function giveYou() {
+async function recordCounter(counterName: CounterName): Promise<boolean> {
+  if (submittingCounter.value)
+    return false
+
+  submittingCounter.value = counterName
+  try {
+    const api = await import('~/services/giveMeMoneyApi')
+    const result = await api.submitCounterVote(counterName)
+    counter[counterName] = result.value
+    setCounterErrors()
+    showToast({
+      message: t('message.counter-recorded'),
+      type: 'success',
+    })
+    return true
+  }
+  catch (error) {
+    const api = await import('~/services/giveMeMoneyApi')
+    if (error instanceof api.CounterLoginRequiredError) {
+      dialogType.value = 'login'
+      showToast({
+        message: t('message.login-required-toast'),
+        type: 'warning',
+      })
+      return false
+    }
+
+    if (error instanceof api.CounterAlreadySubmittedError) {
+      dialogType.value = 'already'
+      showToast({
+        message: t('message.already-submitted-toast'),
+        type: 'warning',
+      })
+      return false
+    }
+
+    showToast({
+      message: t('message.counter-record-failed', {
+        reason: api.getApiErrorMessage(error),
+      }),
+      type: 'error',
+    })
+    return false
+  }
+  finally {
+    submittingCounter.value = null
+  }
+}
+
+async function giveYou() {
   if (!checked.value) {
     showToast({
       message: t('message.must-acknowledge'),
@@ -150,13 +214,25 @@ function giveYou() {
     return
   }
 
+  const recorded = await recordCounter('ok')
+  if (!recorded) {
+    resetPayFields()
+    return
+  }
+
   app.decide('ok')
   dialogType.value = 'submit'
   resetPayFields()
   playLoveAudio()
 }
 
-function rejectRequest() {
+async function rejectRequest() {
+  const recorded = await recordCounter('no')
+  if (!recorded) {
+    resetPayFields()
+    return
+  }
+
   app.decide('no')
   dialogType.value = 'reject'
   resetPayFields()
@@ -231,9 +307,15 @@ function rejectRequest() {
       </div>
 
       <div class="gmm-action-row">
-        <BaseTooltip :content="loadingCounters ? t('message.loading') : promptOk">
+        <BaseTooltip
+          class="gmm-action-tooltip gmm-action-tooltip--ok"
+          :content="loadingCounters ? t('message.loading') : promptOk"
+        >
           <BaseButton
+            class="gmm-action-button--ok"
             variant="primary"
+            :disabled="isSubmitting"
+            :loading="isSubmittingOk"
             @click="giveYou"
           >
             <template #icon>
@@ -243,10 +325,16 @@ function rejectRequest() {
           </BaseButton>
         </BaseTooltip>
 
-        <BaseTooltip :content="loadingCounters ? t('message.loading') : promptNo">
+        <BaseTooltip
+          class="gmm-action-tooltip gmm-action-tooltip--reject"
+          :content="loadingCounters ? t('message.loading') : promptNo"
+        >
           <BaseButton
+            class="gmm-action-button--reject"
             size="small"
             variant="danger"
+            :disabled="isSubmitting"
+            :loading="isSubmittingNo"
             @click="rejectRequest"
           >
             <template #icon>
@@ -339,12 +427,38 @@ function rejectRequest() {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   gap: 0.75rem;
+}
+
+.gmm-action-tooltip--ok {
+  flex: 0 1 12rem;
+}
+
+.gmm-action-tooltip--reject {
+  flex: 0 1 auto;
+}
+
+.gmm-action-button--ok {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.7rem 1.35rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  border-width: 2px;
+}
+
+.gmm-action-button--reject {
+  min-width: 6.5rem;
 }
 
 @media (max-width: 720px) {
   .gmm-action-row {
     justify-content: stretch;
+
+    .gmm-action-tooltip {
+      flex: 1 1 100%;
+    }
 
     :deep(.base-tooltip),
     :deep(.base-button) {

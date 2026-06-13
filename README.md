@@ -1,82 +1,84 @@
+English | [简体中文](./README.zh-CN.md)
+
 # give-me-money
 
-> Just for fun.
+> I'm so cute. Please give me money.
 
 [![GitHub Actions](https://github.com/YunYouJun/give-me-money/workflows/GitHub%20Pages/badge.svg)](https://github.com/YunYouJun/give-me-money/actions)
 
-> Rewrite with Vite + Vue@3 + TypeScript.
+A playful web prank that started as a Parcel demo and has since moved to Vite + Vue 3 + TypeScript.
 
-我很可爱，请给我钱。
+The production site only keeps the browser-side prank experience. It does not submit or store account names, passwords, payment PINs, or other sensitive input. After YunLeFun sign-in, the page writes only a one-time user marker and the public counter choice; comments are handled on the YunLeFun app page.
 
-I'm so cute. Please give me money.
+## Preview
 
-## About
-
-这是自己几年前 Parcel 刚出的时候，写[Parcel.js + Vue 搭建笔记](https://www.yunyoujun.cn/note/vue-parcel-demo/)（已使用 Vite + Vue3 + TypeScript 重构），拿来练手的小玩意儿。所以代码很丑，也没做啥后端校验。现在主站只保留前端恶作剧效果，不会真实提交或保存账号、密码、交易密码。
-
-乐呵乐呵完事了，历史计数仍从云乐坊同一个 CloudBase 环境只读获取；评论互动统一放到云乐坊对应应用的评论页。
-
-大家要想打钱，也不用给我打，有现成的 [联合国儿童基金会](https://www.unicef.cn/)。
-
-~~[要是真想给我打钱，也不是不行，哼！](https://www.yunyoujun.cn/sponsors/)~~
-
-最后，欧尼酱，da i su ki。 （网页声音预警，看到有欧尼酱说不小心社会性死亡了。）
-
----
+- Primary: <https://gmm.yunle.fun/>
+- Backup: <https://gmm.yunyoujun.cn/>
+- GitHub Pages: <https://yunyoujun.github.io/give-me-money/>
+- GitHub: <https://github.com/YunYouJun/give-me-money>
 
 ![give-me-money](https://github.com/YunYouJun/give-me-money/blob/master/public/example.jpg?raw=true)
 
-此前看到的一个图，出处不可考，觉得很有趣，就试着用网页实现了下。
+I once saw this image somewhere, could not trace its source, and rebuilt the joke as a web page because it was funny.
 
-- GitHub: <https://github.com/YunYouJun/give-me-money>
-- 预览地址: <https://yunyoujun.github.io/give-me-money/>
+## Features
 
-## Feature
+- Internationalization
+- Form validation
+- Light and dark themes
+- Cute error messages
+- Local prank dialog without storing sensitive input
+- Public CloudBase counters after YunLeFun sign-in, limited to one submission per user
+- YunLeFun comment entry
 
-- 国际化
-- 表单校验
-- 可爱的出错提示
-- 不保存敏感输入的本地恶作剧弹窗
+## Tech Stack
 
-## Base
-
-- ~~[Parcel](https://parceljs.org)~~
 - [Vite](https://vitejs.dev/)
-- ~~[Vue](https://vuejs.org)~~
-- [Vue3](https://v3.vuejs.org)
-- ~~[Vuex](https://vuex.vuejs.org)~~
-- [Pinia](https://pinia.esm.dev/)
-- [iconify](https://iconify.design/)
-- ~~[Element](https://github.com/ElemeFE/element/)~~
-- ~~[Element-Plus](https://github.com/element-plus/element-plus/)~~
-- ~~[element-theme-ink](https://github.com/YunYouJun/element-theme-ink/)~~
-- Local Vue UI components
-- [vue-i18n](https://github.com/intlify/vue-i18n-next)
+- [Vue 3](https://vuejs.org/)
 - [TypeScript](https://www.typescriptlang.org/)
+- [Pinia](https://pinia.vuejs.org/)
+- [vue-i18n](https://github.com/intlify/vue-i18n-next)
+- [Iconify](https://iconify.design/)
+- [CloudBase JS SDK](https://docs.cloudbase.net/api-reference/webv3/initialization)
+- Local Vue UI components
 
-## Storage
+Migration history:
 
-采用 [CloudBase](https://cloudbase.net/) 只读历史计数。主站不再登录、不写库、不保存表单输入。
+- ~~[Parcel](https://parceljs.org)~~ -> [Vite](https://vitejs.dev/)
+- ~~[Vue 2](https://v2.vuejs.org/)~~ -> [Vue 3](https://vuejs.org/)
+- ~~[Vuex](https://vuex.vuejs.org/)~~ -> [Pinia](https://pinia.vuejs.org/)
+- ~~[Element](https://github.com/ElemeFE/element/)~~ / ~~[Element Plus](https://github.com/element-plus/element-plus/)~~ -> Local Vue UI components
 
-> 虽然至今都没有一个真的啊！摔！
+## Data And Privacy
 
-## Audio
+The app uses [CloudBase](https://cloudbase.net/) for public counters and one-time user submission markers. The production site writes only the counter choice and current signed-in user marker; it does not store account, password, or PIN form input.
 
-话说这个音频，有识之士（~~绅士~~）应该都有所耳闻。(~~笑~~)
+Two collections are needed:
 
-我不是，我没有。
+- `counters/ok`: public accept count with `name: "ok"` and `time: number`
+- `counters/no`: public reject count with `name: "no"` and `time: number`
+- `counter_votes/{uid}`: one-time user marker with `uid`, `counterName`, and `createdAt`
 
-## Use
+Enable a CloudBase Web sign-in provider, then configure `counters` and `counter_votes` so signed-in users can write the required documents. The frontend creates `counter_votes/{uid}` and increments the public counter in one transaction; if the marker already exists, it does not count again. The old `pay_records` collection should be deleted or blocked to avoid retaining historical sensitive fields.
+
+If you want to donate money, [UNICEF China](https://www.unicef.cn/) is a better place to send it.
+
+~~[But if you really want to sponsor me, well...](https://www.yunyoujun.cn/sponsors/)~~
+
+## Audio Notice
+
+The page plays audio. Check your volume before opening it in public.
+
+## Local Development
 
 ```sh
 git clone https://github.com/YunYouJun/give-me-money.git
 cd give-me-money
 pnpm install
+cp .env.example .env
 ```
 
-复制 `.env.example`，并重命名为 `.env`。
-
-在 `.env` 中填入云乐坊 CloudBase 环境和 publishable access key，用于读取历史计数。应用评论页地址可按需覆盖。
+Fill `.env` with the YunLeFun CloudBase environment and publishable access key used to read counters and write them after sign-in. The app comment URL can be overridden when needed.
 
 ```sh
 VITE_CLOUDBASE_ENV_ID=yunlefun-8g7ybcxc7345c490
@@ -85,18 +87,9 @@ VITE_CLOUDBASE_ACCESS_KEY=xxxxxxx
 VITE_GMM_COMMENTS_URL=https://apps.yunle.fun/app/give-me-money
 ```
 
-CloudBase 只需要保留 `counters` 集合：
-
-- `counters/ok`: 历史参与数
-- `counters/no`: 历史拒绝数
-
-建议删除或封禁旧的 `pay_records` 集合，避免继续保留敏感字段历史数据。
-
-### 运行
+Start the dev server:
 
 ```sh
 pnpm run dev
 # http://localhost:2333
 ```
-
-端口号当然是 `2333` 啦~
