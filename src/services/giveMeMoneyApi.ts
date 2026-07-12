@@ -39,6 +39,11 @@ interface TransactionalCounterDb {
   runTransaction: <T>(callback: (transaction: CounterTransaction) => Promise<T>, times?: number) => Promise<T>
 }
 
+interface CounterReadAuth {
+  getSession: () => Promise<unknown>
+  signInAnonymously?: () => Promise<unknown>
+}
+
 export class CounterLoginRequiredError extends Error {
   constructor() {
     super('请先登录云乐坊后再提交。')
@@ -142,6 +147,14 @@ function hasDocumentData(result: unknown): boolean {
   return isRecord(data)
 }
 
+function hasSessionData(result: unknown): boolean {
+  if (!isRecord(result))
+    return false
+
+  const data = result.data
+  return isRecord(data) && isRecord(data.session)
+}
+
 function readVoteCounterName(result: unknown): CounterName | undefined {
   if (!isRecord(result))
     return undefined
@@ -183,6 +196,10 @@ function readSessionUserId(result: unknown): string | null {
   return userId || null
 }
 
+function isCounterReadAuth(value: unknown): value is CounterReadAuth {
+  return isRecord(value) && typeof value.getSession === 'function'
+}
+
 async function requireCurrentUserId(): Promise<string> {
   const { auth } = ensureCloudbaseClient()
   const result: unknown = await auth.getSession()
@@ -197,12 +214,43 @@ async function requireCurrentUserId(): Promise<string> {
   return userId
 }
 
+async function ensureCounterReadAccess(auth: unknown): Promise<void> {
+  if (!isCounterReadAuth(auth))
+    return
+
+  try {
+    const result = await auth.getSession()
+    if (hasSessionData(result))
+      return
+  }
+  catch {}
+
+  if (typeof auth.signInAnonymously === 'function') {
+    try {
+      await auth.signInAnonymously()
+    }
+    catch {
+      // Public counter reads may still be allowed through the CloudBase access key.
+    }
+  }
+}
+
 async function readCounter(name: string): Promise<number> {
-  const { db } = ensureCloudbaseClient()
-  const result = await db.collection(COUNTER_COLLECTION)
-    .where({ name })
-    .limit(1)
-    .get()
+  const { auth, db } = ensureCloudbaseClient()
+  await ensureCounterReadAccess(auth)
+
+  let result
+  try {
+    result = await db.collection(COUNTER_COLLECTION)
+      .doc(name)
+      .get()
+  }
+  catch (error) {
+    if (hasMissingCollectionError(error, COUNTER_COLLECTION))
+      return 0
+
+    throw error
+  }
 
   if (result.code) {
     if (hasMissingCollectionError(result, COUNTER_COLLECTION))
@@ -211,7 +259,7 @@ async function readCounter(name: string): Promise<number> {
     throw new Error(result.message || result.code)
   }
 
-  const first = result.data[0]
+  const first = Array.isArray(result.data) ? result.data[0] : result.data
   if (!isRecord(first))
     return 0
 

@@ -13,15 +13,16 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
 
 <template>
   <nav class="gmm-nav" aria-label="Primary">
+    <RouterLink
+      class="gmm-nav-brand"
+      :class="{ 'is-active': activePath === '/' }"
+      to="/"
+      aria-label="Give Me Money"
+    >
+      <span class="gmm-menu-logo i-ri-money-cny-circle-line" aria-hidden="true" />
+      <span class="gmm-brand-text">Give Me Money</span>
+    </RouterLink>
     <div class="gmm-menu">
-      <RouterLink
-        class="gmm-nav-link is-logo"
-        :class="{ 'is-active': activePath === '/' }"
-        to="/"
-        aria-label="Give Me Money"
-      >
-        <span class="gmm-menu-logo i-ri-money-cny-circle-line" aria-hidden="true" />
-      </RouterLink>
       <a
         class="gmm-nav-link"
         :href="commentsUrl"
@@ -59,69 +60,104 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
 <style scoped lang="scss">
 .gmm-nav {
   display: flex;
-  align-items: stretch;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 4rem;
   padding: 0 max(1rem, calc((100vw - 1120px) / 2));
   color: var(--gmm-text);
-  border-bottom: 1px solid var(--gmm-border-soft);
+}
+
+.gmm-nav-brand,
+.gmm-menu {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.gmm-nav-brand {
+  gap: 0.6rem;
+  min-height: 2.5rem;
+  margin-right: auto;
+  color: var(--gmm-heading);
+  font-family: ui-rounded, 'Arial Rounded MT Bold', sans-serif;
+  font-weight: 900;
+  text-decoration: none;
+  letter-spacing: -0.025em;
+}
+
+.gmm-nav-brand:hover,
+.gmm-nav-brand:focus-visible {
+  color: var(--gmm-primary);
+  outline: none;
+}
+
+.gmm-brand-text {
+  white-space: nowrap;
 }
 
 .gmm-menu {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: stretch;
-  min-width: 0;
+  gap: 0.1rem;
 }
 
 .gmm-nav-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 4rem;
-  height: 60px;
-  padding: 0 1rem;
-  color: var(--gmm-text);
+  min-height: 2.25rem;
+  padding: 0 0.7rem;
+  color: var(--gmm-muted);
+  font-size: 0.9rem;
+  font-weight: 700;
   text-decoration: none;
-  border-bottom: 2px solid transparent;
+  border-radius: 999px;
+  transition:
+    color 0.18s ease,
+    background 0.18s ease;
 }
 
+.gmm-nav-link:hover,
+.gmm-nav-link:focus-visible,
 .gmm-nav-link.is-active {
   color: var(--gmm-primary);
-  border-bottom-color: var(--gmm-primary);
-}
-
-.gmm-nav-link.is-logo {
-  min-width: 3.25rem;
+  background: var(--gmm-primary-soft);
+  outline: none;
 }
 
 .gmm-menu-logo {
-  display: block;
-  width: 1.35rem;
-  height: 1.35rem;
-  color: currentColor;
+  display: grid;
+  width: 2.15rem;
+  height: 2.15rem;
+  place-items: center;
+  color: #624600;
+  border-radius: 50%;
+  background: var(--gmm-accent);
+  box-shadow: inset 0 0 0 4px color-mix(in srgb, var(--gmm-accent) 72%, white);
 }
 
 .gmm-nav-actions {
   display: flex;
-  flex: 0 0 auto;
-  align-items: stretch;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
 }
 
 .gmm-nav-actions :deep(.base-tooltip) {
-  height: 60px;
+  height: 2.4rem;
 }
 
 .gmm-nav-icon-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 3.5rem;
-  height: 60px;
-  color: var(--gmm-text);
-  font-size: 1.25rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  color: var(--gmm-muted);
+  font-size: 1.15rem;
   text-decoration: none;
-  border-bottom: 2px solid transparent;
+  border-radius: 50%;
   transition:
     color 0.18s ease,
+    border-color 0.18s ease,
     background 0.18s ease;
 }
 
@@ -134,25 +170,56 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
 
 .right-menu-item {
   display: inline-flex;
-  flex: 0 0 5.75rem;
+  flex: 0 0 4.6rem;
   justify-content: center;
-  height: 60px;
+  height: 2.4rem;
 }
 
-@media (max-width: 480px) {
+.gmm-nav-actions :deep(.lang-select) {
+  width: 4.6rem;
+}
+
+@media (max-width: 640px) {
   .gmm-nav {
-    padding: 0 0.5rem;
+    gap: 0.15rem;
+    min-height: 3.75rem;
+    padding: 0 0.75rem;
+  }
+
+  .gmm-nav-brand {
+    margin-right: auto;
+  }
+
+  .gmm-menu {
+    flex: 0 0 auto;
   }
 
   .gmm-nav-link {
-    min-width: auto;
-    padding: 0 0.65rem;
+    min-width: 0;
+    padding: 0 0.5rem;
+    font-size: 0.82rem;
   }
 
-  .gmm-nav-icon-link,
   .right-menu-item {
-    width: 4.75rem;
     flex-basis: 4.75rem;
+  }
+
+  .gmm-nav-actions :deep(.lang-select) {
+    width: 4.75rem;
+  }
+
+  .gmm-nav-icon-link {
+    width: 2.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gmm-brand-text {
+    display: none;
+  }
+
+  .gmm-nav-brand {
+    flex: 0 0 auto;
   }
 }
 </style>

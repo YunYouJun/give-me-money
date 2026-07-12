@@ -17,7 +17,7 @@ export function getCloudbaseConfig(): CloudbaseConfig {
     envId,
     region,
     accessKey,
-    isConfigured: Boolean(envId && region && accessKey),
+    isConfigured: Boolean(envId && region),
   }
 }
 

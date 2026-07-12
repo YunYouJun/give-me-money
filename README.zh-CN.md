@@ -90,6 +90,7 @@ VITE_CLOUDBASE_ENV_ID=yunlefun-8g7ybcxc7345c490
 VITE_CLOUDBASE_REGION=ap-shanghai
 VITE_CLOUDBASE_ACCESS_KEY=xxxxxxx
 VITE_GMM_COMMENTS_URL=https://apps.yunle.fun/app/give-me-money
+VITE_YUNLE_ORIGIN=https://www.yunle.fun
 ```
 
 运行开发服务器：

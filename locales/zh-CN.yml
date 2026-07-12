@@ -8,7 +8,7 @@ link:
 message:
   check: 我确认我知道这是一个恶作剧网站，填写内容只会在本页用于玩笑效果，并希望继续。
   title: 我很可爱，请给我钱！
-  give-me-pay: '欧尼酱，可以……告诉我……你的……{name}吗？'
+  give-me-pay: '欧尼酱，可以…告诉我……你的……{name}吗？'
   header: 可爱的萝莉妹妹们
   nsfw:
     title: NSFW 内容提醒
@@ -21,10 +21,7 @@ message:
   counter-unavailable: 历史计数暂不可用。
   counter-recorded: 已记录到公共计数器。
   counter-record-failed: '计数失败：{reason}'
-  login-required-title: 需要先登录
-  login-required-description: 请先登录云乐坊，登录后再回来提交一次计数。账号、密码和交易密码仍然不会保存。
-  login-required-action: 登录云乐坊
-  login-required-toast: 请先登录云乐坊后再提交。
+  login-required-toast: 请先登录云乐坊，登录成功后再回来提交。
   already-submitted-title: 已经提交过啦
   already-submitted-description: 每个登录用户只能提交一次，当前不会重复写入公共计数器。
   already-submitted-toast: 你已经提交过一次啦。

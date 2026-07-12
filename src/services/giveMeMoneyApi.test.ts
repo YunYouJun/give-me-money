@@ -24,7 +24,27 @@ function asMock<T extends (...args: never[]) => unknown>(fn: T) {
 }
 
 function createCollectionMock() {
+  const doc = {
+    get: vi.fn(),
+  }
+
+  const auth = {
+    getSession: vi.fn().mockResolvedValue({
+      data: {
+        session: {
+          user: {
+            id: 'user-1',
+            is_anonymous: false,
+          },
+        },
+      },
+      error: null,
+    }),
+    signInAnonymously: vi.fn().mockResolvedValue({ data: {}, error: null }),
+  }
+
   const collection = {
+    doc: vi.fn(() => doc),
     get: vi.fn(),
     limit: vi.fn(() => collection),
     where: vi.fn(() => collection),
@@ -34,9 +54,9 @@ function createCollectionMock() {
     collection: vi.fn(() => collection),
   }
 
-  asMock(ensureCloudbaseClient).mockReturnValue({ db })
+  asMock(ensureCloudbaseClient).mockReturnValue({ auth, db })
 
-  return { collection, db }
+  return { auth, collection, db, doc }
 }
 
 interface MockTransactionDocument {
@@ -57,7 +77,12 @@ interface MockTransaction {
 type TransactionCallback = (transaction: MockTransaction) => Promise<unknown>
 
 function createSubmissionMock() {
+  const counterReadDoc = {
+    get: vi.fn().mockResolvedValue({ data: { name: 'ok', time: 8 } }),
+  }
+
   const counterCollection = {
+    doc: vi.fn(() => counterReadDoc),
     get: vi.fn().mockResolvedValue({ data: [{ name: 'ok', time: 8 }] }),
     limit: vi.fn(() => counterCollection),
     where: vi.fn(() => counterCollection),
@@ -134,34 +159,67 @@ beforeEach(() => {
 
 describe('giveMeMoneyApi', () => {
   it('reads the historical ok counter without touching pay records', async () => {
-    const { collection, db } = createCollectionMock()
-    collection.get.mockResolvedValue({ data: [{ name: 'ok', time: 7 }] })
+    const { collection, db, doc } = createCollectionMock()
+    doc.get.mockResolvedValue({ data: { name: 'ok', time: 7 } })
 
     await expect(readOkCounter()).resolves.toBe(7)
 
     expect(db.collection).toHaveBeenCalledWith('counters')
     expect(db.collection).not.toHaveBeenCalledWith('pay_records')
-    expect(collection.where).toHaveBeenCalledWith({ name: 'ok' })
-    expect(collection.limit).toHaveBeenCalledWith(1)
+    expect(collection.doc).toHaveBeenCalledWith('ok')
+    expect(collection.where).not.toHaveBeenCalled()
+    expect(collection.limit).not.toHaveBeenCalled()
   })
 
   it('reads the historical no counter', async () => {
-    const { collection } = createCollectionMock()
-    collection.get.mockResolvedValue({ data: [{ name: 'no', time: 4 }] })
+    const { collection, doc } = createCollectionMock()
+    doc.get.mockResolvedValue({ data: { name: 'no', time: 4 } })
 
     await expect(readNoCounter()).resolves.toBe(4)
 
-    expect(collection.where).toHaveBeenCalledWith({ name: 'no' })
+    expect(collection.doc).toHaveBeenCalledWith('no')
   })
 
   it('treats a missing counters collection as zero', async () => {
-    const { collection } = createCollectionMock()
-    collection.get.mockResolvedValue({
+    const { doc } = createCollectionMock()
+    doc.get.mockResolvedValue({
       code: 'DATABASE_COLLECTION_NOT_EXIST',
       message: 'Db or Table not exist: counters. Please check your request.',
     })
 
     await expect(readOkCounter()).resolves.toBe(0)
+  })
+
+  it('treats a rejected missing counters collection as zero', async () => {
+    const { doc } = createCollectionMock()
+    doc.get.mockRejectedValue({
+      code: 'DATABASE_COLLECTION_NOT_EXIST',
+      message: 'Db or Table not exist: counters. Please check your request.',
+    })
+
+    await expect(readOkCounter()).resolves.toBe(0)
+  })
+
+  it('uses an anonymous CloudBase session for public counter reads', async () => {
+    const { auth, doc } = createCollectionMock()
+    auth.getSession.mockResolvedValue({ data: {}, error: null })
+    doc.get.mockResolvedValue({ data: { name: 'ok', time: 7 } })
+
+    await expect(readOkCounter()).resolves.toBe(7)
+
+    expect(auth.signInAnonymously).toHaveBeenCalled()
+  })
+
+  it('continues public counter reads when anonymous sign-in is unavailable', async () => {
+    const { auth, doc } = createCollectionMock()
+    auth.getSession.mockResolvedValue({ data: {}, error: null })
+    auth.signInAnonymously.mockRejectedValue(new Error('anonymous auth disabled'))
+    doc.get.mockResolvedValue({ data: { name: 'ok', time: 7 } })
+
+    await expect(readOkCounter()).resolves.toBe(7)
+
+    expect(auth.signInAnonymously).toHaveBeenCalled()
+    expect(doc.get).toHaveBeenCalled()
   })
 
   it('requires a real signed-in user before submitting a counter vote', async () => {

@@ -21,10 +21,7 @@ message:
   counter-unavailable: Historical counters are temporarily unavailable.
   counter-recorded: Recorded in the public counter.
   counter-record-failed: 'Counter update failed: {reason}'
-  login-required-title: Sign-in required
-  login-required-description: Sign in to Yunle first, then come back and submit one counter entry. Account, password, and PIN values are still not saved.
-  login-required-action: Sign in to Yunle
-  login-required-toast: Please sign in to Yunle before submitting.
+  login-required-toast: Please sign in to Yunle, then come back and submit again.
   already-submitted-title: Already submitted
   already-submitted-description: Each signed-in user can submit only once, so the public counter was not written again.
   already-submitted-toast: You have already submitted once.

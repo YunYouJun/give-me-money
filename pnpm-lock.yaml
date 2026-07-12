@@ -17,6 +17,9 @@ importers:
       '@vueuse/core':
         specifier: 14.3.0
         version: 14.3.0(vue@3.5.35(typescript@6.0.3))
+      '@yunlefun/sso':
+        specifier: 0.1.0
+        version: 0.1.0
       dayjs:
         specifier: 1.11.21
         version: 1.11.21
@@ -2757,6 +2760,9 @@ packages:
     resolution: {integrity: sha512-bZpge9eSXwa4ToSiqJ7j6KRwhAsneMFoSz3LMWKQDkqimm3D/tbFlrklrs/IOqC8tEcYmXQZJ6N0UrjhBirVCg==}
     peerDependencies:
       vue: ^3.5.0
+
+  '@yunlefun/sso@0.1.0':
+    resolution: {integrity: sha512-oGrdtAcDG3MBzrIjNJpC3PzGgmCNa6i3LvnMaxW34KLibvOI8HegoA7qWagsUHCMow7H36OkBGwIKijYCvOzWw==}
 
   abbrev@2.0.0:
     resolution: {integrity: sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==}
@@ -8074,6 +8080,8 @@ snapshots:
   '@vueuse/shared@14.3.0(vue@3.5.35(typescript@6.0.3))':
     dependencies:
       vue: 3.5.35(typescript@6.0.3)
+
+  '@yunlefun/sso@0.1.0': {}
 
   abbrev@2.0.0: {}
 

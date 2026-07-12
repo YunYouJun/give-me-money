@@ -8,6 +8,7 @@ import { validatePayInfo } from '~/composables/usePayFormValidation'
 import { showToast } from '~/composables/useToast'
 import { isCloudbaseReady } from '~/services/cloudbaseConfig'
 import { getCommentsUrl } from '~/services/commentsConfig'
+import { ensureYunleCloudbaseSession, redirectToYunleLogin } from '~/services/yunleSso'
 import { useAppStore } from '~/stores/app'
 import { playLoveAudio } from '../utils'
 import SubmissionResultDialog from './SubmissionResultDialog.vue'
@@ -27,7 +28,7 @@ const name = shallowRef('')
 const checked = shallowRef(false)
 const loadingCounters = shallowRef(false)
 const submittingCounter = shallowRef<CounterName | null>(null)
-const dialogType = shallowRef<'already' | 'login' | 'reject' | 'submit' | null>(null)
+const dialogType = shallowRef<'already' | 'reject' | 'submit' | null>(null)
 const counterErrors = reactive({
   ok: '',
   no: '',
@@ -58,8 +59,6 @@ const isSubmitting = computed(() => submittingCounter.value !== null)
 const dialogTitle = computed(() => {
   if (dialogType.value === 'already')
     return t('message.already-submitted-title')
-  if (dialogType.value === 'login')
-    return t('message.login-required-title')
   if (dialogType.value === 'reject')
     return t('message.fake-reject-title')
   return t('message.fake-submit-title')
@@ -67,15 +66,11 @@ const dialogTitle = computed(() => {
 const dialogMessage = computed(() => {
   if (dialogType.value === 'already')
     return t('message.already-submitted-description')
-  if (dialogType.value === 'login')
-    return t('message.login-required-description')
   if (dialogType.value === 'reject')
     return t('message.fake-reject-description')
   return t('message.fake-submit-description')
 })
 const dialogActionLabel = computed(() => {
-  if (dialogType.value === 'login')
-    return t('message.login-required-action')
   if (dialogType.value === 'submit')
     return t('message.open-comments-login')
   return t('message.open-comments')
@@ -135,7 +130,19 @@ async function loadCounters() {
   }
 }
 
-onMounted(loadCounters)
+async function warmUpYunleSession() {
+  try {
+    await ensureYunleCloudbaseSession({ mode: 'silent' })
+  }
+  catch {
+    // The page can still show public counters and ask for login during submit.
+  }
+}
+
+onMounted(() => {
+  void loadCounters()
+  void warmUpYunleSession()
+})
 
 function useForm(formName: PayMethod) {
   payInfo.type = formName
@@ -145,6 +152,50 @@ function closeDialog() {
   dialogType.value = null
 }
 
+async function promptYunleLogin(): Promise<boolean> {
+  const session = await ensureYunleCloudbaseSession({ mode: 'interactive' })
+  return !!session
+}
+
+async function submitCounter(api: typeof import('~/services/giveMeMoneyApi'), counterName: CounterName): Promise<boolean> {
+  const result = await api.submitCounterVote(counterName)
+  counter[counterName] = result.value
+  setCounterErrors()
+  showToast({
+    message: t('message.counter-recorded'),
+    type: 'success',
+  })
+  return true
+}
+
+function handleCounterError(api: typeof import('~/services/giveMeMoneyApi'), error: unknown): boolean {
+  if (error instanceof api.CounterLoginRequiredError) {
+    showToast({
+      message: t('message.login-required-toast'),
+      type: 'warning',
+    })
+    redirectToYunleLogin()
+    return false
+  }
+
+  if (error instanceof api.CounterAlreadySubmittedError) {
+    dialogType.value = 'already'
+    showToast({
+      message: t('message.already-submitted-toast'),
+      type: 'warning',
+    })
+    return false
+  }
+
+  showToast({
+    message: t('message.counter-record-failed', {
+      reason: api.getApiErrorMessage(error),
+    }),
+    type: 'error',
+  })
+  return false
+}
+
 async function recordCounter(counterName: CounterName): Promise<boolean> {
   if (submittingCounter.value)
     return false
@@ -152,42 +203,24 @@ async function recordCounter(counterName: CounterName): Promise<boolean> {
   submittingCounter.value = counterName
   try {
     const api = await import('~/services/giveMeMoneyApi')
-    const result = await api.submitCounterVote(counterName)
-    counter[counterName] = result.value
-    setCounterErrors()
-    showToast({
-      message: t('message.counter-recorded'),
-      type: 'success',
-    })
-    return true
+    return await submitCounter(api, counterName)
   }
   catch (error) {
     const api = await import('~/services/giveMeMoneyApi')
     if (error instanceof api.CounterLoginRequiredError) {
-      dialogType.value = 'login'
-      showToast({
-        message: t('message.login-required-toast'),
-        type: 'warning',
-      })
-      return false
+      const loggedIn = await promptYunleLogin()
+      if (!loggedIn)
+        return handleCounterError(api, error)
+
+      try {
+        return await submitCounter(api, counterName)
+      }
+      catch (retryError) {
+        return handleCounterError(api, retryError)
+      }
     }
 
-    if (error instanceof api.CounterAlreadySubmittedError) {
-      dialogType.value = 'already'
-      showToast({
-        message: t('message.already-submitted-toast'),
-        type: 'warning',
-      })
-      return false
-    }
-
-    showToast({
-      message: t('message.counter-record-failed', {
-        reason: api.getApiErrorMessage(error),
-      }),
-      type: 'error',
-    })
-    return false
+    return handleCounterError(api, error)
   }
   finally {
     submittingCounter.value = null
@@ -241,13 +274,51 @@ async function rejectRequest() {
 
 <template>
   <section class="gmm-form-shell">
-    <h2 class="text-3xl text-center my-4">
-      {{
-        t("message.give-me-pay", {
-          name: t(`message.${payInfo.type}.name`),
-        })
-      }}
-    </h2>
+    <header class="gmm-pay-heading">
+      <div class="gmm-pay-meta">
+        <span>{{ t(`message.${payInfo.type}.name`) }}</span>
+        <span>REQUEST · 001</span>
+      </div>
+      <h2 class="gmm-pay-title">
+        {{
+          t("message.give-me-pay", {
+            name: t(`message.${payInfo.type}.name`),
+          })
+        }}
+      </h2>
+      <div class="gmm-payment-switch gmm-action-row">
+        <BaseTooltip
+          v-if="payInfo.type === 'alipay'"
+          :content="t('prompt.wechat')"
+        >
+          <BaseButton
+            class="gmm-payment-switch-button gmm-payment-switch-button--wechat"
+            size="small"
+            @click="useForm('wechat')"
+          >
+            <template #icon>
+              <i-ri-wechat-pay-line />
+            </template>
+            {{ t("message.wechat.button") }}
+          </BaseButton>
+        </BaseTooltip>
+        <BaseTooltip
+          v-else
+          :content="t('prompt.alipay')"
+        >
+          <BaseButton
+            class="gmm-payment-switch-button gmm-payment-switch-button--alipay"
+            size="small"
+            @click="useForm('alipay')"
+          >
+            <template #icon>
+              <i-ri-alipay-line />
+            </template>
+            {{ t("message.alipay.button") }}
+          </BaseButton>
+        </BaseTooltip>
+      </div>
+    </header>
 
     <form
       class="gmm-pay-form"
@@ -343,37 +414,6 @@ async function rejectRequest() {
             {{ t("message.no") }}
           </BaseButton>
         </BaseTooltip>
-
-        <BaseTooltip
-          v-if="payInfo.type === 'alipay'"
-          :content="t('prompt.wechat')"
-        >
-          <BaseButton
-            size="small"
-            variant="success"
-            @click="useForm('wechat')"
-          >
-            <template #icon>
-              <i-ri-wechat-pay-line />
-            </template>
-            {{ t("message.wechat.button") }}
-          </BaseButton>
-        </BaseTooltip>
-        <BaseTooltip
-          v-else
-          :content="t('prompt.alipay')"
-        >
-          <BaseButton
-            size="small"
-            variant="primary"
-            @click="useForm('alipay')"
-          >
-            <template #icon>
-              <i-ri-alipay-line />
-            </template>
-            {{ t("message.alipay.button") }}
-          </BaseButton>
-        </BaseTooltip>
       </div>
     </form>
     <SubmissionResultDialog
@@ -389,15 +429,73 @@ async function rejectRequest() {
 
 <style scoped lang="scss">
 .gmm-form-shell {
-  width: min(100%, 920px);
-  margin: 0 auto;
+  position: relative;
+  width: 100%;
+  padding: clamp(1.1rem, 3vw, 1.6rem);
+  color: var(--gmm-text);
+  border: 1px solid var(--gmm-form-border);
+  border-radius: 0.35rem;
+  background: var(--gmm-form-background);
+  box-shadow: var(--gmm-shadow-strong);
+}
+
+.gmm-form-shell::before,
+.gmm-form-shell::after {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 0.55rem;
+  pointer-events: none;
+  content: '';
+  background: radial-gradient(circle at 0.55rem 0, transparent 0.35rem, var(--gmm-panel-solid) 0.37rem) 0 0 / 1.1rem
+    0.55rem repeat-x;
+}
+
+.gmm-form-shell::before {
+  top: -0.3rem;
+}
+
+.gmm-form-shell::after {
+  bottom: -0.3rem;
+  transform: rotate(180deg);
+}
+
+.gmm-pay-heading {
+  display: grid;
+  gap: 0.8rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  text-align: left;
+  border-bottom: 1px dashed var(--gmm-border-strong);
+}
+
+.gmm-pay-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--gmm-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gmm-pay-title {
+  margin: 0;
+  color: var(--gmm-heading);
+  font-family: ui-rounded, 'Arial Rounded MT Bold', 'Hiragino Maru Gothic ProN', sans-serif;
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
 
 .gmm-pay-form {
   display: grid;
-  gap: 1rem;
-  max-width: 680px;
-  margin: 0 auto;
+  gap: 0.9rem;
   text-align: left;
 }
 
@@ -408,8 +506,10 @@ async function rejectRequest() {
 
 .gmm-field-label {
   color: var(--gmm-text);
-  font-size: 0.925rem;
-  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.025em;
 }
 
 .gmm-field-error {
@@ -419,16 +519,19 @@ async function rejectRequest() {
 }
 
 .gmm-check-row {
-  display: flex;
-  justify-content: center;
+  padding: 0.75rem 0;
+  border-top: 1px dashed var(--gmm-border);
+  border-bottom: 1px dashed var(--gmm-border);
 }
 
 .gmm-action-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem;
+}
+
+.gmm-payment-switch {
+  display: contents;
 }
 
 .gmm-action-tooltip--ok {
@@ -441,29 +544,97 @@ async function rejectRequest() {
 
 .gmm-action-button--ok {
   width: 100%;
-  min-height: 3rem;
+  min-height: 3.15rem;
   padding: 0.7rem 1.35rem;
   font-size: 1.0625rem;
   font-weight: 700;
-  border-width: 2px;
+  border-color: var(--gmm-primary);
+  background: var(--gmm-primary) !important;
+  color: #fff !important;
 }
 
 .gmm-action-button--reject {
-  min-width: 6.5rem;
+  min-width: 6rem;
+  min-height: 3.15rem;
+}
+
+.gmm-payment-switch-button.gmm-payment-switch-button.gmm-payment-switch-button {
+  width: fit-content;
+  color: var(--gmm-payment-color);
+  font-weight: 700;
+  border-color: var(--gmm-payment-border);
+  background: linear-gradient(180deg, var(--gmm-payment-bg-start), var(--gmm-payment-bg-end));
+  box-shadow: none;
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.gmm-payment-switch-button--wechat {
+  --gmm-payment-color: #07c160;
+  --gmm-payment-border: rgba(7, 193, 96, 0.48);
+  --gmm-payment-bg-start: rgba(7, 193, 96, 0.12);
+  --gmm-payment-bg-end: var(--gmm-panel-solid);
+  --gmm-payment-hover-start: #07c160;
+  --gmm-payment-hover-end: #06ad56;
+  --gmm-payment-shadow: rgba(7, 193, 96, 0.14);
+  --gmm-payment-shadow-strong: rgba(7, 193, 96, 0.25);
+}
+
+.gmm-payment-switch-button--alipay {
+  --gmm-payment-color: #1677ff;
+  --gmm-payment-border: rgba(22, 119, 255, 0.5);
+  --gmm-payment-bg-start: rgba(22, 119, 255, 0.12);
+  --gmm-payment-bg-end: var(--gmm-panel-solid);
+  --gmm-payment-hover-start: #1677ff;
+  --gmm-payment-hover-end: #0f63d8;
+  --gmm-payment-shadow: rgba(22, 119, 255, 0.14);
+  --gmm-payment-shadow-strong: rgba(22, 119, 255, 0.26);
+}
+
+.gmm-payment-switch-button.gmm-payment-switch-button.gmm-payment-switch-button:hover:not(:disabled),
+.gmm-payment-switch-button.gmm-payment-switch-button.gmm-payment-switch-button:focus-visible {
+  color: #fff;
+  border-color: var(--gmm-payment-color);
+  background: linear-gradient(180deg, var(--gmm-payment-hover-start), var(--gmm-payment-hover-end));
+  box-shadow: 0 10px 22px var(--gmm-payment-shadow-strong);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+:global(html.dark .gmm-payment-switch-button.gmm-payment-switch-button.gmm-payment-switch-button) {
+  color: var(--gmm-payment-color);
+  border-color: var(--gmm-payment-border);
+  background: linear-gradient(180deg, var(--gmm-payment-bg-start), rgba(13, 21, 16, 0.92));
+  box-shadow: 0 0 18px var(--gmm-payment-shadow);
+  text-shadow: 0 0 12px var(--gmm-payment-shadow-strong);
+}
+
+:global(html.dark .gmm-payment-switch-button.gmm-payment-switch-button.gmm-payment-switch-button:hover:not(:disabled)),
+:global(html.dark .gmm-payment-switch-button.gmm-payment-switch-button.gmm-payment-switch-button:focus-visible) {
+  color: #fff;
+  border-color: var(--gmm-payment-color);
+  background: linear-gradient(180deg, var(--gmm-payment-hover-start), var(--gmm-payment-hover-end));
+  box-shadow: 0 0 24px var(--gmm-payment-shadow-strong);
 }
 
 @media (max-width: 720px) {
   .gmm-action-row {
-    justify-content: stretch;
-
-    .gmm-action-tooltip {
-      flex: 1 1 100%;
-    }
+    grid-template-columns: 1fr;
 
     :deep(.base-tooltip),
     :deep(.base-button) {
       width: 100%;
     }
+  }
+}
+
+@media (max-width: 360px) {
+  .gmm-pay-title {
+    font-size: 1.32rem;
   }
 }
 </style>

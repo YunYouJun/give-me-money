@@ -1,5 +1,6 @@
 minimumReleaseAgeExclude:
   - '@cloudbase/js-sdk@3.4.5'
+  - '@yunlefun/sso@0.1.0'
 shellEmulator: true
 trustPolicy: no-downgrade
 trustPolicyExclude:

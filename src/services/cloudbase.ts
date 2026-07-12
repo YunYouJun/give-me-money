@@ -31,7 +31,7 @@ export function getCloudbaseClient(): CloudbaseClient | null {
   const app = cloudbase.init({
     env: config.envId,
     region: config.region,
-    accessKey: config.accessKey,
+    ...(config.accessKey ? { accessKey: config.accessKey } : {}),
     auth: {
       detectSessionInUrl: true,
     },

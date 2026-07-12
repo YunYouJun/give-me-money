@@ -1,8 +1,8 @@
 import { useDark, useToggle } from '@vueuse/core'
 
 export const COLOR_SCHEME_STORAGE_KEY = 'vueuse-color-scheme'
-export const LIGHT_THEME_COLOR = '#fffaf0'
-export const DARK_THEME_COLOR = '#070b0a'
+export const LIGHT_THEME_COLOR = '#edf3f5'
+export const DARK_THEME_COLOR = '#101518'
 
 type ColorScheme = 'dark' | 'light'
 type StoredColorScheme = ColorScheme | 'auto'

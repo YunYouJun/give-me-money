@@ -21,10 +21,7 @@ message:
   counter-unavailable: 履歴カウンターは一時的に利用できません。
   counter-recorded: 公開カウンターに記録しました。
   counter-record-failed: 'カウンターの更新に失敗しました：{reason}'
-  login-required-title: ログインが必要です
-  login-required-description: 先に Yunle にログインしてから、戻って一度だけカウントを送信してください。アカウント、パスワード、取引パスワードは保存されません。
-  login-required-action: Yunle にログイン
-  login-required-toast: 送信前に Yunle にログインしてください。
+  login-required-toast: Yunle にログインしてから、戻ってもう一度送信してください。
   already-submitted-title: すでに送信済みです
   already-submitted-description: ログインユーザーごとに送信は一度だけなので、公開カウンターには再度書き込みません。
   already-submitted-toast: すでに一度送信しています。

@@ -133,7 +133,7 @@ onBeforeUnmount(() => {
   cursor: pointer;
   background: transparent;
   border: 0;
-  border-bottom: 2px solid transparent;
+  border-radius: 999px;
   transition:
     color 0.18s ease,
     background 0.18s ease;
@@ -173,7 +173,7 @@ onBeforeUnmount(() => {
   padding: 0.35rem;
   text-align: left;
   border: 1px solid var(--gmm-border);
-  border-radius: 8px;
+  border-radius: 0.85rem;
   background: var(--gmm-panel-solid);
   box-shadow: var(--gmm-shadow-strong);
 }
@@ -190,7 +190,7 @@ onBeforeUnmount(() => {
   white-space: nowrap;
   cursor: pointer;
   border: 0;
-  border-radius: 6px;
+  border-radius: 0.6rem;
   background: transparent;
 
   &:hover,

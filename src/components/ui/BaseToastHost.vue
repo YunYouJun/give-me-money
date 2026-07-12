@@ -32,9 +32,10 @@ const { dismissToast, toasts } = useToast()
   z-index: 3000;
   top: 1rem;
   right: 1rem;
+  left: 1rem;
   display: grid;
-  width: min(24rem, calc(100vw - 2rem));
   gap: 0.75rem;
+  justify-items: end;
   pointer-events: none;
 }
 
@@ -43,6 +44,7 @@ const { dismissToast, toasts } = useToast()
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  width: min(100%, 24rem);
   padding: 0.75rem 0.875rem;
   color: var(--gmm-text);
   text-align: left;

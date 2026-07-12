@@ -23,19 +23,31 @@
   position: sticky;
   z-index: 10;
   top: 0;
-  background: color-mix(in srgb, var(--gmm-panel-solid) 88%, transparent);
-  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--gmm-border-soft);
+  background: color-mix(in srgb, var(--gmm-bg-soft) 84%, transparent);
+  backdrop-filter: blur(18px);
 }
 
 .gmm-main {
   width: min(100% - 2rem, 1120px);
   min-height: calc(100vh - 160px);
-  padding: 1.75rem 0 2rem;
+  padding: clamp(2rem, 5vw, 4.5rem) 0 3rem;
   margin: 0 auto;
 }
 
 .gmm-footer {
   width: min(100% - 2rem, 1120px);
   margin: 0 auto;
+}
+
+@media (max-width: 640px) {
+  .gmm-main {
+    width: min(100% - 1.5rem, 1120px);
+    padding-top: 2rem;
+  }
+
+  .gmm-footer {
+    width: min(100% - 1.5rem, 1120px);
+  }
 }
 </style>
