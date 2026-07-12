@@ -155,6 +155,7 @@ function createSubmissionMock() {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  vi.stubEnv('VITE_CLOUDBASE_ACCESS_KEY', '')
 })
 
 describe('giveMeMoneyApi', () => {
@@ -208,6 +209,19 @@ describe('giveMeMoneyApi', () => {
     await expect(readOkCounter()).resolves.toBe(7)
 
     expect(auth.signInAnonymously).toHaveBeenCalled()
+  })
+
+  it('skips anonymous sign-in when a publishable access key is configured', async () => {
+    vi.stubEnv('VITE_CLOUDBASE_ACCESS_KEY', 'publishable-key')
+    const { auth, doc } = createCollectionMock()
+    auth.getSession.mockResolvedValue({ data: {}, error: null })
+    doc.get.mockResolvedValue({ data: { name: 'ok', time: 7 } })
+
+    await expect(readOkCounter()).resolves.toBe(7)
+
+    expect(auth.getSession).not.toHaveBeenCalled()
+    expect(auth.signInAnonymously).not.toHaveBeenCalled()
+    expect(doc.get).toHaveBeenCalled()
   })
 
   it('continues public counter reads when anonymous sign-in is unavailable', async () => {

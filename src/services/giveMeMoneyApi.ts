@@ -1,5 +1,6 @@
 import { getApiErrorMessage } from './apiError'
 import { ensureCloudbaseClient } from './cloudbase'
+import { getCloudbaseConfig } from './cloudbaseConfig'
 
 export { getApiErrorMessage } from './apiError'
 
@@ -215,6 +216,9 @@ async function requireCurrentUserId(): Promise<string> {
 }
 
 async function ensureCounterReadAccess(auth: unknown): Promise<void> {
+  if (getCloudbaseConfig().accessKey)
+    return
+
   if (!isCounterReadAuth(auth))
     return
 
