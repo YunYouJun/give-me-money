@@ -1,5 +1,7 @@
 import { mount } from '@vue/test-utils'
+import { TooltipProvider } from 'reka-ui'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { defineComponent, h } from 'vue'
 import { createI18n } from 'vue-i18n'
 import BaseTooltip from '~/components/ui/BaseTooltip.vue'
 import Navbar from './Navbar.vue'
@@ -25,6 +27,15 @@ const messages = {
   },
 }
 
+const NavbarTestHost = defineComponent({
+  name: 'NavbarTestHost',
+  setup() {
+    return () => h(TooltipProvider, null, {
+      default: () => h(Navbar),
+    })
+  },
+})
+
 function mountNavbar() {
   const i18n = createI18n({
     legacy: false,
@@ -32,7 +43,7 @@ function mountNavbar() {
     messages,
   })
 
-  return mount(Navbar, {
+  return mount(NavbarTestHost, {
     global: {
       components: {
         BaseTooltip,

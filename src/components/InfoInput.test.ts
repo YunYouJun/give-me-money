@@ -1,6 +1,8 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
+import { TooltipProvider } from 'reka-ui'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { defineComponent, h } from 'vue'
 import { createI18n } from 'vue-i18n'
 import { clearToasts, useToast } from '~/composables/useToast'
 import zhCNMessages from '../../locales/zh-CN.yml'
@@ -48,6 +50,15 @@ vi.mock('../utils', () => ({
 
 const messages = { 'zh-CN': zhCNMessages }
 
+const InfoInputTestHost = defineComponent({
+  name: 'InfoInputTestHost',
+  setup() {
+    return () => h(TooltipProvider, null, {
+      default: () => h(InfoInput),
+    })
+  },
+})
+
 function mountInfoInput() {
   const i18n = createI18n({
     legacy: false,
@@ -55,7 +66,7 @@ function mountInfoInput() {
     messages,
   })
 
-  return mount(InfoInput, {
+  return mount(InfoInputTestHost, {
     global: {
       components: {
         BaseButton,
@@ -304,9 +315,10 @@ describe('info input', () => {
     const wrapper = mountInfoInput()
     await flushPromises()
 
-    const tooltips = wrapper.findAll('.gmm-pay-form > .gmm-action-row .base-tooltip-content')
+    const tooltipContents = wrapper.findAllComponents(BaseTooltip)
+      .map(tooltip => tooltip.props('content'))
 
-    expect(tooltips[0]?.text()).toBe('已经有 7 个欧尼酱参与过啦！')
-    expect(tooltips[1]?.text()).toBe('历史计数暂不可用。')
+    expect(tooltipContents).toContain('已经有 7 个欧尼酱参与过啦！')
+    expect(tooltipContents).toContain('历史计数暂不可用。')
   })
 })

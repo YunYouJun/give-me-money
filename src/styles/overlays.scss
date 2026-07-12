@@ -1,0 +1,102 @@
+.base-tooltip {
+  display: inline-flex;
+}
+
+.base-tooltip-content {
+  z-index: 100;
+  width: max-content;
+  max-width: min(16rem, calc(var(--reka-tooltip-content-available-width) - 1rem));
+  max-height: calc(var(--reka-tooltip-content-available-height) - 1rem);
+  padding: 0.4rem 0.55rem;
+  overflow-wrap: anywhere;
+  color: var(--gmm-text);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  border: 1px solid var(--gmm-border);
+  border-radius: 6px;
+  background: var(--gmm-panel-solid);
+  box-shadow: var(--gmm-shadow-strong);
+  transform-origin: var(--reka-tooltip-content-transform-origin);
+  animation: tooltip-enter 0.16s ease-out;
+}
+
+.base-tooltip-arrow {
+  fill: var(--gmm-panel-solid);
+  stroke: var(--gmm-border);
+  stroke-width: 1px;
+}
+
+.lang-select-content {
+  z-index: 100;
+  min-width: max(9rem, var(--reka-select-trigger-width));
+  max-height: min(18rem, var(--reka-select-content-available-height));
+  padding: 0.35rem;
+  overflow: hidden;
+  color: var(--gmm-text);
+  border: 1px solid var(--gmm-border);
+  border-radius: 0.85rem;
+  background: var(--gmm-panel-solid);
+  box-shadow: var(--gmm-shadow-strong);
+  transform-origin: var(--reka-select-content-transform-origin);
+  animation: overlay-enter 0.16s ease-out;
+}
+
+.lang-select-viewport {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.lang-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.25rem;
+  padding: 0 0.65rem;
+  color: var(--gmm-text);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  border: 0;
+  border-radius: 0.6rem;
+  outline: none;
+  background: transparent;
+}
+
+.lang-select-option[data-highlighted],
+.lang-select-option[data-state='checked'] {
+  color: var(--gmm-primary);
+  background: var(--gmm-primary-soft);
+}
+
+.lang-select-option[data-state='checked'] {
+  font-weight: 700;
+}
+
+.lang-select-option-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes tooltip-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes overlay-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-0.2rem) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .base-tooltip-content,
+  .lang-select-content {
+    animation: none;
+  }
+}
