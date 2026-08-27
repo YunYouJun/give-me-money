@@ -94,15 +94,25 @@ export default defineConfig({
     // https://github.com/antfu/vite-plugin-pwa
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.png'],
+      includeAssets: [
+        'favicon.png',
+        'apple-touch-icon.png',
+        'give-me-money-mark.svg',
+        'give-me-money-app-icon.svg',
+      ],
       manifest: {
         name: '请给我钱',
         short_name: '给我钱',
         theme_color: '#fffaf0',
         icons: [
           {
-            src: '/favicon.png',
-            sizes: '200x200',
+            src: '/icon-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: '/icon-512.png',
+            sizes: '512x512',
             type: 'image/png',
           },
         ],

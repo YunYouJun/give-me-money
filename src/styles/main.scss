@@ -199,9 +199,10 @@ hr {
 
 .gmm-about-mark {
   display: block;
+  width: 3rem;
+  height: 3rem;
   margin: 0 auto 0.75rem;
-  color: var(--gmm-primary);
-  font-size: 3rem;
+  object-fit: contain;
 }
 
 .gmm-about-kicker {

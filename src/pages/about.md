@@ -3,7 +3,7 @@ title: 关于
 ---
 
 <section class="gmm-about-hero">
-  <i-ri-money-cny-circle-line class="gmm-about-mark" />
+  <img class="gmm-about-mark" src="/give-me-money-mark.svg" alt="" aria-hidden="true">
   <p class="gmm-about-kicker">Give Me Money</p>
   <h1>关于这个恶作剧</h1>
   <p class="gmm-about-lead">

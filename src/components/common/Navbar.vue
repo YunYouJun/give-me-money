@@ -19,7 +19,12 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
       to="/"
       aria-label="Give Me Money"
     >
-      <span class="gmm-menu-logo i-ri-money-cny-circle-line" aria-hidden="true" />
+      <img
+        class="gmm-menu-logo"
+        src="/give-me-money-mark.svg"
+        alt=""
+        aria-hidden="true"
+      >
       <span class="gmm-brand-text">Give Me Money</span>
     </RouterLink>
     <div class="gmm-menu">
@@ -124,14 +129,9 @@ const githubUrl = 'https://github.com/YunYouJun/give-me-money'
 }
 
 .gmm-menu-logo {
-  display: grid;
   width: 2.15rem;
   height: 2.15rem;
-  place-items: center;
-  color: #624600;
-  border-radius: 50%;
-  background: var(--gmm-accent);
-  box-shadow: inset 0 0 0 4px color-mix(in srgb, var(--gmm-accent) 72%, white);
+  object-fit: contain;
 }
 
 .gmm-nav-actions {
