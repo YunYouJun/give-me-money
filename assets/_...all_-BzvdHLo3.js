@@ -1,0 +1,1 @@
+import{C as e,Ct as t,D as n,U as r,vt as i}from"./vendor-DehxJPOG.js";import{H as a}from"./app-BfH3YX94.js";var o=n({__name:`[...all]`,setup(n){let{t:o}=a();return(n,a)=>(r(),e(`div`,null,t(i(o)(`not-found`)),1))}}),s={};typeof s==`function`&&s(o);var c=o;export{c as default};

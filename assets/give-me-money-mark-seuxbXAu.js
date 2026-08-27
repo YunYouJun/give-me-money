@@ -1,0 +1,1 @@
+var e=`/give-me-money-mark.svg`;export{e as t};
